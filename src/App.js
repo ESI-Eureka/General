@@ -1,10 +1,10 @@
 // import logo from './logo.svg';
 // import './App.css';
-import Login from './Pages/Login';
+import Signup from './Pages/Signup';
 
 function App() {
   return (
-    <Login />
+    <Signup />
     // <div className="App">
     //   <header className="App-header">
     //     <img src={logo} className="App-logo" alt="logo" />
