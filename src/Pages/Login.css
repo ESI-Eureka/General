@@ -50,32 +50,17 @@ body {
     border-radius: 8px;
     border: 1px solid var(--Neutral02, #A6A6A6);
   }
-  
-  .remember-me {
-    margin: 2.5vh 0;
-    display: flex;
-  }
-  
-  .remember-me input {
-    width: auto;
-    margin-right: 8px;
-    border-radius: 8px;
-  }
-  
-  .remember-me input:checked + label + #email {
-    background-color: rgba(0, 123, 255, 0.1);
-  }
-  
+
   button {
     background-color: #2546F3;
     color: #fff;
     border: none;
-    padding: 1.5vh 7vw;
+    padding: 1.5vh 5vw;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
     font-size: 1.5rem;
-    margin: 7vh;
+    margin: 10vh 0 5vh 0;
   }
   
   button:hover {
@@ -98,14 +83,19 @@ body {
     }
   }
 
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 767px) {
+    body{
+      background-color: #fff;
+    }
+
     .login-container{
       max-width: 90vw;
+      box-shadow: none;
     }
 
     .email-password input {
-      max-width: 82vw;
-      width: 18rem;
+      max-width: 85vw;
+      width: 20rem;
     }
   
     button {
