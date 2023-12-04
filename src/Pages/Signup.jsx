@@ -53,16 +53,6 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
         </div>
-
-        <div className="remember-me">
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={handleRememberMeChange}
-          />
-          <label htmlFor="rememberMe">Remember me</label>
-        </div>
       </form>
 
       <button type="button" onClick={handleSignup}>
