@@ -1,0 +1,52 @@
+.SearchBar {
+    width: auto;
+    display: flex;
+    align-items: center ;
+    justify-content: center;
+    overflow-y: hidden;
+}
+
+input {
+    height: 45px;
+    width: 50vw;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    padding-left: 15px;
+}
+
+.DivIcon {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    background-color: #0923A9;
+    height: 50px;
+    border: 1px black;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+
+@media (max-width: 768px) {
+
+    .DivIcon {
+        width: 50px;
+        height: 45px;
+    }
+
+    input {
+        height: 40px;
+        width: 50vw;
+        padding-left: 10px;
+    }
+
+  }
+
+@media (max-width: 392px) {
+   
+    input {
+        width: 60vw;
+    }
+
+  }
