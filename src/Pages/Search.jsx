@@ -8,7 +8,11 @@ const SearchPage = () => {
 
     return (
         <div>
-            <NavBar/>
+            <NavBar
+                Nav1="Accueil"
+                Nav2="Favoris"
+                Nav3="Profile"
+            />
             <div className="SearchContainer">
                 <Logo2 className='Logo2'/>
                 <SearchBar/>

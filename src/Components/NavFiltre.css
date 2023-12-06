@@ -19,7 +19,7 @@
     font-weight: 400;
 }
 
-button {
+.NavFiltre button {
     cursor: pointer;
     display: flex;
     align-items: center;

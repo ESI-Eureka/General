@@ -9,7 +9,11 @@ const Filtre = () => {
 
     return (
         <div>
-            <NavBar/>
+            <NavBar
+                Nav1="Accueil"
+                Nav2="Favoris"
+                Nav3="Profile"
+            />
             <SearchBar/>
             <div className="FiltreContainer">
                 <span className='SpanFiltre'> Filtre </span>
