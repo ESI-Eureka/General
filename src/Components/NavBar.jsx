@@ -19,8 +19,8 @@ const NavBar = () => {
             </div>
 
             <div className="Links">
-                <a href='#' className="Home" > Aceuil </a>
-                <a href='#' className='Favoris'> Favoris </a>
+                <a href='#' className="Home" > Home </a>
+                <a href='#' className='Favoris'> Favorite </a>
                 <a href='#' className='Profile'> Profile </a>
             </div>
 
