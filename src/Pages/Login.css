@@ -1,26 +1,46 @@
-  body {
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: #f4f4f4;
-  }
-  
-  .login-container {
-    width: 100%; 
-    text-align: center;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .login-form {
-    padding: 0 5vw;
-    display: flex;
-    flex-direction: column;
-  }
+body {
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  margin: 0; /* Supprimez la marge par défaut du corps */
+  overflow: hidden;
+}
+
+.login-container {
+  display: flex;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.picAuth-container {
+  flex: 1;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  height: 100vh;
+  width: 50vw;
+  margin-left: 2vw;
+}
+
+.picAuth-container svg {
+  width: 100%;
+  height: 95%;
+  max-width: 650px; /* Optionally, set a maximum width to control the image size */
+}
+
+.login-form {
+  width: 50vw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the form vertically */
+  justify-content: center; /* Center the form horizontally */
+}
+
   
   h2 {
     color: var(--Neutral00, #030303);
@@ -60,37 +80,48 @@
     cursor: pointer;
     font-weight: bold;
     font-size: 1.5rem;
-    margin: 10vh 0 5vh 0;
+    margin: 10vh 0 3vh 0;
   }
   
   button:hover {
     background-color: #0923A9;
   }
+  a {
+    text-decoration: none; 
+    color: #007bff; 
+    cursor: pointer; 
+  }
+  
+  a:hover {
+    text-decoration: underline; 
+  }
 
   @media screen and (max-width: 1024px) {
   
+    .picAuth-container {
+      display: none; 
+    }
     h2 {
       font-size: 2rem;
     }
   
     .email-password input {
-      width: 40vw;
+      width: 50vw;
     }
   
     button {
         padding: 0.8rem 3.5em;
-        margin-top: 3vh;
+        margin-top: 7vh;
     }
   }
 
   @media screen and (max-width: 767px) {
-    body{
-      background-color: #fff;
+    .picAuth-container {
+      display: none; 
     }
 
-    .login-container{
-      max-width: 90vw;
-      box-shadow: none;
+    .login-form {
+      width: 100%;
     }
 
     .email-password input {

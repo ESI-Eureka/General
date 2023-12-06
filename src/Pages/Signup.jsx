@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Login.css';
+import { ReactComponent as PicAuth } from '../Icons/Auth.svg';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-
-  useEffect(() => {
-    // Load email from local storage if "Remember Me" is checked
-    const storedEmail = localStorage.getItem('rememberedEmail');
-    if (rememberMe && storedEmail) {
-      setEmail(storedEmail);
-    }
-  }, [rememberMe]);
 
   const handleSignup = () => {
     console.log('Signing up with:', { email, password });
-
-    // Store the email in local storage if "Remember Me" is checked
-    if (rememberMe) {
-      localStorage.setItem('rememberedEmail', email);
-    } else {
-      localStorage.removeItem('rememberedEmail');
-    }
-  };
-
-  const handleRememberMeChange = () => {
-    setRememberMe(!rememberMe);
   };
 
   return (
     <div className="login-container">
+      <div className="picAuth-container">
+        <PicAuth className="picAuth"/>
+      </div>
       <form className="login-form">
         <h2>Sign-Up</h2>
 
@@ -53,11 +37,11 @@ const Signup = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
         </div>
-      </form>
-
-      <button type="button" onClick={handleSignup}>
+        <button type="button" onClick={handleSignup}>
           Sign Up
         </button>
+        <p>Already have an account? <a href="/login">Log-in</a></p>
+      </form>
     </div>
   );
 };
