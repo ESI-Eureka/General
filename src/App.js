@@ -9,13 +9,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Profil from './Pages/Profil';
+import Upload from './Pages/Upload';
 
 
 function App() {
   return (
     <BrowserRouter>
      <Routes>
-        <Route path='/' element=''></Route>
+        <Route path='/' element={<Upload/>}></Route>
         <Route path='/profil' element={<Profil/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
