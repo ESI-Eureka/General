@@ -1,14 +1,21 @@
-// import logo from './logo.svg';
 // import './App.css';
-//import Signup from './Pages/Signup';
-//import Login from './Pages/Login';
 //import SearchPage from './Pages/Search';
 //import Filtre from './Pages/Filtre';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
+import Signup from './Pages/Signup';
+
 
 function App() {
   return (
-    <Login/>
+    <BrowserRouter>
+     <Routes>
+        <Route path='/' element={<Login/>}></Route>
+        <Route path='/login' element={<Login/>}></Route>
+        <Route path='/signup' element={<Signup/>}></Route>
+      </Routes>
+    </BrowserRouter>
     // <div className="App">
     //   <header className="App-header">
     //     <img src={logo} className="App-logo" alt="logo" />
