@@ -1,40 +1,40 @@
 import React from 'react';
 import './Filtrage.css';
 import {ReactComponent as Check} from '../Icons/Check.svg';
-import SearchBar2 from './SearchBar2';
+import SearchBar3 from './SearchBar3';
 
-const FiltreAuteur = () => {
+const FiltreMotCle = () => {
 
     return (
         <div className="BodyFiltre">
 
-            <SearchBar2/>
+            <SearchBar3/>
 
             <div className="Container">
 
                 <div className="Ligne">
                     <Check className='Check'/>
-                    <span> Nom 1 </span>
+                    <span> Mot clé 1 </span>
                 </div>
 
                 <div className="Ligne">
                     <Check className='Check'/>
-                    <span> Nom 2 </span>
+                    <span> Mot clé 2 </span>
                 </div>
 
                 <div className="Ligne">
                     <Check className='Check'/>
-                    <span> Nom 3 </span>
+                    <span> Mot clé  3 </span>
                 </div>
 
                 <div className="Ligne">
                     <Check className='Check'/>
-                    <span> Nom 4 </span>
+                    <span> Mot clé 4 </span>
                 </div>
 
                 <div className="Ligne">
                     <Check className='Check'/>
-                    <span> Nom 5 </span>
+                    <span> Mot clé 5 </span>
                 </div>
 
             </div>
@@ -44,4 +44,4 @@ const FiltreAuteur = () => {
     );
 }
 
-export default FiltreAuteur;
+export default FiltreMotCle;

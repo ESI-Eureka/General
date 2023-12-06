@@ -6,7 +6,8 @@
     overflow-y: hidden;
 }
 
-input {
+.SearchBar input {
+    outline: none;
     height: 45px;
     width: 50vw;
     border-bottom-left-radius: 5px;
@@ -32,13 +33,6 @@ input {
 
     .DivIcon {
         width: 50px;
-        height: 45px;
-    }
-
-    input {
-        height: 40px;
-        width: 50vw;
-        padding-left: 10px;
     }
 
   }

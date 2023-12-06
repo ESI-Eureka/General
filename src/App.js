@@ -1,4 +1,7 @@
+// import logo from './logo.svg';
 // import './App.css';
+//import Signup from './Pages/Signup';
+//import Login from './Pages/Login';
 import SearchPage from './Pages/Search';
 import Filtre from './Pages/Filtre';
 import React from 'react';
