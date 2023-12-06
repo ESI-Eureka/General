@@ -2,7 +2,7 @@ import React , {useState} from 'react';
 import { ReactComponent as WhitePlus } from '../Icons/WhitePlus.svg';
 import './SearchBar.css';
 
-const AddModerateurBar = () => {
+const UploadBar = () => {
 
     const [search, setSearch] = useState('');
     const handleSearchChange = (e) => {
@@ -13,7 +13,7 @@ const AddModerateurBar = () => {
         <div className="SearchBar">
             <input
                 type="text"
-                placeholder="Ajouter un modérateur"
+                placeholder="Entrer URL"
                 value={search}
                 onChange={handleSearchChange}
             />
@@ -24,4 +24,4 @@ const AddModerateurBar = () => {
     );
 }
 
-export default AddModerateurBar;
+export default UploadBar;
