@@ -15,6 +15,7 @@ const Filtre = () => {
                 <span className='SpanFiltre'> Filtre </span>
                 <NavFiltre/>
                 <div className="ResultatContainer">
+                    <span className='SpanFiltre'> Résultats </span>
                     <Resultat 
                         titre={"Titre"} 
                         auteur={"Nom de l'auteur"} 
@@ -45,6 +46,39 @@ const Filtre = () => {
                         date={"02-12-2023"} 
                         resume={"Resume"}
                     />
+                    <Resultat 
+                        titre={"Titre"} 
+                        auteur={"Nom de l'auteur"} 
+                        date={"02-12-2023"} 
+                        resume={"Resume"}
+                    />
+                    <Resultat 
+                        titre={"Titre"} 
+                        auteur={"Nom de l'auteur"} 
+                        date={"02-12-2023"} 
+                        resume={"Resume"}
+                    />
+                    <Resultat 
+                        titre={"Titre"} 
+                        auteur={"Nom de l'auteur"} 
+                        date={"02-12-2023"} 
+                        resume={"Resume"}
+                    />
+                    <Resultat 
+                        titre={"Titre"} 
+                        auteur={"Nom de l'auteur"} 
+                        date={"02-12-2023"} 
+                        resume={"Resume"}
+                    />
+                    <Resultat 
+                        titre={"Titre"} 
+                        auteur={"Nom de l'auteur"} 
+                        date={"02-12-2023"} 
+                        resume={"Resume"}
+                    />
+                    <div className="footer">
+                        
+                    </div>
                 </div>
             </div>
         </div>

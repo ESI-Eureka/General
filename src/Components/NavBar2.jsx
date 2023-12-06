@@ -5,7 +5,7 @@ import { ReactComponent as FavorisIcon } from '../Icons/Favoris.svg';
 import { ReactComponent as HomeIcon } from '../Icons/Home.svg';
 import { ReactComponent as Logo } from '../Icons/Logo.svg';
 
-const NavBar = () => {
+const NavBar2 = () => {
 
     return (
         <div className='NavBar'>
@@ -20,7 +20,7 @@ const NavBar = () => {
 
             <div className="Links">
                 <a href='/Home' className="Home" > Aceuil </a>
-                <a href='/Favoris' className='Favoris'> Favoris </a>
+                <a href='/Favoris' className='Moderateurs'> Modérateurs </a>
                 <a href='/Profile' className='Profile'> Profile </a>
             </div>
 
@@ -40,4 +40,4 @@ const NavBar = () => {
     );
 }
 
-export default NavBar;
+export default NavBar2;

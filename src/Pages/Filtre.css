@@ -10,14 +10,14 @@ body {
     flex-direction: column;
 }
 
-.FiltreContainer {
+.FiltreContainer, .FavorisContainer {
     width: auto;
     margin: 50px;
     background-color: #f4f4f4;
     padding: 20px;
 }
 
-.SpanFiltre {
+.SpanFiltre, .SpanFavoris{
     font-size: 20px;
     font-weight: 600;
 }

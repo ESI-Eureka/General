@@ -1,14 +1,14 @@
 import React from 'react';
 import './Filtrage.css';
 import {ReactComponent as Check} from '../Icons/Check.svg';
-import SearchBar2 from './SearchBar2';
+import SearchBar4 from './SearchBar4';
 
-const FiltreAuteur = () => {
+const FiltreInstitution = () => {
 
     return (
         <div className="BodyFiltre">
 
-            <SearchBar2/>
+            <SearchBar4/>
 
             <div className="Container">
 
@@ -44,4 +44,4 @@ const FiltreAuteur = () => {
     );
 }
 
-export default FiltreAuteur;
+export default FiltreInstitution;

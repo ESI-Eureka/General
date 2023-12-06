@@ -1,4 +1,3 @@
-
 .NavBar {
     height: 40px;
     width: auto;
@@ -18,23 +17,34 @@
     justify-content: space-between;
 }
 
-.Home, .Favoris, .Profile {
+.Home,
+.Favoris,
+.Profile, .Moderateurs {
     text-decoration: none;
     font-size: 18px;
-    margin-right: 20px;
+    margin-right: 25px;
     color: black;
-}
-
-.Home {
-    color: #2546F3;
 }
 
 .Icons {
     display: none;
 }
 
+.Menu {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    display: none;
+}
+
+.Menu span {
+    height: 5%;
+    margin-top: 5px;
+    background-color: #2546F3;
+}
+
 @media (max-width: 768px) {
-    
+
     .Links {
         display: none;
     }
@@ -45,14 +55,32 @@
         align-items: end;
     }
 
-    .FavIcon , .ProfIcon, .HomeIcon {
+    .FavIcon,
+    .ProfIcon,
+    .HomeIcon {
         margin-right: 15px;
     }
 
     .Logo {
         margin-right: 20px;
     }
-    
-  }
 
+}
 
+@media (max-width: 450px) {
+    .Links {
+        display: none;
+    }
+
+    .Icons {
+        display: none;
+    }
+
+    .Menu {
+        display: block;
+    }
+
+    .Logo {
+        margin-right: 20px;
+    }
+}

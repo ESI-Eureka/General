@@ -1,13 +1,11 @@
-// import logo from './logo.svg';
-// import './App.css';
 //import Signup from './Pages/Signup';
 //import Login from './Pages/Login';
-import SearchPage from './Pages/Search';
+//import SearchPage from './Pages/Search';
 import Filtre from './Pages/Filtre';
 
 function App() {
   return (
-    <Filtre/>
+      <Filtre/>
     // <div className="App">
     //   <header className="App-header">
     //     <img src={logo} className="App-logo" alt="logo" />
