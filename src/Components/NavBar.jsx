@@ -1,36 +1,48 @@
-// NavBar.js
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import './NavBar.css';
-import { ReactComponent as ProfileIcon } from '../Icons/Profile.svg';
-import { ReactComponent as FavorisIcon } from '../Icons/Favoris.svg';
-import { ReactComponent as HomeIcon } from '../Icons/Home.svg';
 import { ReactComponent as Logo } from '../Icons/Logo.svg';
+import { useRef } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const NavBar = ({ Nav1, Nav2, Nav3 }) => {
-    return (
-        <div className='NavBar'>
-            <div className="Logo">
-                <Logo />
-            </div>
-            <div className="LinkIcon">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const navRef = useRef();
 
-            <div className="Links">
-                <a href='#' className="Home" > {Nav1} </a>
-                <a href='#' className='Favoris'> {Nav2} </a>
-                <a href='#' className='Profile'> {Nav3} </a>
-            </div>
+  const showNavbar = () => {
+    navRef.current.classList.toggle("responsive_nav");
+  };
 
-            <div className="Icons">
-                <HomeIcon className='HomeIcon'/>
-                <FavorisIcon className='FavIcon'/>
-                <ProfileIcon className='ProfIcon'/>
-            </div>
-        </div>
-    );
+  return (
+    <header>
+      <div>
+        <Logo/>
+      </div>
+      <nav ref={navRef}>
+        <a href='/' className={`Home ${currentPath === '/' ? 'active' : ''}`}>
+          {Nav1}
+        </a>
+        <a href='/' className={`Favoris ${currentPath === '/favoris' ? 'active' : ''}`}>
+          {Nav2}
+        </a>
+        <a href='/profil' className={`Profile ${currentPath === '/profil' ? 'active' : ''}`}>
+          {Nav3}
+        </a>
+        <button className="nav-btn nav-close-btn" onClick={showNavbar}>
+          <FaTimes/>
+        </button>
+      </nav>
+      <button className="nav-btn" onClick={showNavbar}>
+        <FaBars/>
+      </button>
+    </header>
+  );
 }
 
 export default NavBar;
+
+
+
+
+
