@@ -1,6 +1,6 @@
 // import './App.css';
-//import SearchPage from './Pages/Search';
-//import Filtre from './Pages/Filtre';
+import SearchPage from './Pages/Search';
+import Filtre from './Pages/Filtre';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
@@ -11,7 +11,7 @@ function App() {
   return (
     <BrowserRouter>
      <Routes>
-        <Route path='/' element={<Login/>}></Route>
+        <Route path='/' element={<Filtre/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
       </Routes>
