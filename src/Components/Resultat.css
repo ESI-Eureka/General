@@ -2,13 +2,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 15px;
     padding: 20px;
 }
 
 .Information {
     background-color: white;
-    height: 150px;
+    height: 120px;
     width: 65vw;
     padding: 25px;
     border-bottom-left-radius: 10px;
@@ -17,7 +17,7 @@
 
 .Details {
     background-color: #0923A9;
-    height: 150px;
+    height: 120px;
     width: 10vw;
     padding: 25px;
     display: flex;

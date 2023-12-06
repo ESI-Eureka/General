@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React from 'react';
 import { ReactComponent as Fleche2 } from '../Icons/Fleche2.svg';
 import { ReactComponent as Favoris } from '../Icons/Favoris.svg';
 import './Resultat.css';
