@@ -3,6 +3,7 @@ import NavBar from '../Components/NavBar';
 import SearchBar from '../Components/SearchBar';
 import NavFiltre from '../Components/NavFiltre';
 import Resultat from '../Components/Resultat';
+import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 import './Filtre.css';
 
 const Favoris = () => {
@@ -16,7 +17,7 @@ const Favoris = () => {
     return (
         <div>
             <NavBar navItems={navItems} />
-            <SearchBar/>
+            <SearchBar label={"Rechercher un article"} icon={<SearchIcon/>}/>
             <div className="FiltreContainer">
                 <span className='SpanFiltre'> Filtre </span>
                 <NavFiltre/>

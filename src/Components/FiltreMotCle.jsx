@@ -1,14 +1,15 @@
 import React from 'react';
 import './Filtrage.css';
 import {ReactComponent as Check} from '../Icons/Check.svg';
-import SearchBar3 from './SearchBar3';
+import { ReactComponent as Plus } from '../Icons/Plus.svg';
+import SearchBar2 from './SearchBar2';
 
 const FiltreMotCle = () => {
 
     return (
         <div className="BodyFiltre">
 
-            <SearchBar3/>
+            <SearchBar2 label={"Ajouter mot clé"} icon={<Plus/>}/>
 
             <div className="Container">
 

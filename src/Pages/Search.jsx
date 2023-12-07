@@ -3,6 +3,7 @@ import './Search.css';
 import NavBar from '../Components/NavBar';
 import SearchBar from '../Components/SearchBar';
 import { ReactComponent as Logo2 } from '../Icons/Logo2.svg';
+import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 
 const SearchPage = () => {
     const navItems = [
@@ -16,7 +17,7 @@ const SearchPage = () => {
             <NavBar navItems={navItems} />
             <div className="SearchContainer">
                 <Logo2 className='Logo2'/>
-                <SearchBar/>
+                <SearchBar label={"Rechercher un article"} icon={<SearchIcon/>}/>
             </div>
         </div>
 

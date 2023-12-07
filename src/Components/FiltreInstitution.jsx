@@ -1,14 +1,15 @@
 import React from 'react';
 import './Filtrage.css';
 import {ReactComponent as Check} from '../Icons/Check.svg';
-import SearchBar4 from './SearchBar4';
+import { ReactComponent as Plus } from '../Icons/Plus.svg';
+import SearchBar2 from './SearchBar2';
 
 const FiltreInstitution = () => {
 
     return (
         <div className="BodyFiltre">
 
-            <SearchBar4/>
+            <SearchBar2 label={"Recherhcer institution"} icon={<Plus/>}/>
 
             <div className="Container">
 

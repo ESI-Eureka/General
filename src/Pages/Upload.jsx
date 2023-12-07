@@ -17,7 +17,7 @@ const Upload = () => {
       <NavBar navItems={navItems} />
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
-        <UploadBar />
+        <SearchBar label={"Entrer URL"} icon={<WhitePlus/>}/>
       </div>
     </div>
   );

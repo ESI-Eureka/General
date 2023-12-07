@@ -1,11 +1,9 @@
 import React from 'react';
 import NavBar from '../Components/NavBar';
-import SearchBar from '../Components/SearchBar';
-import NavFiltre from '../Components/NavFiltre';
 import Resultat from '../Components/Resultat';
 import './Filtre.css';
 
-const Filtre = () => {
+const Favoris = () => {
 
     const navItems = [
         { text: "Home", path: "/home1", className: "Home" },
@@ -85,4 +83,4 @@ const Filtre = () => {
     );
 }
 
-export default Filtre;
+export default Favoris;

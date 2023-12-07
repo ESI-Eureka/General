@@ -1,6 +1,5 @@
 
 body {
-    height: 100vh;
     margin: 0;
     padding: 0;
     font-family: 'Montserrat', sans-serif;
@@ -8,11 +7,12 @@ body {
     background: white;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .FiltreContainer, .FavorisContainer {
     width: auto;
-    margin: 50px;
+    margin: 40px;
     background-color: #f4f4f4;
     padding: 20px;
 }
@@ -24,4 +24,20 @@ body {
 
 .ResultatContainer {
     overflow-y: auto;
+}
+
+@media (max-width: 800px) {
+    .FiltreContainer {
+        margin: 20px;
+    }
+   
+
+}
+
+@media (max-width: 500px) {
+    .FiltreContainer {
+        margin: 20px;
+    }
+   
+
 }

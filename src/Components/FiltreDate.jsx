@@ -1,5 +1,5 @@
 import React from 'react';
-import BarreCalendar from './BarreCalendar';
+import Calendrier from '../Components/Calendrier';
 import './Filtrage.css';
 
 const FiltreDate = () => {
@@ -8,9 +8,9 @@ const FiltreDate = () => {
         <div className="BodyFiltre">
 
              <span> De </span>
-             <BarreCalendar/>
+             <Calendrier/>
              <span> A </span>
-             <BarreCalendar/>
+             <Calendrier/>
             
         </div>
 
