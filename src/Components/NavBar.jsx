@@ -1,11 +1,11 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
-import './NavBar.css';
-import { ReactComponent as Logo } from '../Icons/Logo.svg';
+import React from "react";
+import { useLocation } from "react-router-dom";
+import "./NavBar.css";
+import { ReactComponent as Logo } from "../Icons/Logo.svg";
 import { useRef } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 
-const NavBar = ({ Nav1, Nav2, Nav3 }) => {
+const NavBar = ({ navItems }) => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navRef = useRef();
@@ -16,33 +16,26 @@ const NavBar = ({ Nav1, Nav2, Nav3 }) => {
 
   return (
     <header>
-      <div>
-        <Logo/>
-      </div>
+      <Logo />
       <nav ref={navRef}>
-        <a href='/' className={`Home ${currentPath === '/' ? 'active' : ''}`}>
-          {Nav1}
-        </a>
-        <a href='/' className={`Favoris ${currentPath === '/favoris' ? 'active' : ''}`}>
-          {Nav2}
-        </a>
-        <a href='/profil' className={`Profile ${currentPath === '/profil' ? 'active' : ''}`}>
-          {Nav3}
-        </a>
+        {navItems.map((item) => (
+          <a
+            key={item.path}
+            href={item.path}
+            className={`${item.className} ${currentPath === item.path ? "active" : ""}`}
+          >
+            {item.text}
+          </a>
+        ))}
         <button className="nav-btn nav-close-btn" onClick={showNavbar}>
-          <FaTimes/>
+          <FaTimes />
         </button>
       </nav>
       <button className="nav-btn" onClick={showNavbar}>
-        <FaBars/>
+        <FaBars />
       </button>
     </header>
   );
-}
+};
 
 export default NavBar;
-
-
-
-
-

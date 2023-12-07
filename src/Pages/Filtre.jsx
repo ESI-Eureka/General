@@ -5,15 +5,17 @@ import NavFiltre from '../Components/NavFiltre';
 import Resultat from '../Components/Resultat';
 import './Filtre.css';
 
-const Filtre = () => {
+const Favoris = () => {
 
+    const navItems = [
+        { text: "Home", path: "/home1", className: "Home" },
+        { text: "Favorite", path: "/favorite", className: "Favoris" },
+        { text: "Profil", path: "/profil", className: "Profile" },
+        // Ajoutez d'autres liens selon vos besoins
+      ];
     return (
         <div>
-            <NavBar
-                Nav1="Accueil"
-                Nav2="Favoris"
-                Nav3="Profile"
-            />
+            <NavBar navItems={navItems} />
             <SearchBar/>
             <div className="FiltreContainer">
                 <span className='SpanFiltre'> Filtre </span>
@@ -90,4 +92,4 @@ const Filtre = () => {
     );
 }
 
-export default Filtre;
+export default Favoris;
