@@ -1,15 +1,17 @@
 import React from 'react';
 import NavBar from '../Components/NavBar';
-import SearchBar from '../Components/SearchBar';
-import NavFiltre from '../Components/NavFiltre';
 import Resultat from '../Components/Resultat';
 import './Filtre.css';
 
-const Filtre = () => {
+const Favoris = () => {
 
     return (
         <div>
-            <NavBar />
+           <NavBar 
+                Nav1={"Acceuil"}
+                Nav2={"Favoris"}
+                Nav3={"Profile"}
+            />          
             <div className="FavorisContainer">
                 <span className='SpanFavoris'> Favoris </span>
                 <Resultat
@@ -79,4 +81,4 @@ const Filtre = () => {
     );
 }
 
-export default Filtre;
+export default Favoris;

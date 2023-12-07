@@ -19,7 +19,7 @@
 
 .Home,
 .Favoris,
-.Profile, .Moderateurs {
+.Profile {
     text-decoration: none;
     font-size: 18px;
     margin-right: 25px;

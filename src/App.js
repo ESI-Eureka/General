@@ -1,20 +1,17 @@
-// import logo from './logo.svg';
-// import './App.css';
-//import Signup from './Pages/Signup';
-//import Login from './Pages/Login';
-import SearchPage from './Pages/Search';
-import Filtre from './Pages/Filtre';
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
+import SearchPage from './Pages/Search';
+import Favoris from './Pages/Favoris';
 
 
 function App() {
   return (
     <BrowserRouter>
      <Routes>
-        <Route path='/' element={<Filtre/>}></Route>
+        <Route path='/' element={<Favoris/>}></Route>
+        <Route path='/Favoris' element={<Favoris/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
       </Routes>

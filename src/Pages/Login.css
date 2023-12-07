@@ -100,7 +100,7 @@ body {
     .picAuth-container {
       display: none; 
     }
-    h2 {
+    .login-form h2 {
       font-size: 2rem;
     }
   
@@ -108,7 +108,7 @@ body {
       width: 50vw;
     }
   
-    button {
+    .login-form button {
         padding: 0.8rem 3.5em;
         margin-top: 7vh;
     }

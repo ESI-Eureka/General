@@ -19,9 +19,9 @@ const NavBar = ({ Nav1, Nav2, Nav3 }) => {
             </div>
 
             <div className="Links">
-                <a href='#' className="Home" > {Nav1} </a>
-                <a href='#' className='Favoris'> {Nav2} </a>
-                <a href='#' className='Profile'> {Nav3} </a>
+                <a href={'/' + Nav1} className="Home"> {Nav1} </a>
+                <a href={'/' + Nav2} className='Favoris'> {Nav2} </a>
+                <a href={'/' + Nav3} className='Profile'> {Nav3} </a>
             </div>
 
             <div className="Icons">
@@ -29,6 +29,13 @@ const NavBar = ({ Nav1, Nav2, Nav3 }) => {
                 <FavorisIcon className='FavIcon'/>
                 <ProfileIcon className='ProfIcon'/>
             </div>
+
+            <div className="Menu">
+                <span> </span>
+                <span> </span>
+                <span> </span>
+            </div>
+            
         </div>
     );
 }

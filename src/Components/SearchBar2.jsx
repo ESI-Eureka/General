@@ -1,8 +1,8 @@
-import React , {useState} from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import './SearchBar2.css';
 
-const SearchBar = () => {
+const SearchBar = ({ label, icon }) => {
 
     const [search, setSearch] = useState('');
     const handleSearchChange = (e) => {
@@ -13,11 +13,11 @@ const SearchBar = () => {
         <div className="SearchBar2">
             <input
                 type="text"
-                placeholder="Rechercher un auteur"
+                placeholder={label}
                 value={search}
                 onChange={handleSearchChange}
             />
-            <SearchIcon2 className='SearchIcon2'/>
+            {icon}
         </div>
     );
 }
