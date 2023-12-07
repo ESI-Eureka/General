@@ -1,0 +1,123 @@
+.moderator-item {
+  border: 1px solid #595959;
+  border-top: none;
+  padding: 10px;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.moderator-item:first-child {
+  border-radius: 8px 8px 0px 0px;
+  border-top: 1px solid #595959;
+}
+.moderator-item:last-child {
+  border-radius: 0px 0px 8px 8px;
+}
+.moderator-item input {
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  padding: 8px;
+  width: 16vw;
+}
+.moderator-item .buttons button {
+  display: flex;
+  border: none;
+  font-family: "Montserrat", sans-serif;
+  border-radius: 2px;
+  font-size: calc(10px + 1vmin);
+  height: 2.5rem;
+  width: 7rem;
+  justify-content: center;
+  align-items: center;
+  gap: 10%;
+  background-color: #fff;
+  cursor: pointer;
+}
+.moderator-item .editing svg path {
+  fill: #2546f3;
+}
+.moderator-item .buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1vw;
+}
+/* CSS pour le pop-up de confirmation */
+.delete-confirmation {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.delete-confirmation p {
+  margin-bottom: 30px;
+}
+
+.delete-buttons button {
+  margin-right: 2vw;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  border-radius: 2px;
+  font-size: calc(10px + 0.7vmin);
+  height: 2rem;
+  width: 5rem;
+  gap: 10%;
+  background-color: #fff;
+}
+
+.delete-btn {
+  color: #dd2025;
+  border: 1px solid #dd2025;
+}
+
+.delete-btn:hover {
+  background-color: #dd2025;
+  color: #fff;
+}
+
+.cancel-btn:hover {
+  background-color: #ccc;
+}
+.id-moderator {
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  margin-left: 5vw;
+}
+
+@media screen and (max-width: 767px) {
+  .button-text {
+    display: none;
+  }
+  .moderator-item .buttons svg {
+    width: 14px;
+    height: auto;
+  }
+  .cross svg {
+    width: 14px;
+    height: 10px;
+  }
+  .moderator-item .buttons button {
+    width: auto;
+    height: auto;
+  }
+  .delete-confirmation {
+    width: 55%;
+  }
+  .delete-confirmation p {
+    font-size: 14px;
+  }
+}
