@@ -3,12 +3,14 @@
 //import Signup from './Pages/Signup';
 //import Login from './Pages/Login';
 //import SearchPage from './Pages/Search';
-//import Filtre from './Pages/Filtre';
-import Login from './Pages/Login';
+import Filtre from './Pages/Filtre';
+import Details from './Pages/Details';
+
+//import Login from './Pages/Login';
 
 function App() {
   return (
-    <Login/>
+    <Details/>
     // <div className="App">
     //   <header className="App-header">
     //     <img src={logo} className="App-logo" alt="logo" />
