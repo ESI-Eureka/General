@@ -6,7 +6,7 @@ import Resultat from '../Components/Resultat';
 import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 import './Filtre.css';
 
-const Favoris = () => {
+const Filtre = () => {
 
     const navItems = [
         { text: "Home", path: "/home1", className: "Home" },
@@ -93,4 +93,4 @@ const Favoris = () => {
     );
 }
 
-export default Favoris;
+export default Filtre;
