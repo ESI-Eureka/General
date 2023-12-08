@@ -1,33 +1,49 @@
-  body {
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background-color: #f4f4f4;
-  }
+body {
+  font-family: 'Montserrat', sans-serif;
+  width: 100vw;
+  margin: 0; /* Supprimez la marge par défaut du corps */
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.picAuth-container {
+  flex: 1;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  height: 100vh;
+  width: 50vw;
+}
+
+.picAuth-container svg {
+  width: 100%;
+  height: 95%;
+  max-width: 650px; /* Optionally, set a maximum width to control the image size */
+}
+
+.login-form {
+  width: 50vw;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the form vertically */
+  justify-content: center; /* Center the form horizontally */
+}
+
   
-  .login-container {
-    width: 100%; 
-    text-align: center;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .login-form {
-    padding: 0 5vw;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  h2 {
-    color: var(--Neutral00, #030303);
-    font-size: 3rem;
-    font-style: normal;
-    font-weight: bold;
-  }
+.login-form h2 {
+  color: var(--Neutral00, #030303);
+  font-size: calc(10px + 3vmin);
+  font-style: normal;
+  font-weight: bold;
+}
   
   .email-password {
     display: flex;
@@ -37,68 +53,72 @@
   
   .email-password label {
     display: block;
+    font-size: calc(10px + 1vmin);
     margin-bottom: 1.5vh;
     margin-top: 4vh;
   }
   
   .email-password input {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: calc(10px + 1vmin);
     width: 30vw;
     padding: 1rem 8px;
     box-sizing: border-box;
     border-radius: 8px;
-    border: 1px solid var(--Neutral02, #A6A6A6);
+    border: 1px solid #A6A6A6;
   }
 
-  button {
+.login-form button {
     background-color: #2546F3;
     color: #fff;
     border: none;
-    padding: 1.5vh 5vw;
+    padding: 1.5vmin 10vmin;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 1.5rem;
-    margin: 10vh 0 5vh 0;
+    font-size: calc(10px + 2vmin);
+    margin: 10vh 0 3vh 0;
+}
+  
+.login-form button:hover {
+    background-color: #0923A9;
+  }
+.login-form a {
+    text-decoration: none; 
+    color: #007bff; 
+    cursor: pointer; 
   }
   
-  button:hover {
-    background-color: #0923A9;
+  a:hover {
+    text-decoration: underline; 
   }
 
   @media screen and (max-width: 1024px) {
   
-    h2 {
-      font-size: 2rem;
+    .picAuth-container {
+      display: none; 
     }
   
     .email-password input {
-      width: 40vw;
+      width: 50vw;
     }
   
-    button {
-        padding: 0.8rem 3.5em;
-        margin-top: 3vh;
+    .login-form button {
+        margin-top: 7vh;
     }
   }
 
   @media screen and (max-width: 767px) {
-    body{
-      background-color: #fff;
+    .picAuth-container {
+      display: none; 
     }
 
-    .login-container{
-      max-width: 90vw;
-      box-shadow: none;
+    .login-form {
+      width: 100%;
     }
 
     .email-password input {
       max-width: 85vw;
       width: 20rem;
-    }
-  
-    button {
-        padding: 0.8rem 3rem;
     }
   }
