@@ -1,7 +1,8 @@
 import React from "react";
 import "./Search.css";
 import NavBar from "../Components/NavBar";
-import UploadBar from "../Components/UploadBar";
+import SearchBar from '../Components/SearchBar';
+import { ReactComponent as WhitePlus } from "../Icons/WhitePlus.svg";
 import { ReactComponent as Logo2 } from "../Icons/Logo2.svg";
 
 const Upload = () => {
