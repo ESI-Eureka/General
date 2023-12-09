@@ -1,52 +1,85 @@
-.Resultat {
+.ResultatDetails {
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 18px;
-    padding: 20px;
 }
-.Information {
-    background-color: white;
-    height: 120px;
-    width: 90%;
-    padding: 25px;
-    border-bottom-left-radius: 10px;
-    border-top-left-radius: 10px;
-}
-.Format {
-    background-color: black;
-    height: 90px;
-    width: 10%;
-    padding: 40px;
+
+.InformationContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    /*justify-content: space-between;*/
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    cursor: pointer;
+    justify-content: space-between;
+    background-color: white;
+    height: auto;
+    width: 90%;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
-.Pdf {
-    background-color:#2546F3 ;
-    height: 50%;
-    width: 100%;
+
+.Format {
+    height: 195px;
+    width: 10%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    border-top-right-radius: 10px;
-   /* border-bottom-right-radius: 10px;*/
     cursor: pointer;
 }
-.Txt {
-    background-color: #0923A9;
+
+.Pdf {
+    background-color:#2546F3 ;
     height: 50%;
-    width: 100%;
+    width: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
-   justify-content: space-between;
-    /*border-top-right-radius: 10px;*/
-   border-bottom-right-radius: 10px;
+    justify-content: center;
     cursor: pointer;
+    border-top-right-radius: 10px;
+    padding-right: 10px;
 }
+
+.Txt {
+    background-color: #0923A9;
+    height: 50%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-bottom-right-radius: 10px;
+    padding-right: 10px;
+}
+
+@media screen and (max-width: 500px) {
+    .ResultatDetails {
+        flex-direction: column;
+    }
+
+    .Format {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 55px;
+        padding: 0px;
+    }
+
+    .InformationContainer {
+        width: 90%;
+        border-radius: 0px;
+        padding: 20px;
+    }
+
+    .Pdf, .Txt {
+        border-radius: 0px;
+        width: 50%;
+        height: 100%;
+    }
+
+  }

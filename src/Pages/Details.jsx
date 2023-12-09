@@ -4,11 +4,18 @@ import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
+
 const Details = () => {
 
+    const navItems = [
+        { text: "Home", path: "/home1", className: "Home" },
+        { text: "Favorite", path: "/favorite", className: "Favoris" },
+        { text: "Profil", path: "/profil", className: "Profile" },
+        // Ajoutez d'autres liens selon vos besoins
+      ];
     return (
         <div>
-            <NavBar/>
+            <NavBar navItems={navItems} />
             <div className="DetailsContainer">
                 <RightFleche/>
                 <div className="ResultatDetailsContainer">
@@ -18,18 +25,18 @@ const Details = () => {
                         nomAuteur={"Nom de l'auteur"} 
                         date={"02-12-2023"} 
                     />
-                <div className="MoreDetails">
-                    <MoreDetails
-                        institustions={"Institutions"}
-                        motsCles={"Mots Clés"}
-                        resume={"Résumé"}
-                        references={"Références Bibliographiques"}
-                    />
-                </div>
+
+                    <div className="moreDetails"> 
+                        <MoreDetails
+                            institution="ESI"
+                            keywords="key words"
+                            summary="resume"
+                            fourthVariable="references"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
-
     );
 }
 

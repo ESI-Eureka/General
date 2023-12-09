@@ -1,7 +1,8 @@
-.Resultat {
-   /* display: flex;*/
-    align-items: center;
-    justify-content: center;
+.MoreDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
     font-size: 18px;
     padding: 20px;
+    overflow-x: hidden;
 }
