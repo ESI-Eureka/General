@@ -37,7 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'elastic',
+    'rest_framework',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
 ]
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": ["http://elasticsearch:9200"],
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
