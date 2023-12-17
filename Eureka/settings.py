@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl_drf',
 ]
 
+
 ELASTICSEARCH_DSL = {
-    "default": {
-        "hosts": ["http://elasticsearch:9200"],
+    'default': {
+        'hosts': 'localhost:9200',
     },
 }
 
