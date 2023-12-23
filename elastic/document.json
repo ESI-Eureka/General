@@ -1,0 +1,78 @@
+[
+    {
+        "title": "Titre dynamique - 1702774151.8898892",
+        "abstract": "R\u00e9sum\u00e9 dynamique",
+        "authors": [
+            "Auteur dynamique"
+        ],
+        "institutions": [
+            "Institution dynamique"
+        ],
+        "keywords": [
+            "Mot cl\u00e9 dynamique"
+        ],
+        "full_text": "Texte int\u00e9gral dynamique",
+        "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+        "references": [
+            "R\u00e9f\u00e9rence dynamique"
+        ],
+        "publication_date": "2023-01-01"
+    },
+    {
+        "title": "Titre dynamique - 1702774161.9450974",
+        "abstract": "R\u00e9sum\u00e9 dynamique",
+        "authors": [
+            "Auteur dynamique"
+        ],
+        "institutions": [
+            "Institution dynamique"
+        ],
+        "keywords": [
+            "Mot cl\u00e9 dynamique"
+        ],
+        "full_text": "Texte int\u00e9gral dynamique",
+        "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+        "references": [
+            "R\u00e9f\u00e9rence dynamique"
+        ],
+        "publication_date": "2023-01-01"
+    },
+    {
+        "title": "Titre dynamique - 1702774249.6945634",
+        "abstract": "R\u00e9sum\u00e9 dynamique",
+        "authors": [
+            "Auteur dynamique"
+        ],
+        "institutions": [
+            "Institution dynamique"
+        ],
+        "keywords": [
+            "Mot cl\u00e9 dynamique"
+        ],
+        "full_text": "Texte int\u00e9gral dynamique",
+        "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+        "references": [
+            "R\u00e9f\u00e9rence dynamique"
+        ],
+        "publication_date": "2023-01-01"
+    },
+    {
+        "title": "Titre dynamique - 1702774259.749788",
+        "abstract": "R\u00e9sum\u00e9 dynamique",
+        "authors": [
+            "Auteur dynamique"
+        ],
+        "institutions": [
+            "Institution dynamique"
+        ],
+        "keywords": [
+            "Mot cl\u00e9 dynamique"
+        ],
+        "full_text": "Texte int\u00e9gral dynamique",
+        "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+        "references": [
+            "R\u00e9f\u00e9rence dynamique"
+        ],
+        "publication_date": "2023-01-01"
+    }
+]
