@@ -9,12 +9,13 @@ import Filtre from './Pages/Filtre';
 import SearchPage from './Pages/Search';
 import Favoris from './Pages/Favoris';
 import Details from './Pages/Details';
+import Details from './Pages/Details';
 
 function App() {
   return (
     <BrowserRouter>
      <Routes>
-        <Route path='/' element={<Details/>}></Route>
+        <Route path='/' element={<SearchPage/>}></Route>
         <Route path='/home' element={<Upload/>}></Route>
         <Route path='/home1' element={<SearchPage/>}></Route>
         <Route path='/favorite' element={<Favoris/>}></Route>
@@ -23,6 +24,7 @@ function App() {
         <Route path='/profil' element={<Profil/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
+        <Route path='/Details' element={<Details/>}></Route>
       </Routes>
     </BrowserRouter>
   );

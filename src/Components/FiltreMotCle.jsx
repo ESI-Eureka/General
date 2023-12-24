@@ -38,6 +38,16 @@ const FiltreMotCle = () => {
                     <span> Mot clé 5 </span>
                 </div>
 
+                <div className="Ligne">
+                    <Check className='Check'/>
+                    <span> Mot clé 5 </span>
+                </div>
+
+                <div className="Ligne">
+                    <Check className='Check'/>
+                    <span> Mot clé 5 </span>
+                </div>
+
             </div>
             
         </div>

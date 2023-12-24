@@ -17,7 +17,7 @@ const SearchBar = ({label , icon}) => {
                 onChange={handleSearchChange}
             />
             <div className="DivIcon">
-                {icon}
+                <a href='/filtre'> {icon} </a>
             </div>
         </div>
     );

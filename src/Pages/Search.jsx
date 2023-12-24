@@ -7,9 +7,9 @@ import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 
 const SearchPage = () => {
     const navItems = [
-        { text: "Home", path: "/home1", className: "Home" },
-        { text: "Favorite", path: "/favorite", className: "Favoris" },
-        { text: "Profil", path: "/profil", className: "Profile" },
+        { text: "Aceuil", path: "/home1", className: "Home" },
+        { text: "Favoris", path: "/favorite", className: "Favoris" },
+        { text: "Profile", path: "/profil", className: "Profile" },
         // Ajoutez d'autres liens selon vos besoins
       ];
     return (

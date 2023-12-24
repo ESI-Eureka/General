@@ -38,6 +38,16 @@ const FiltreInstitution = () => {
                     <span> Nom 5 </span>
                 </div>
 
+                <div className="Ligne">
+                    <Check className='Check'/>
+                    <span> Nom 5 </span>
+                </div>
+                
+                <div className="Ligne">
+                    <Check className='Check'/>
+                    <span> Nom 5 </span>
+                </div>
+
             </div>
             
         </div>
