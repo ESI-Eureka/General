@@ -9,7 +9,6 @@ import Filtre from './Pages/Filtre';
 import SearchPage from './Pages/Search';
 import Favoris from './Pages/Favoris';
 import Details from './Pages/Details';
-import Details from './Pages/Details';
 
 function App() {
   return (
