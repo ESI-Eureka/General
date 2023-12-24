@@ -11,7 +11,7 @@ const Resultat = ({ titre, auteur, date, resume }) => {
   };
 
   return (
-    <div className="Resultat">
+    <div className="resultats">
       <div className="Information">
         <div className='info'>{titre}</div>
         <div className='info'>{auteur}</div>
@@ -21,7 +21,7 @@ const Resultat = ({ titre, auteur, date, resume }) => {
       </div>
 
       <div className="Details">
-        <span>Afficher détails</span>
+        <a href='/Détails'>Afficher détails</a>
         <Fleche2 />
       </div>
     </div>

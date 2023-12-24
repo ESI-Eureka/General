@@ -46,7 +46,7 @@ const NavFiltre = () => {
                         style={{ transform: `rotate(${rotateAngleAuteur}deg)` }}
                     />
                 </div>
-                {filtreAuteurVisible && <FiltreAuteur />}
+                {filtreAuteurVisible && <FiltreAuteur numberOfLines={8} />}
             </div>
             
             <div className="Listes">

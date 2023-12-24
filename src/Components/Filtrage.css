@@ -10,7 +10,38 @@
 
 .Container {
     margin-top: 10px;
+    height: 150px;
+    overflow-y: scroll;
 }
+
+/* WebKit */
+.Container::-webkit-scrollbar {
+    width: 7.5px;
+}
+
+.Container::-webkit-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+.Container::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
+/* Internet Explorer */
+.Container {
+    scrollbar-width: thin;
+}
+
+.Container::-ms-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+.Container::-ms-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
 
 .Ligne {
     display: flex;
