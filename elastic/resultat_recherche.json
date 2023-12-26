@@ -1,11 +1,9 @@
 [
   {
-    "_index": "articles_scientifiques",
-    "_id": "myhemIwBcuzF56LYiCwO",
-    "_score": 0.6931471,
+    "_id": "MKlqo4wBvRRk4YLy2GsB",
     "_source": {
-      "id": 2,
-      "titre": "Titre dynamique - 1703363381.2571812",
+      "id": 5,
+      "titre": "Titre dynamique - 1703548737.4945083",
       "resume": "R\u00e9sum\u00e9 dynamique",
       "auteurs": [
         "Auteur dynamique"
@@ -14,7 +12,7 @@
         "Institution dynamique"
       ],
       "mots_cles": [
-        "Mot cl\u00e9 dynamique"
+        "cl\u00e9 dynamique"
       ],
       "texte_integral": "Texte int\u00e9gral dynamique",
       "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",

@@ -18,11 +18,11 @@ if not es.indices.exists(index=nom_index):
                 "id": {"type": "integer"},
                 "titre": {"type": "text"},
                 "resume": {"type": "text"},
-                "auteurs": {"type": "keyword"},
-                "institutions": {"type": "keyword"},
-                "mots_cles": {"type": "keyword"},
+                "auteurs": {"type": "text"},
+                "institutions": {"type": "text"},
+                "mots_cles": {"type": "text"},
                 "texte_integral": {"type": "text"},
-                "pdf_url": {"type": "keyword"},
+                "pdf_url": {"type": "text"},
                 "references": {"type": "text"},
                 "publication_date": {"type": "date"}
             }
@@ -55,12 +55,12 @@ def obtenir_nouveaux_articles(nombre_articles):
     for _ in range(nombre_articles):
         global current_id
         nouvel_article = {
-            'id': current_id,
+            'id': current_id + 1,
             'titre': f'Titre dynamique - {time.time()}',
             'resume': 'Résumé dynamique',
             'auteurs': ['Auteur dynamique'],
             'institutions': ['Institution dynamique'],
-            'mots_cles': ['Mot clé dynamique'],
+            'mots_cles': ['clé dynamique'],
             'texte_integral': 'Texte intégral dynamique',
             'pdf_url': 'https://exemple.com/chemin/vers/le/pdf_dynamique',
             'references': ['Référence dynamique'],

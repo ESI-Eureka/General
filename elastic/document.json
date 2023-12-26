@@ -1,7 +1,7 @@
 [
   {
-    "id": 1,
-    "titre": "Titre dynamique - 1703363371.2465234",
+    "id": 2,
+    "titre": "Titre dynamique - 1703547162.017617",
     "resume": "R\u00e9sum\u00e9 dynamique",
     "auteurs": [
       "Auteur dynamique"
@@ -20,8 +20,8 @@
     "publication_date": "2023-01-01"
   },
   {
-    "id": 2,
-    "titre": "Titre dynamique - 1703363381.2571812",
+    "id": 3,
+    "titre": "Titre dynamique - 1703547172.0424435",
     "resume": "R\u00e9sum\u00e9 dynamique",
     "auteurs": [
       "Auteur dynamique"
@@ -31,6 +31,86 @@
     ],
     "mots_cles": [
       "Mot cl\u00e9 dynamique"
+    ],
+    "texte_integral": "Texte int\u00e9gral dynamique",
+    "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+    "references": [
+      "R\u00e9f\u00e9rence dynamique"
+    ],
+    "publication_date": "2023-01-01"
+  },
+  {
+    "id": 3,
+    "titre": "Titre dynamique - 1703547191.6814501",
+    "resume": "R\u00e9sum\u00e9 dynamique",
+    "auteurs": [
+      "Auteur dynamique"
+    ],
+    "institutions": [
+      "Institution dynamique"
+    ],
+    "mots_cles": [
+      "Mot cl\u00e9 dynamique"
+    ],
+    "texte_integral": "Texte int\u00e9gral dynamique",
+    "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+    "references": [
+      "R\u00e9f\u00e9rence dynamique"
+    ],
+    "publication_date": "2023-01-01"
+  },
+  {
+    "id": 4,
+    "titre": "Titre dynamique - 1703547201.7509007",
+    "resume": "R\u00e9sum\u00e9 dynamique",
+    "auteurs": [
+      "Auteur dynamique"
+    ],
+    "institutions": [
+      "Institution dynamique"
+    ],
+    "mots_cles": [
+      "Mot cl\u00e9 dynamique"
+    ],
+    "texte_integral": "Texte int\u00e9gral dynamique",
+    "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+    "references": [
+      "R\u00e9f\u00e9rence dynamique"
+    ],
+    "publication_date": "2023-01-01"
+  },
+  {
+    "id": 5,
+    "titre": "Titre dynamique - 1703548737.4945083",
+    "resume": "R\u00e9sum\u00e9 dynamique",
+    "auteurs": [
+      "Auteur dynamique"
+    ],
+    "institutions": [
+      "Institution dynamique"
+    ],
+    "mots_cles": [
+      "cl\u00e9 dynamique"
+    ],
+    "texte_integral": "Texte int\u00e9gral dynamique",
+    "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+    "references": [
+      "R\u00e9f\u00e9rence dynamique"
+    ],
+    "publication_date": "2023-01-01"
+  },
+  {
+    "id": 6,
+    "titre": "Titre dynamique - 1703548747.5632305",
+    "resume": "R\u00e9sum\u00e9 dynamique",
+    "auteurs": [
+      "Auteur dynamique"
+    ],
+    "institutions": [
+      "Institution dynamique"
+    ],
+    "mots_cles": [
+      "cl\u00e9 dynamique"
     ],
     "texte_integral": "Texte int\u00e9gral dynamique",
     "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
