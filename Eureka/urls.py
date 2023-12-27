@@ -22,6 +22,5 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('elastic/', include('elastic.urls')),
-    path('', RedirectView.as_view(url='/elastic/search/')),  # Redirect the root URL to /api/recherche/
-
+    path('', RedirectView.as_view(url='/elastic/search/')),  # Redirect the root URL to /elastic/search/
 ]
