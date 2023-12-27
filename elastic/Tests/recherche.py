@@ -13,21 +13,22 @@ def recherche_articles(requete):
         "query": {
             "multi_match": {
                 "query": requete,
-                "fields": ["titre", "mots_cles", "auteurs", "texte_integral"]
+                "fields": ["titre", "auteurs", "mots_cles", "texte_integral"]
             }
         }
     }
+    print("Requête Elasticsearch:", json.dumps(body, indent=2))
 
     # 2. Exécution de la recherche Elasticsearch avec le corps de la requête construit
     resultats = es.search(index=nom_index, body=body)
 
-    # 3. Récupération des résultats de la recherche dans la variable 'result'
+    # 3. Récupération des résultats de la recherche dans la variable 'resultats'
     # le terme "hits" fait référence aux documents correspondants à une requête de recherche
     return resultats['hits']['hits']
 
 # Test 
 
-requete_utilisateur = " 1703363381.2571812"
+requete_utilisateur = "clé"
 resultats_recherche = recherche_articles(requete_utilisateur)
 
 #Mettre les résultats de la recherche dans un fichier JSON (resultat_recherche.py)

@@ -1,25 +1,27 @@
 [
   {
-    "_index": "articles_scientifiques",
-    "_id": "myhemIwBcuzF56LYiCwO",
-    "_score": 0.6931471,
+    "_id": "sf7srIwBn28-9XEsVPp6",
     "_source": {
-      "id": 2,
-      "titre": "Titre dynamique - 1703363381.2571812",
-      "resume": "R\u00e9sum\u00e9 dynamique",
+      "id": 7,
+      "titre": "Titre de l'article",
+      "resume": "R\u00e9sum\u00e9 de l'article",
       "auteurs": [
-        "Auteur dynamique"
+        "Auteur 1",
+        "Auteur 2"
       ],
       "institutions": [
-        "Institution dynamique"
+        "Institution 1",
+        "Institution 2"
       ],
       "mots_cles": [
-        "Mot cl\u00e9 dynamique"
+        "Mot cl\u00e9 1",
+        "Mot cl\u00e9 2"
       ],
-      "texte_integral": "Texte int\u00e9gral dynamique",
-      "pdf_url": "https://exemple.com/chemin/vers/le/pdf_dynamique",
+      "texte_integral": "Texte int\u00e9gral de l'article",
+      "pdf_url": "https://exemple.com/chemin/vers/le/pdf",
       "references": [
-        "R\u00e9f\u00e9rence dynamique"
+        "R\u00e9f\u00e9rence 1",
+        "R\u00e9f\u00e9rence 2"
       ],
       "publication_date": "2023-01-01"
     }
