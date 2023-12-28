@@ -8,13 +8,13 @@ import os
 # Initialiser Elasticsearch
 es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
 nom_index = 'articles_scientifiques'
+dernier_id = 0
 
 # Chemin vers le fichier JSON
 
 fichier_json_path = './elastic/resultat_recherche.json'
 
 fichier2_json_path = './elastic/document.json'
-
 
 #------------------------------------------------------------------------------------------------------------#
 # Requete GET pour avoir les résultats de la recherche
@@ -63,7 +63,35 @@ def search_articles(request):
         # retourner une liste vide
         return JsonResponse([], safe=False)
 
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour obtenir le dernier ID attribué
+def get_dernier_id():
 
+    body = {
+        "query": {
+            "match_all": {}
+        },
+        "sort": [
+            {
+                "id": {
+                    "order": "desc"
+                }
+            }
+        ],
+        "size": 1
+    }
+
+    resultats = es.search(index=nom_index, body=body)
+    hits = resultats['hits']['hits']
+
+    if hits:
+        # Si des documents sont trouvés, récupérez le dernier ID attribué
+        dernier_id_attribue = hits[0]['_source']['id']
+        return dernier_id_attribue
+    else:
+        # Aucun document trouvé, l'index est peut-être vide
+        return 0  # Ou tout autre valeur par défaut que vous souhaitez utiliser
+    
 #------------------------------------------------------------------------------------------------------------#
 # Fonction pour indexer les articles scientifiques dans elasticsearch
     
@@ -77,7 +105,6 @@ def index_article(article):
         mapping = {
             "mappings": {
                 "properties": {
-                    "id": {"type": "integer"},
                     "titre": {"type": "text"},
                     "resume": {"type": "text"},
                     "auteurs": {"type": "text"},
@@ -86,7 +113,10 @@ def index_article(article):
                     "texte_integral": {"type": "text"},
                     "pdf_url": {"type": "text"},
                     "references": {"type": "text"},
-                    "publication_date": {"type": "date"}
+                    "publication_date": {
+                        "type": "date",
+                        "format": "dd/MM/yyyy"  # Spécifiez le format de date ici
+                    }
                 }
             }
         }
@@ -122,16 +152,16 @@ def index_article(article):
 #Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
 
 def index_article_view(request):
-
+    
     if request.method == 'POST':
         # 1. Récupérer les données JSON de la requête
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
-
+        
         # 2. Vérifier que les champs nécessaires sont présents dans les données
-        required_fields = ['id', 'titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
+        required_fields = ['titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
                             'texte_integral', 'pdf_url', 'references', 'publication_date']
         for field in required_fields:
             if field not in data:
