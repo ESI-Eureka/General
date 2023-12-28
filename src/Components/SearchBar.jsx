@@ -1,26 +1,34 @@
-import React , {useState} from 'react';
+// SearchBar.js
+
+import React, { useState } from 'react';
 import './SearchBar.css';
 
-const SearchBar = ({label , icon}) => {
+const SearchBar = ({ label, icon, onAddClick }) => {
+  const [search, setSearch] = useState('');
 
-    const [search, setSearch] = useState('');
-    const handleSearchChange = (e) => {
-        setSearch(e.target.value);
-    };
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+  };
 
-    return (
-        <div className="SearchBar">
-            <input
-                type="text"
-                placeholder={label}
-                value={search}
-                onChange={handleSearchChange}
-            />
-            <div className="DivIcon">
-                <a href='/filtre'> {icon} </a>
-            </div>
-        </div>
-    );
+  const handleAddClick = () => {
+    // Invoke the callback function with the current search value
+    onAddClick(search);
+  };
+
+  return (
+    <div className="SearchBar">
+      <input
+        type="text"
+        placeholder={label}
+        value={search}
+        onChange={handleSearchChange}
+      />
+      <div className="DivIcon">
+        {/* Call handleAddClick when the + icon is clicked */}
+        <a  onClick={handleAddClick}>{icon}</a>
+      </div>
+    </div>
+  );
 }
 
 export default SearchBar;
