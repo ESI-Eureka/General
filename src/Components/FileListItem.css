@@ -1,0 +1,41 @@
+.container{
+    position: relative;
+    width: 60vw;
+    height: 10vh;
+    border: 0.5px solid var(--Neutral01, #595959);
+    background: #FFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.name{
+    margin-top: 20px;
+    position: absolute;
+    color: var(--Neutral00, #030303);
+    font-family: Montserrat;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    margin-left: 20px;
+    left: 80px;
+}
+.delete{
+      position: absolute;
+      right: 36px;
+      margin-top: 16px;
+      cursor: pointer;
+}
+.file{
+    position: absolute;
+      left: 36px;
+      margin-top: 8px;
+}
+@media screen and (max-width: 800px) {
+    .name {
+        width : 100px;
+        font-size: 12px;
+        word-wrap: break-word; /* Adjust font size for smaller screens */
+    }
+    
+}
