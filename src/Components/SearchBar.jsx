@@ -1,18 +1,19 @@
-// SearchBar.js
 
 import React, { useState } from 'react';
 import './SearchBar.css';
 
-const SearchBar = ({ label, icon, onAddClick }) => {
+const SearchBar = ({ label, icon, onSearch }) => {
+
   const [search, setSearch] = useState('');
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const handleAddClick = () => {
-    // Invoke the callback function with the current search value
-    onAddClick(search);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onSearch(search);
+    }
   };
 
   return (
@@ -22,13 +23,13 @@ const SearchBar = ({ label, icon, onAddClick }) => {
         placeholder={label}
         value={search}
         onChange={handleSearchChange}
+        onKeyDown={handleKeyDown}
       />
       <div className="DivIcon">
-        {/* Call handleAddClick when the + icon is clicked */}
-        <a  onClick={handleAddClick}>{icon}</a>
+        <a href='/filtre'> {icon} </a>
       </div>
     </div>
   );
-}
+};
 
 export default SearchBar;
