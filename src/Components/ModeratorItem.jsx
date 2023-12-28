@@ -18,9 +18,38 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
   };
 
   const handleDeleteConfirmation = () => {
-    onDelete(id);
-    setShowDeleteConfirmation(false);
+    // Perform save logic here
+    // You can call the onDelete function
+    // Make a DELETE request to the Django backend endpoint
+    fetch('http://localhost:8000/users/', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email
+    }),
+    })
+      .then(response => {
+        // Check if the response status is 204 (No Content), indicating a successful deletion
+        if (response.status === 204) {
+          console.log('Moderator deleted successfully');
+          // You may want to redirect the user or perform other actions here
+          onDelete(id);
+        } else {
+          // Handle other response statuses, e.g., show an error message
+          console.error('Failed to delete moderator. Status:', response.status);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle errors, show a message to the user, etc.
+      })
+      .finally(() => {
+        setShowDeleteConfirmation(false);
+      });
   };
+  
 
   const handleCancelClick = () => {
     setNewEmail(initialEmail);
@@ -31,9 +60,36 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
   const handleSaveClick = () => {
     // Perform save logic here
     // You can call the onEdit function with the updated email
-    onEdit(id, newEmail);
-    // Set isEditing to false to exit the editing mode
-    setIsEditing(false);
+    // Make a POST request to the Django backend endpoint
+    fetch('http://localhost:8000/users/', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        current_email : initialEmail,
+        email: newEmail
+    }),
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("Update successfull:", response.body);
+          onEdit(id, newEmail);
+          // Set isEditing to false to exit the editing mode
+          setIsEditing(false);
+          // Call the parent function with the added moderator details
+          return response.json();
+        } else if (response.status === 400) {
+          throw new Error("Email already exists.");
+        } else {
+          throw new Error("Failed to edit.");
+        }
+      })
+      .catch(error => {
+        console.error('Error :', error);
+        // Handle errors, show a message to the user, etc.
+      });
   };
 
   const handleEditClick = () => {
@@ -53,14 +109,15 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
       <span className="id-moderator">{id}</span>
       {isEditing ? (
         <>
-          <input
-            type="text"
-            value={newEmail}
-            onChange={(e) => {
-              setNewEmail(e.target.value);
-              setIsValidEmail(validateEmail(e.target.value));
-            }}
-          />
+            <input
+              type="text"
+              value={newEmail}
+              onChange={(e) => {
+                setNewEmail(e.target.value);
+                setIsValidEmail(validateEmail(e.target.value));
+              }}
+            />
+
           <div className="buttons">
             <button
               className="editing"

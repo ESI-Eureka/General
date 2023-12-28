@@ -1,17 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ModeratorList.css";
 import ModeratorItem from "./ModeratorItem";
 import ModeratorForm from "./ModeratorForm";
 
 const ModeratorList = () => {
-  const [moderateurs, setModerateurs] = useState([
-    { id: 1, email: "moderateur1@example.com" },
-    { id: 2, email: "moderateur2@example.com" },
-    { id: 3, email: "moderateur3@example.com" },
-    // Ajoutez d'autres modérateurs selon vos besoins
-  ]);
+  const [moderateurs, setModerateurs] = useState([]);
 
   const [showForm, setShowForm] = useState(false);
+
+  // Assuming you have an endpoint for fetching moderators, adjust the URL accordingly
+  const moderatorsEndpoint = "http://localhost:8000/users/role/2/";
+
+  // Function to fetch moderators
+  const fetchModerators = async () => {
+    try {
+      const response = await fetch(moderatorsEndpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Handle the response from the backend
+      console.log("Moderators fetched successfully:", data);
+      // You may want to update state or perform other actions here
+      const moderators = data.map((mod, index) => ({
+        ...mod,
+        id: index + 1,
+    }));
+
+    setModerateurs(moderators);
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle errors, show a message to the user, etc.
+    }
+  };
+
+  // Call fetchModerators when needed
+  // For example, you can call it in a useEffect hook when the component mounts
+  useEffect(() => {
+    fetchModerators();
+  }, []);
 
   const handleDelete = (id) => {
     // Supprimer le modérateur côté client
