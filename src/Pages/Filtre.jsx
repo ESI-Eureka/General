@@ -5,6 +5,7 @@ import NavFiltre from '../Components/NavFiltre';
 import Resultat from '../Components/Resultat';
 import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 import './Filtre.css';
+import { data } from '../data';
 
 const Filtre = () => {
 
@@ -23,66 +24,15 @@ const Filtre = () => {
                 <NavFiltre/>
                 <div className="ResultatContainer">
                     <span className='SpanFiltre'> Résultats </span>
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
+                    {data.map(article => (
+                    <Resultat
+                        key={article.id}
+                        titre={article.titre}
+                        auteur={article.auteurs.join(', ')}  // Si plusieurs auteurs
+                        date={article.publication_date}
+                        resume={article.resume}
                     />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
-                    <Resultat 
-                        titre={"Titre"} 
-                        auteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                        resume={"Resume"}
-                    />
+                ))}
                     <div className="footer">
                         
                     </div>
