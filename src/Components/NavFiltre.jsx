@@ -5,12 +5,19 @@ import FiltreAuteur from './FiltreAuteur';
 import FiltreMotCle from './FiltreMotCle';
 import FiltreInstitution from './FiltreInstitution';
 import FiltreDate from './FiltreDate';
+import { data } from '../data';
+
+const extractUniqueValues = (property) => {
+    // Utilisez Set pour obtenir des valeurs uniques
+    const uniqueValues = new Set(data.map(article => article[property]).flat());
+    return Array.from(uniqueValues);
+};
 
 const NavFiltre = () => {
     const [filtreAuteurVisible, setFiltreAuteurVisible] = useState(false);
     const [filtreMotCleVisible, setFiltreMotCleVisible] = useState(false);
-    const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
-    const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
+    const [filtreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
+    const [filtreDateVisible, setFiltreDateVisible] = useState(false);
 
     const [rotateAngleAuteur, setRotateAngleAuteur] = useState(0);
     const [rotateAngleMotCle, setRotateAngleMotCle] = useState(0);
@@ -28,14 +35,19 @@ const NavFiltre = () => {
     };
     
     const toggleFiltreInstitution = () => {
-        setFiltreInstitutionVisible(!FiltreInstitutionVisible);
+        setFiltreInstitutionVisible(!filtreInstitutionVisible);
         setRotateAngleInstitution((prevAngle) => (prevAngle + 180) % 360);
     };
 
     const toggleFiltreDate = () => {
-        setFiltreDateVisible(!FiltreDateVisible);
+        setFiltreDateVisible(!filtreDateVisible);
         setRotateAngleDate((prevAngle) => (prevAngle + 180) % 360);
     };
+
+    const auteurs = extractUniqueValues('auteurs');
+    const motsCles = extractUniqueValues('mots_cles');
+    const institutions = extractUniqueValues('institutions');
+    const periodes = extractUniqueValues('publication_date');
 
     return (
         <div className="NavFiltre">
@@ -46,7 +58,7 @@ const NavFiltre = () => {
                         style={{ transform: `rotate(${rotateAngleAuteur}deg)` }}
                     />
                 </div>
-                {filtreAuteurVisible && <FiltreAuteur />}
+                {filtreAuteurVisible && <FiltreAuteur options={auteurs} />}
             </div>
             
             <div className="Listes">
@@ -56,7 +68,7 @@ const NavFiltre = () => {
                         style={{ transform: `rotate(${rotateAngleMotCle}deg)` }}
                     />
                 </div>
-                {filtreMotCleVisible && <FiltreMotCle />}
+                {filtreMotCleVisible && <FiltreMotCle options={motsCles} />}
             </div>
         
             <div className="Listes">
@@ -66,7 +78,7 @@ const NavFiltre = () => {
                         style={{ transform: `rotate(${rotateAngleInstitution}deg)` }}
                     />
                 </div>
-                {FiltreInstitutionVisible && <FiltreInstitution />}
+                {filtreInstitutionVisible && <FiltreInstitution options={institutions} />}
             </div>
             
             <div className="Listes">
@@ -76,7 +88,7 @@ const NavFiltre = () => {
                         style={{ transform: `rotate(${rotateAngleDate}deg)` }}
                     />
                 </div>
-                {FiltreDateVisible && <FiltreDate />}
+                {filtreDateVisible && <FiltreDate options={periodes} />}
             </div>
 
             <div className="Button">

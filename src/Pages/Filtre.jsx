@@ -30,7 +30,7 @@ const Filtre = () => {
                         titre={article.titre}
                         auteur={article.auteurs.join(', ')}  // Si plusieurs auteurs
                         date={article.publication_date}
-                        resume={article.resume}
+                        resume={article.institutions}
                     />
                 ))}
                     <div className="footer">

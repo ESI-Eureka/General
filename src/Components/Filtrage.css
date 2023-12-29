@@ -26,6 +26,11 @@
 .Check {
     cursor: pointer;
 }
+.Check.selected {
+
+    background-color: #e0e0e0;
+}
+
 
 @media (max-width: 550px) {
    
