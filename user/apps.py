@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
-class ElasticsearchConfig(AppConfig):
+
+class UserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'elastic'
+    name = 'user'
