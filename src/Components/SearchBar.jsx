@@ -18,6 +18,7 @@ const SearchBar = ({ label, icon, onSearch }) => {
     <div className="SearchBar">
       <input
         type="text"
+        name='query'
         placeholder={label}
         value={search}
         onChange={handleSearchChange}

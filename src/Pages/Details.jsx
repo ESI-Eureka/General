@@ -4,11 +4,18 @@ import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
+
 const Details = () => {
+
+    const navItems = [
+        { text: 'Accueil', path: '/home1', className: 'Home' },
+        { text: 'Favoris', path: '/favorite', className: 'Favoris' },
+        { text: 'Profil', path: '/profil', className: 'Profile' },
+      ];
 
     return (
         <div>
-            <NavBar/>
+            <NavBar navItems={navItems} />
             <div className="DetailsContainer">
                 <RightFleche/>
                 <div className="ResultatDetailsContainer">
