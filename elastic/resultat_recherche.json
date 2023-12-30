@@ -1,29 +1,28 @@
 [
   {
-    "_id": "sf7srIwBn28-9XEsVPp6",
+    "_id": "rlo1towB7nON8L6EH-MO",
     "_source": {
-      "id": 7,
-      "titre": "Titre de l'article",
-      "resume": "R\u00e9sum\u00e9 de l'article",
+      "titre": "Titre de l'article3",
+      "resume": "R\u00e9sum\u00e9 de l'article3",
       "auteurs": [
         "Auteur 1",
-        "Auteur 2"
+        "Auteur 2",
+        "Auteur 3"
       ],
       "institutions": [
         "Institution 1",
         "Institution 2"
       ],
       "mots_cles": [
-        "Mot cl\u00e9 1",
-        "Mot cl\u00e9 2"
+        "Mot cl\u00e9 1"
       ],
-      "texte_integral": "Texte int\u00e9gral de l'article",
+      "texte_integral": "Texte int\u00e9gral de l'article3",
       "pdf_url": "https://exemple.com/chemin/vers/le/pdf",
       "references": [
         "R\u00e9f\u00e9rence 1",
         "R\u00e9f\u00e9rence 2"
       ],
-      "publication_date": "2023-01-01"
+      "publication_date": "29/12/2023"
     }
   }
 ]
