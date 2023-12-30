@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from Upload.DataExtract import extractData
-from elastic.Index_script import indexer_article
+from elastic.views import indexer_article
 
 @api_view(['POST'])
 def upload_files(request):

@@ -15,13 +15,6 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-<<<<<<< HEAD
-from django.urls import path,include
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('Upload/',include('Upload.urls')),
-=======
 from django.urls import include, path
 from django.views.generic import RedirectView
 
@@ -29,7 +22,7 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('elastic/', include('elastic.urls')),
-    path('', RedirectView.as_view(url='/elastic/search/')),  # Redirect the root URL to /elastic/search/
+    path('', RedirectView.as_view(url='/elastic/search/')),
+    path('Upload/',include('Upload.urls')),# Redirect the root URL to /elastic/search/
     path('users/', include('user.urls')),
->>>>>>> bbe24ae6937ab3edbde5938b7ac5488bec0a5661
 ]

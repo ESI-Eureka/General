@@ -45,10 +45,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
-<<<<<<< HEAD
-    'Upload',
-    'corsheaders',
-=======
     'user',
     'corsheaders',
 ]
@@ -56,7 +52,6 @@ INSTALLED_APPS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend
->>>>>>> bbe24ae6937ab3edbde5938b7ac5488bec0a5661
 ]
 
 
@@ -75,9 +70,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-<<<<<<< HEAD
-    
-=======
     'corsheaders.middleware.CorsMiddleware',
 ]
 
@@ -88,7 +80,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Your React app's address
->>>>>>> bbe24ae6937ab3edbde5938b7ac5488bec0a5661
 ]
 
 ROOT_URLCONF = 'Eureka.urls'
