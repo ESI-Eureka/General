@@ -33,3 +33,8 @@ __pycache__/
 # Windows
 Thumbs.db
 desktop.ini
+elastic/__pycache__/apps.cpython-312.pyc
+elastic/__pycache__/models.cpython-312.pyc
+Eureka/__pycache__/settings.cpython-312.pyc
+
+Eureka/__pycache__/urls.cpython-312.pyc
