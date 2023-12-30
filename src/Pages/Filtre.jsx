@@ -64,10 +64,10 @@ const Filtre = () => {
           {searchResults && searchResults.map((result, index) => (
             <Resultat
               key={index}
+              institution={result._source.institutions.join(', ')}
               titre={result._source.titre}
               auteur={result._source.auteurs.join(', ')}
-              date={result._source.date}
-              resume={result._source.resume}
+              date={result._source.publication_date}
             />
           ))}
         </div>
