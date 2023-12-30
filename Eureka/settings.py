@@ -10,12 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -42,6 +45,10 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
+<<<<<<< HEAD
+    'Upload',
+    'corsheaders',
+=======
     'user',
     'corsheaders',
 ]
@@ -49,6 +56,7 @@ INSTALLED_APPS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React frontend
+>>>>>>> bbe24ae6937ab3edbde5938b7ac5488bec0a5661
 ]
 
 
@@ -67,6 +75,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+<<<<<<< HEAD
+    
+=======
     'corsheaders.middleware.CorsMiddleware',
 ]
 
@@ -77,6 +88,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Your React app's address
+>>>>>>> bbe24ae6937ab3edbde5938b7ac5488bec0a5661
 ]
 
 ROOT_URLCONF = 'Eureka.urls'
@@ -155,3 +167,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+MEDIA_URL = '/media/'  # URL prefix for serving media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # Absolute path to the directory for storing media files
