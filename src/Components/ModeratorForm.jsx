@@ -4,17 +4,50 @@ import "./ModeratorForm.css";
 const ModeratorForm = ({ onAdd, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Appeler la fonction de l'ajout du modérateur dans le composant parent
-    onAdd(email);
-    // Réinitialiser le formulaire
-    setEmail("");
+
+    setLoading(true);
+
+    const userData = {
+      email: email,
+      password: password,
+      role: 2,
+    };
+
+    fetch("http://localhost:8000/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+    .then((response) => {
+      if (response.ok) {
+         console.log("Moderator added successfully:", response.body);
+         // Call the parent function with the added moderator details
+         onAdd(userData.email); // Assuming the server returns the moderator details, including email
+         setEmail(""); // Reset the form
+         return response.json();
+      } else if (response.status === 400) {
+         setError("Email already exists.");
+      } else {
+         throw new Error('Failed to add a moderator.');
+      }
+   })
+   .catch((error) => {
+      console.error("Error:", error);
+   })
+   .finally(() => {
+      setLoading(false);
+   });
+   
   };
-  
+
   const handleCancel = () => {
-    // Appeler la fonction de fermeture du formulaire dans le composant parent
     onClose();
   };
 
@@ -47,8 +80,12 @@ const ModeratorForm = ({ onAdd, onClose }) => {
             />
           </div>
 
+          {error && <p className="error-message">{error}</p>}
+
           <div className="buttons">
-            <button type="submit">Add</button>
+            <button type="submit" disabled={loading}>
+              {loading ? "Adding..." : "Add"}
+            </button>
             <button className="cancel" type="button" onClick={handleCancel}>
               Cancel
             </button>

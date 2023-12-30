@@ -10,6 +10,34 @@ body {
     overflow-x: hidden;
 }
 
+/* WebKit */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
+/* Internet Explorer */
+body {
+    scrollbar-width: thin;
+}
+
+body::-ms-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+body::-ms-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
 .FiltreContainer, .FavorisContainer {
     width: auto;
     margin: 40px;
@@ -26,6 +54,10 @@ body {
     overflow-y: auto;
 }
 
+.searchBarMobile {
+    display: none;
+}
+
 @media (max-width: 800px) {
     .FiltreContainer {
         margin: 20px;
@@ -37,6 +69,16 @@ body {
 @media (max-width: 500px) {
     .FiltreContainer {
         margin: 20px;
+    }
+
+    .searchBarDisktop {
+        display: none;
+    }
+
+    .searchBarMobile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
    
 

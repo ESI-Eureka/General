@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import NavBar from '../Components/NavBar';
 import SearchBar from '../Components/SearchBar';
 import NavFiltre from '../Components/NavFiltre';
@@ -39,8 +40,10 @@ const Filtre = () => {
                 </div>
             </div>
         </div>
+      </div>
 
-    );
+    </div>
+  );
 }
 
 export default Filtre;

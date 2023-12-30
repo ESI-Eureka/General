@@ -25,13 +25,12 @@
 
 .modal-content label {
   display: block;
-  margin-bottom: 10px;
+  margin-top: 4vh;
 }
 
 .modal-content input {
   width: 100%;
   padding: 0.8rem;
-  margin-bottom: 10px;
   box-sizing: border-box;
 }
 
