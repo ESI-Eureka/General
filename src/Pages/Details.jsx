@@ -5,14 +5,16 @@ import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
 
+
 const Details = () => {
 
     const navItems = [
-        { text: "Home", path: "/home1", className: "Home" },
-        { text: "Favorite", path: "/favorite", className: "Favoris" },
-        { text: "Profil", path: "/profil", className: "Profile" },
-        // Ajoutez d'autres liens selon vos besoins
-      ];
+        { text: 'Accueil', path: '/home1', className: 'Home' },
+        { text: 'Favoris', path: '/favorite', className: 'Favoris' },
+        { text: 'Profil', path: '/profil', className: 'Profile' },
+    ];
+
+
     return (
         <div>
             <NavBar navItems={navItems} />
