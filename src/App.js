@@ -14,7 +14,7 @@ function App() {
   return (
     <BrowserRouter>
      <Routes>
-        <Route path='/' element={<SearchPage/>}></Route>
+        <Route path='/' element={<Filtre/>}></Route>
         <Route path='/home' element={<Upload/>}></Route>
         <Route path='/home1' element={<SearchPage/>}></Route>
         <Route path='/favorite' element={<Favoris/>}></Route>
