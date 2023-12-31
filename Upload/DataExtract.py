@@ -41,6 +41,7 @@ def extractData(pdf_file):
         "pdf_url": "",
         "references": [],
         "publication_date":""
+
     }
     
     filter1=[]

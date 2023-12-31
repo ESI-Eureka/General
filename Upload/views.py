@@ -4,7 +4,9 @@ from rest_framework.decorators import api_view
 
 from Upload.DataExtract import extractData
 from elastic.views import index_article
+
 from elastic.views import es, nom_index
+
 
 @api_view(['POST'])
 def upload_files(request):
@@ -24,4 +26,5 @@ def upload_files(request):
     else:
         print("Les clés extraites ne correspondent pas au mapping.")
         
+
     return Response({'message': 'Files uploaded successfully'})
