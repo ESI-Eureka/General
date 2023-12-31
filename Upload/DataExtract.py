@@ -32,15 +32,16 @@ def extractData(pdf_file):
     pdf_reader =fitz.open("pdf",pdf_content)
     num_pages = pdf_reader.page_count
     Data= {
-        'titre': "",
-        'resume':"",
-        'auteurs' : [],
-        'institutions' : [],
-        'mots_cles': [] ,
-        'texte_integral': '',
-        'pdf_url': '',
-        'references': [],
-        'publication_date':''
+        "titre": "",
+        "resume":"",
+        "auteurs" : [],
+        "institutions" : [],
+        "mots_cles": [] ,
+        "texte_integral": "",
+        "pdf_url": "",
+        "references": [],
+        "publication_date":""
+
     }
     
     filter1=[]

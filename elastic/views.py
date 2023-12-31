@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.csrf import csrf_exempt
 from elasticsearch import Elasticsearch, NotFoundError
+from elasticsearch import Elasticsearch, NotFoundError
 import json
 import os
 
@@ -45,6 +46,10 @@ def search_articles(request):
         # 4. Avoir la liste des artilces
         search_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
+        # Debug information
+        print("Elasticsearch Query:", body)
+        print("Elasticsearch Response:", resultats)
+        
         # 5. Sauvegarder la liste dans le fichier JSON
         with open(fichier_json_path, 'w') as json_file:
             json.dump(search_results, json_file, indent=2)
@@ -65,6 +70,7 @@ def search_articles(request):
 
 #------------------------------------------------------------------------------------------------------------#
 # Fonction pour obtenir le dernier ID attribué
+    
 def get_dernier_id():
 
     body = {
@@ -126,6 +132,7 @@ def index_article(article):
 
     # Indexation de l'article dans l'index elasticsearch
     es.index(index=nom_index, body=article, ignore=400)
+    print('Article indexé avec succes')
 
     # Récupération des articles sauvegardés dans le fichier JSON
     try:
@@ -176,7 +183,10 @@ def index_article_view(request):
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
 
+
 #------------------------------------------------------------------------------------------------------------#
+# Requete POST pour supprimer un article de l'index
+
 @require_POST
 @csrf_exempt
 def delete_article_view(request):
@@ -185,7 +195,7 @@ def delete_article_view(request):
         # 1. Get the article ID from the request
         try:
             data = json.loads(request.body)
-            article_id = data.get('id')
+            article_id = data.get('_id')
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
 
@@ -208,15 +218,16 @@ def delete_article_view(request):
         except Exception as e:
             print(f"Erreur lors de la suppression : {e}")
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de la suppression : {e}'})
-        
+
         # 4. Remove the article from the list of existing articles in the JSON file
         try:
             with open(fichier2_json_path, 'r') as fichier_json:
                 articles_existants = json.load(fichier_json)
+           
         except FileNotFoundError:
             articles_existants = []
 
-        articles_existants = [article for article in articles_existants if article.get('id') != article_id]
+        articles_existants = [article for article in articles_existants if article.get('_id') != article_id]
 
         with open(fichier2_json_path, 'w') as fichier_json:
             json.dump(articles_existants, fichier_json, indent=2)
@@ -224,3 +235,23 @@ def delete_article_view(request):
         return JsonResponse({'status': 'success', 'message': 'Article supprimé avec succès'})
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
+
+#------------------------------------------------------------------------------------------------------------#
+# Exemple pour tester l'indexation
+# {
+#     "titre": "Titre de l'article", 
+#     "resume": "Résumé de l'article",
+#     "auteurs": ["Auteur 1", "Auteur 2", "Auteur 3"],
+#     "institutions": ["Institution 1", "Institution 2"],
+#     "mots_cles": ["Mot clé 1"],
+#     "texte_integral": "Texte intégral de l'article",
+#     "pdf_url": "https://exemple.com/chemin/vers/le/pdf",
+#     "references": ["Référence 1", "Référence 2"], 
+#     "publication_date": "29/12/2023"                   
+# }
+
+# Exemple pour tester la suppression
+# {
+#     "_id": ""                  
+# }
