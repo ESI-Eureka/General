@@ -46,10 +46,6 @@ def search_articles(request):
         # 4. Avoir la liste des artilces
         search_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
-        # Debug information
-        print("Elasticsearch Query:", body)
-        print("Elasticsearch Response:", resultats)
-        
         # 5. Sauvegarder la liste dans le fichier JSON
         with open(fichier_json_path, 'w') as json_file:
             json.dump(search_results, json_file, indent=2)
@@ -119,10 +115,7 @@ def index_article(article):
                     "texte_integral": {"type": "text"},
                     "pdf_url": {"type": "text"},
                     "references": {"type": "text"},
-                    "publication_date": {
-                        "type": "date",
-                        "format": "dd/MM/yyyy"  # Spécifiez le format de date ici
-                    }
+                    "publication_date": {"type": "text"}
                 }
             }
         }
@@ -132,7 +125,6 @@ def index_article(article):
 
     # Indexation de l'article dans l'index elasticsearch
     es.index(index=nom_index, body=article, ignore=400)
-    print('Article indexé avec succes')
 
     # Récupération des articles sauvegardés dans le fichier JSON
     try:
@@ -182,7 +174,6 @@ def index_article_view(request):
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de l\'indexation : {e}'})
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
-
 
 #------------------------------------------------------------------------------------------------------------#
 # Requete POST pour supprimer un article de l'index
