@@ -13,6 +13,7 @@ import pdfimg from '../Icons/Pdf.svg'
 import LoadingBar from "../Components/loadingBar";
 import { ReactComponent as MyIcon }  from '../Icons/Vector.svg';
 import {ReactComponent as Cross} from '../Icons/Cross.svg'
+import done from '../Icons/done.png'
 
 const Upload = () => {
   const navItems = [
@@ -47,7 +48,6 @@ const Upload = () => {
         console.error("Error uploading files:", error);
         setError(error); // Handle the error response as needed
       } finally {
-        
         setLoading(false);
       }
 
@@ -116,6 +116,9 @@ const Upload = () => {
       console.log('No PDF files dropped.');
     }
   };
+  const handleContinuer =()=>{
+    setSuccess(false);
+  }
 
   return (
     <div>
@@ -181,8 +184,9 @@ const Upload = () => {
         <>
           {/* Add your success overlay content here */}
           <div className="overlay success">
-          <MyIcon className="contin"/>
-          Success!</div>
+          <img src={done} className="done"/>
+          <MyIcon onClick={handleContinuer} className="contin"/>
+          <p>Success!</p></div>
         </>
       )}
       </div>
