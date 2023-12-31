@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import "./Login.css";
 import { ReactComponent as PicAuth } from "../Icons/Auth.svg";
+import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const Signup = ( { setAuthenticated } ) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const handleSignup = () => {
     console.log("Signing up with:", { email, password });
 
     setLoading(true);
-
+    let signupRes;
     // Create an object containing the user data
     const userData = {
       email: email,
@@ -21,7 +22,7 @@ const Signup = () => {
     };
 
     // Make a POST request to the Django backend endpoint
-    fetch("http://localhost:8000/users/", {
+    fetch("http://localhost:8000/users/signup/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -29,25 +30,61 @@ const Signup = () => {
       body: JSON.stringify(userData),
     })
       .then((response) => {
+        signupRes = response.status;
         console.log(response);
         if (response.ok) {
           console.log("Signup successfull:", response.body);
           setError(null);
           // Call the parent function with the added moderator details
           return response.json();
-        } else if (response.status === 400) {
-          setError("Email already exists.");
-        } else {
+        } else  {
           throw new Error("Failed to signup.");
         }
       })
-      .catch((error) => {
-        console.error("Error during signup:", error);
-        // Handle errors, show a message to the user, etc.
+      .then((data) => {
+        // Assuming the server responds with an access token
+        const { access_token } = data;
+
+        // Store the access token in localStorage
+        localStorage.setItem('access_token', access_token);
+       // Fetch user's role after login
+       fetch('http://localhost:8000/users/role/', {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
       })
-      .finally(() => {
-        setLoading(false);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          const { role } = data;
+          console.log(data)
+
+          // Store the user's role in local storage
+          localStorage.setItem('user_role', role);
+
+          setAuthenticated(true);
+          navigate('/home');
+        })
+        .catch((error) => {
+          console.error("Error fetching user role:", error);
+          setError("Failed to fetch user role. Please try again.");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    })
+    .catch((error) => {
+      console.error("Error during Signup:", error);
+      if (signupRes === 401) {
+        setError("Email already exists.");
+      } else {
+        setError("Failed to Signup. Please try again.");
+      }
+      setLoading(false);
+    });
   };
 
   const handleFormSubmit = (e) => {

@@ -1,26 +1,25 @@
-import React, { useState } from 'react';
-import './Login.css';
-import { ReactComponent as PicAuth } from '../Icons/Auth.svg';
+import React, { useState } from "react";
+import "./Login.css";
+import { ReactComponent as PicAuth } from "../Icons/Auth.svg";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Login = ({ setAuthenticated }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+const navigate = useNavigate();
   const handleLogin = () => {
-    console.log('Logging in with:', { email, password });
-
     setLoading(true);
-
-    // Create an object containing the user login data
+    let loginRes;
     const loginData = {
       email: email,
       password: password,
     };
 
-    // Make a POST request to the Django backend login endpoint
-    fetch('http://localhost:8000/users/login/', {
+    
+
+    fetch("http://localhost:8000/users/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,53 +27,90 @@ const Login = () => {
       body: JSON.stringify(loginData),
     })
       .then((response) => {
-        console.log(response);
+        loginRes = response.status;
+        console.log("response : ", loginRes);
+
         if (response.ok) {
           console.log("Login successfull:", response.body);
           // Call the parent function with the added moderator details
           setError(null);
           return response.json();
-        } else if (response.status === 404) {
-          setError("User with the provided email  doesn't exist.");
-        } else if (response.status === 401) {
-          setError("Password incorrect.");
         } else {
           throw new Error("Failed to login.");
         }
       })
+      .then((data) => {
+        const { access_token } = data;
+
+        // Store the access token in local storage
+        localStorage.setItem("access_token", access_token);
+
+        // Fetch user's role after login
+        fetch("http://localhost:8000/users/role/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const { role } = data;
+            console.log(data);
+            
+            // Store the user's role in local storage
+            localStorage.setItem("user_role", role);
+
+            
+            setAuthenticated(true);
+            navigate('/home');
+          })
+          .catch((error) => {
+            console.error("Error fetching user role:", error);
+            setError("Failed to fetch user role. Please try again.");
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      })
       .catch((error) => {
         console.error("Error during login:", error);
-        // Handle errors, show a message to the user, etc.
-      })
-      .finally(() => {
+        if (loginRes === 404) {
+          setError("User with the provided email  doesn't exist.");
+        } else if (loginRes === 401) {
+          setError("Password incorrect.");
+        } else {
+          setError("Erreur during login. Please try again.");
+        }
         setLoading(false);
       });
   };
 
   const handleFormSubmit = (e) => {
-    e.preventDefault(); // Prevent the default form submission behavior
+    e.preventDefault();
     handleLogin();
   };
-
 
   return (
     <div className="login-container">
       <div className="picAuth-container">
-        <PicAuth/>
+        <PicAuth />
       </div>
       <form className="login-form" onSubmit={handleFormSubmit}>
         <h2>Log-In</h2>
 
         <div className="email-password">
-        <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="text"
             id="email"
             value={email}
             placeholder="Enter email"
             onChange={(e) => setEmail(e.target.value)}
-            pattern="[^\s@]+@[^\s@]+\.[^\s@]+" // Specify the pattern for a valid email
-            title="utilisateur@example.com" // Specify the validation message
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+            title="utilisateur@example.com"
             required
           />
 
@@ -89,15 +125,15 @@ const Login = () => {
           />
         </div>
         {error && <p className="error-message">{error}</p>}
-        <button type="submit">
-          {loading ? "Loging In..." : "Log In"}
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging In..." : "Log In"}
         </button>
-        <p className="signup-prg">Don't have an account yet? <a href="/signup">Sign-up</a></p>
+        <p className="signup-prg">
+          Don't have an account yet? <a href="/signup">Sign-up</a>
+        </p>
       </form>
     </div>
   );
 };
 
 export default Login;
-
-
