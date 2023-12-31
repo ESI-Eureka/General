@@ -10,7 +10,9 @@ import { ReactComponent as Logo2 } from "../Icons/Logo2.svg";
 import myImage from '../Icons/Object.png'
 import FileListItem from "../Components/FileListItem";
 import pdfimg from '../Icons/Pdf.svg'
-
+import LoadingBar from "../Components/loadingBar";
+import { ReactComponent as MyIcon }  from '../Icons/Vector.svg';
+import {ReactComponent as Cross} from '../Icons/Cross.svg'
 
 const Upload = () => {
   const navItems = [
@@ -19,28 +21,46 @@ const Upload = () => {
     { text: "Profil", path: "/profil", className: "Profile" },
     // Add other links as needed
   ];
-  
-  const handleWhitePlusClick = async () => {
-    setDroppedFiles([])
-    try {
-      const formData = new FormData();
-      droppedFiles.forEach(file => {
-        formData.append('files', file);
-      });
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(null);
+    const [droppedFiles, setDroppedFiles] = useState([]);
+    const handleWhitePlusClick = async () => {
+      setLoading(true);
+      
+      try {
+        const formData = new FormData();
+        droppedFiles.forEach((file) => {
+          formData.append("files", file);
+        });
 
-      // Make a POST request to the Django endpoint
-      const response = await axios.post('http://127.0.0.1:8000/Upload/pdff/', formData);
+        // Make a POST request to the Django endpoint
+        const response = await axios.post(
+          "http://127.0.0.1:8000/Upload/pdff/",
+          formData
+        );
 
-      console.log(response.data);  // Handle the response as needed
-    } catch (error) {
-      console.error('Error uploading files:', error);
-    }
+        console.log(response.data);
+        setSuccess(true);
+        setDroppedFiles([]); // Handle the response as needed
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        setError(error); // Handle the error response as needed
+      } finally {
+        
+        setLoading(false);
+      }
+
   };
+   const handleCrossClick =(e)=>{ 
+    setError(null);
+    setSuccess(false);
+   };
     const handleDragStart = (e) => {
       e.dataTransfer.setData('text/plain', ''); // Required for Firefox to enable dragging
     };
   
-      const [droppedFiles, setDroppedFiles] = useState([]);
+      
       const handleDelete = (name) => {
         // Filter out the file with the specified name
         const updatedFiles = droppedFiles.filter(file => file.name !== name);
@@ -126,8 +146,7 @@ const Upload = () => {
       <p className="phrase">Glisser-déposer ou <a className="link" onClick={handleFileInputClick}>
         cliquer
       </a>
-
-      {/* Hidden file input */}
+    
       <input
         type="file"
         ref={fileInputRef}
@@ -135,6 +154,7 @@ const Upload = () => {
         onChange={handleFileInputChange}
       /> pour parcourir les fichiers</p>
       </div>
+      
       {droppedFiles.length > 0 && (
         <div className="dropped-files-list">
           <ul>
@@ -144,8 +164,33 @@ const Upload = () => {
           </ul>
         </div>
       )}
+      {(loading || success|| error) && 
+      <>
+      <div className="bg"></div>
+      <div className={`overlayContainer ${success ? "success" : error ? "error" : ""}`}>
+      {loading && !success && !error &&
+      <>
+        <LoadingBar/>
+        <div className="overlay">Loading...</div>
+      </>
+      }
+      {error && <div className="erorUpload">
+      <Cross onClick={handleCrossClick} className="cross"/>  
+      Error during upload</div>}
+      {success && (
+        <>
+          {/* Add your success overlay content here */}
+          <div className="overlay success">
+          <MyIcon className="contin"/>
+          Success!</div>
+        </>
+      )}
+      </div>
+      </>
+      }
     </div>
   );
 };
 
 export default Upload;
+
