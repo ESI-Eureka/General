@@ -3,7 +3,8 @@ import './Filtrage.css';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
-const FiltreMotCle = ({ options }) => {
+const FiltreMotCle = () => {
+
     return (
         <div className="BodyFiltre">
             <SearchBar2 label={"Ajouter mot clé"} icon={<SearchIcon2 />} />
@@ -15,7 +16,9 @@ const FiltreMotCle = ({ options }) => {
                     </div>
                 ))}
             </div>
+            
         </div>
+
     );
 
 }

@@ -11,6 +11,8 @@ const NavFiltre = ({ data }) => {
     const [filtreMotCleVisible, setFiltreMotCleVisible] = useState(false);
     const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
     const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
+    const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
+    const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
 
     const [rotateAngleAuteur, setRotateAngleAuteur] = useState(0);
     const [rotateAngleMotCle, setRotateAngleMotCle] = useState(0);
@@ -64,7 +66,7 @@ const NavFiltre = ({ data }) => {
                     <span> Auteur </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleAuteur}deg)` }} />
                 </div>
-                {filtreAuteurVisible && <FiltreAuteur options={auteurs} />}
+                {filtreAuteurVisible && <FiltreAuteur numberOfLines={8} />}
             </div>
 
             <div className="Listes">
@@ -72,7 +74,7 @@ const NavFiltre = ({ data }) => {
                     <span> Mot clé </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleMotCle}deg)` }} />
                 </div>
-                {filtreMotCleVisible && <FiltreMotCle options={motsCles} />}
+                {filtreMotCleVisible && <FiltreMotCle />}
             </div>
 
             <div className="Listes">
