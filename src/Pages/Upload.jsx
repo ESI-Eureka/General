@@ -1,4 +1,5 @@
 // Upload
+import axios from "axios";
 import { useState,useRef } from "react";
 import React from "react";
 import "./Upload.css";
@@ -19,7 +20,22 @@ const Upload = () => {
     // Add other links as needed
   ];
   
-  
+  const handleWhitePlusClick = async () => {
+    setDroppedFiles([])
+    try {
+      const formData = new FormData();
+      droppedFiles.forEach(file => {
+        formData.append('files', file);
+      });
+
+      // Make a POST request to the Django endpoint
+      const response = await axios.post('http://127.0.0.1:8000/Upload/pdff/', formData);
+
+      console.log(response.data);  // Handle the response as needed
+    } catch (error) {
+      console.error('Error uploading files:', error);
+    }
+  };
     const handleDragStart = (e) => {
       e.dataTransfer.setData('text/plain', ''); // Required for Firefox to enable dragging
     };
@@ -87,7 +103,7 @@ const Upload = () => {
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
         {/* Pass handleAddClick as a callback to the SearchBar component */}
-        <SearchBar label={"Enter URL"} icon={<WhitePlus />} />
+        <SearchBar label={"Enter URL"} icon={<WhitePlus onClick={handleWhitePlusClick} />} />
       </div>
       <div className="parent"  
       draggable="true"

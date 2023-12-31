@@ -26,7 +26,7 @@ const SearchBar = ({ label, icon, onSearch }) => {
         onKeyDown={handleKeyDown}
       />
       <div className="DivIcon">
-        <a href='/filtre'> {icon} </a>
+        <a> {icon} </a>
       </div>
     </div>
   );
