@@ -11,8 +11,6 @@ const NavFiltre = ({ data }) => {
     const [filtreMotCleVisible, setFiltreMotCleVisible] = useState(false);
     const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
     const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
-    const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
-    const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
 
     const [rotateAngleAuteur, setRotateAngleAuteur] = useState(0);
     const [rotateAngleMotCle, setRotateAngleMotCle] = useState(0);
