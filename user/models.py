@@ -8,7 +8,7 @@ class Role(models.Model):
         return self.name
 
 class Account(models.Model):
-    email = models.EmailField(unique=True)
+    email = models.EmailField(max_length=255,unique=True)
     password = models.CharField(max_length=255)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
