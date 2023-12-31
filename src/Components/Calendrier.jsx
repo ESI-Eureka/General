@@ -4,10 +4,14 @@ import 'react-datepicker/dist/react-datepicker.css'; // Import des styles CSS
 import calendar from '../Icons/Calendar.svg'; // Importez votre icône de calendrier
 import './SearchBar2.css';
 
-const Calendrier = () => {
+const Calendrier = ({ onDateSelect }) => {
+  
   const [date, setDate] = useState(null);
+
   const onChange = date => {
     setDate(date);
+    onDateSelect(date); 
+
   };
 
   return (
