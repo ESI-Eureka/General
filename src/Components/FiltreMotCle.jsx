@@ -1,24 +1,23 @@
 import React from 'react';
 import './Filtrage.css';
-import { ReactComponent as Check } from '../Icons/Check.svg';
-import { ReactComponent as Plus } from '../Icons/Plus.svg';
+import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
 const FiltreMotCle = ({ options }) => {
     return (
         <div className="BodyFiltre">
-            <SearchBar2 label={"Ajouter mot clé"} icon={<Plus />} />
-
+            <SearchBar2 label={"Ajouter mot clé"} icon={<SearchIcon2 />} />
             <div className="Container">
                 {options.map((option, index) => (
                     <div className="Ligne" key={index}>
-                        <Check className='Check' />
-                        <span>{option}</span>
+                        <input type="checkbox" id={option} />
+                        <label htmlFor={option}>{option}</label>
                     </div>
                 ))}
             </div>
         </div>
     );
+
 }
 
 export default FiltreMotCle;
