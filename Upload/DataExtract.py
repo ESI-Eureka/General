@@ -33,11 +33,12 @@ def extractData(pdf_file):
     num_pages = pdf_reader.page_count
     Data= {
         'titre': "",
+        'resume':"",
         'auteurs' : [],
         'institutions' : [],
-        'resume':"",
         'mots_cles': [] ,
         'texte_integral': '',
+        'pdf_url': '',
         'references': [],
         'publication_date':''
     }
