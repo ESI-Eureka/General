@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.csrf import csrf_exempt
 from elasticsearch import Elasticsearch, NotFoundError
+from elasticsearch import Elasticsearch, NotFoundError
 import json
 import os
 
@@ -174,6 +175,55 @@ def index_article_view(request):
             return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de l\'indexation : {e}'})
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
+#------------------------------------------------------------------------------------------------------------#
+@require_POST
+@csrf_exempt
+def delete_article_view(request):
+
+    if request.method == 'POST':
+        # 1. Get the article ID from the request
+        try:
+            data = json.loads(request.body)
+            article_id = data.get('id')
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+
+        # 2. Check if the article exists in Elasticsearch
+        try:
+            result = es.get(index=nom_index, id=article_id)
+            if result.get('found'):
+                print(f"Article trouvé avec succès : {result['_source']}")
+            else:
+                print(f"Article non trouvé pour l'ID : {article_id}")
+                return JsonResponse({'status': 'error', 'message': 'Article non trouvé'})
+        except NotFoundError:
+            print(f"Article non trouvé pour l'ID : {article_id}")
+            return JsonResponse({'status': 'error', 'message': 'Article non trouvé'})
+
+        # 3. Delete the article from Elasticsearch
+        try:
+            es.delete(index=nom_index, id=article_id)
+            print(f"Article supprimé avec succès : {article_id}")
+        except Exception as e:
+            print(f"Erreur lors de la suppression : {e}")
+            return JsonResponse({'status': 'error', 'message': f'Erreur lors de la suppression : {e}'})
+        
+        # 4. Remove the article from the list of existing articles in the JSON file
+        try:
+            with open(fichier2_json_path, 'r') as fichier_json:
+                articles_existants = json.load(fichier_json)
+        except FileNotFoundError:
+            articles_existants = []
+
+        articles_existants = [article for article in articles_existants if article.get('id') != article_id]
+
+        with open(fichier2_json_path, 'w') as fichier_json:
+            json.dump(articles_existants, fichier_json, indent=2)
+
+        return JsonResponse({'status': 'success', 'message': 'Article supprimé avec succès'})
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
 
