@@ -45,7 +45,7 @@ def extractData(pdf_file):
     }
     
     filter1=[]
-    for page_num in range(3):
+    for page_num in range(2):
         page = pdf_reader[page_num]
         blocks = page.get_text("blocks")
         fourth_elements = [block[4] for block in blocks]
@@ -116,13 +116,14 @@ def extractData(pdf_file):
             if match:
                 matched_paragraph = match.group()
                 matched_paragraph=re.sub(r'(Keywords|KEYWORDS|Index Terms)','',matched_paragraph)
-        keywords=matched_paragraph
+        matched_paragraph=re.sub(r'\n',' ',matched_paragraph)
+        keywords=matched_paragraph.split(',')
     else:
         #if there wasn't we use spacy to extract most used words in the document 
         keywords = extract_most_used_words(text)
         keywords= [f'{word}' for word, count in keywords]
-    keywords=re.sub(r'(\n)','',keywords)
-    Data['mots_cles']=keywords.split(',')
+    
+    Data['mots_cles']=keywords
     
     pattern = re.compile(r'\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){3}', re.DOTALL)
 
