@@ -1,28 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Filtrage.css';
-import { ReactComponent as Check } from '../Icons/Check.svg';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
-const FiltreAuteur = ({ numberOfLines }) => {
-  const lines = [];
+const FiltreAuteur = ({ options , onSelect }) => {
 
-  for (let i = 1; i <= numberOfLines; i++) {
-    lines.push(
-      <div className="Ligne" key={i}>
-        <Check className='Check' />
-        <span> Nom {i} </span>
-      </div>
-    );
+    //pour stocker les options (auteurs) sélectionnés
+    const [selectedOptions, setSelectedOptions] = useState([]);
+  
+    const handleCheckboxChange = (option) => {
+      console.log('Option sélectionnée:', option);
+  
+      // Mettre à jour la liste des auteurs sélectionnés
+      setSelectedOptions((prevSelected) => {
+          if (prevSelected.includes(option)) {
+              console.log('Désélection de l\'option:', option);
+              return prevSelected.filter((selected) => selected !== option);
+          } else {
+              console.log('Sélection de l\'option:', option);
+              return [...prevSelected, option];
+          }
+      });
+  };
+  
+  console.log('Options disponibles:', options);
+  console.log('Options sélectionnées:', selectedOptions);
+
+    // Appeler la fonction onSelect pour mettre à jour les options sélectionnées dans le composant parent Navfiltre
+    React.useEffect(() => {
+        onSelect(selectedOptions);
+      }, [selectedOptions, onSelect]);
+  
+      return (
+          <div className="BodyFiltre">
+              <SearchBar2 label={"Rechercher Auteur"} icon={<SearchIcon2 />} />
+              <div className="Container">
+                  {options.map((option, index) => (
+                      <div className="Ligne" key={index}>
+                             <input
+                              type="checkbox"
+                              id={option}
+                              checked={selectedOptions.includes(option)}
+                              onChange={() => handleCheckboxChange(option)}
+                          />
+                          <label htmlFor={option}>{option}</label>
+                      </div>
+                  ))}
+              </div>
+          </div>
+      );
   }
-
-  return (
-    <div className="BodyFiltre">
-      <SearchBar2 label={"Rechercher Auteur"} icon={<SearchIcon2 />} />
-
-      <div className="Container">{lines}</div>
-    </div>
-  );
-};
-
-export default FiltreAuteur;
+  
+  export default FiltreAuteur;
+  

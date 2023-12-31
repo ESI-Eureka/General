@@ -37,6 +37,14 @@ const Filtre = () => {
       console.error('Error fetching search results:', error);
     }
   };
+  
+  //pour les résultats de filtres
+  const [filteredResults, setFilteredResults] = useState(searchResults);
+
+  // fonction pour la mise à jour de résultat de filtre
+  const handleFilterResultUpdate = (filteredData) => {
+    setFilteredResults(filteredData);
+};
 
   // Navigation items pour la barre de navigation
   const navItems = [
@@ -58,10 +66,10 @@ const Filtre = () => {
 
       <div className="FiltreContainer">
         <span className='SpanFiltre'> Filtre </span>
-        <NavFiltre />
+        <NavFiltre data={searchResults} onFilterResultUpdate={handleFilterResultUpdate} />
         <div className="ResultatContainer">
           <span className='SpanFiltre'> Résultats </span>
-          {searchResults && searchResults.map((result, index) => (
+          {filteredResults && filteredResults.map((result, index) => (
             <Resultat
               key={index}
               institution={result._source.institutions.join(', ')}
