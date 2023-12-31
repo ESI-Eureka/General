@@ -2,6 +2,7 @@
 from django.urls import path
 from .views import delete_article_view, search_articles
 from .views import index_article_view
+from .views import delete_article_view
 
 urlpatterns = [
     path('search/', search_articles, name='search_articles'),
