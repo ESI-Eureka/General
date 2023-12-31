@@ -39,11 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'elastic',
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
     'user',
-    'corsheaders',
 ]
 
 
@@ -70,8 +70,15 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': [
-    'rest_framework.permission.AllowAny']}
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 CORS_ORIGIN_ALLOW_ALL = True
 
