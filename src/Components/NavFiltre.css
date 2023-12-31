@@ -33,6 +33,10 @@
     font-weight: 400;
 }
 
+.NavFiltre .Button button:hover {
+    background-color: #2546F3;
+}
+
 
 .Liste {
     justify-content: center;
