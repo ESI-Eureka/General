@@ -46,6 +46,10 @@ def search_articles(request):
         # 4. Avoir la liste des artilces
         search_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
+        # Debug information
+        print("Elasticsearch Query:", body)
+        print("Elasticsearch Response:", resultats)
+        
         # 5. Sauvegarder la liste dans le fichier JSON
         with open(fichier_json_path, 'w') as json_file:
             json.dump(search_results, json_file, indent=2)
@@ -128,6 +132,7 @@ def index_article(article):
 
     # Indexation de l'article dans l'index elasticsearch
     es.index(index=nom_index, body=article, ignore=400)
+    print('Article indexé avec succes')
 
     # Récupération des articles sauvegardés dans le fichier JSON
     try:
