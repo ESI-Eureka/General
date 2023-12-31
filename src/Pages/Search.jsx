@@ -17,6 +17,7 @@ const SearchPage = () => {
     try {
       // Effectuer une requête pour obtenir les résultats de la recherche
       const response = await fetch(`http://127.0.0.1:8000/elastic/search/?query=${query}`);
+      console.log(query)
       const data = await response.json();
       
       // Mettre à jour le state avec les résultats de la recherche

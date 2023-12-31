@@ -3,8 +3,7 @@ import './Filtrage.css';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
-const FiltreInstitution = () => {
-
+const FiltreInstitution = ({ options }) => {
     return (
         <div className="BodyFiltre">
             <SearchBar2 label={"Rechercher Institution"} icon={<SearchIcon2 />} />
@@ -16,9 +15,7 @@ const FiltreInstitution = () => {
                     </div>
                 ))}
             </div>
-            
         </div>
-
     );
 }
 

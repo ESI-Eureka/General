@@ -64,7 +64,7 @@ const NavFiltre = ({ data }) => {
                     <span> Auteur </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleAuteur}deg)` }} />
                 </div>
-                {filtreAuteurVisible && <FiltreAuteur numberOfLines={8} />}
+                {filtreAuteurVisible && <FiltreAuteur options={auteurs} />}
             </div>
 
             <div className="Listes">
@@ -72,7 +72,7 @@ const NavFiltre = ({ data }) => {
                     <span> Mot clé </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleMotCle}deg)` }} />
                 </div>
-                {filtreMotCleVisible && <FiltreMotCle />}
+                {filtreMotCleVisible && <FiltreMotCle options={motsCles} />}
             </div>
 
             <div className="Listes">
