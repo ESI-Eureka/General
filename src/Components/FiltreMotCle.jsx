@@ -1,58 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Filtrage.css';
-import {ReactComponent as Check} from '../Icons/Check.svg';
-import { ReactComponent as Plus } from '../Icons/Plus.svg';
+import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
-const FiltreMotCle = () => {
+const FiltreMotCle = ({ options, onSelect }) => {
+
+       //pour stocker les options (auteurs) sélectionnés
+       const [selectedOptions, setSelectedOptions] = useState([]);
+  
+       const handleCheckboxChange = (option) => {
+         console.log('Option sélectionnée:', option);
+     
+         // Mettre à jour la liste des auteurs sélectionnés
+         setSelectedOptions((prevSelected) => {
+             if (prevSelected.includes(option)) {
+                 console.log('Désélection de l\'option:', option);
+                 return prevSelected.filter((selected) => selected !== option);
+             } else {
+                 console.log('Sélection de l\'option:', option);
+                 return [...prevSelected, option];
+             }
+         });
+     };
+     
+     console.log('Options disponibles:', options);
+     console.log('Options sélectionnées:', selectedOptions);
+    // Appeler la fonction onSelect pour mettre à jour les options sélectionnées dans le composant parent
+    React.useEffect(() => {
+         onSelect(selectedOptions);
+         }, [selectedOptions, onSelect]);
 
     return (
         <div className="BodyFiltre">
-
-            <SearchBar2 label={"Ajouter mot clé"} icon={<Plus/>}/>
-
+            <SearchBar2 label={"Ajouter mot clé"} icon={<SearchIcon2 />} />
             <div className="Container">
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 1 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 2 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé  3 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 4 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 5 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 5 </span>
-                </div>
-
-                <div className="Ligne">
-                    <Check className='Check'/>
-                    <span> Mot clé 5 </span>
-                </div>
-
+                {options.map((option, index) => (
+                    <div className="Ligne" key={index}>
+                          <input
+                              type="checkbox"
+                              id={option}
+                              checked={selectedOptions.includes(option)}
+                              onChange={() => handleCheckboxChange(option)}
+                          />
+                        <label htmlFor={option}>{option}</label>
+                    </div>
+                ))}
             </div>
-            
         </div>
-
     );
+
 }
 
 export default FiltreMotCle;

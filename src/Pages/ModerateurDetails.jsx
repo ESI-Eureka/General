@@ -3,23 +3,25 @@ import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
-import './Details.css';
-
+import './ModerateurDetails.css';
+import { ReactComponent as Ecrire } from '../Icons/Ecrire.svg';
+import IconedButton from '../Components/IconedButton';
 
 const Details = () => {
 
     const navItems = [
-        { text: 'Accueil', path: '/home1', className: 'Home' },
-        { text: 'Favoris', path: '/favorite', className: 'Favoris' },
-        { text: 'Profil', path: '/profil', className: 'Profile' },
-    ];
-
-
+        { text: "Articles", path: "/article", className: "ModerateurDetails" },
+ { text: "Profile", path: "/profil", className: "Profile" },
+        
+      ];
     return (
         <div>
             <NavBar navItems={navItems} />
             <div className="DetailsContainer">
+            <div className="NavCorriger">
                 <RightFleche/>
+                <IconedButton icon={Ecrire} text="Corriger" />
+           </div>
                 <div className="ResultatDetailsContainer">
                     <ResultatDetails
                         articleTitre={"Article Title"} 

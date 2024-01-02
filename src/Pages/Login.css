@@ -72,7 +72,7 @@ body {
     background-color: #2546F3;
     color: #fff;
     border: none;
-    padding: 1.5vmin 10vmin;
+    padding: 1.7vmin 10vmin;
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
@@ -93,6 +93,17 @@ body {
     text-decoration: underline; 
   }
 
+  .error-message {
+    color: #ff0000;
+    font-size: 0.9rem;
+    font-weight: bold;
+    position: relative;
+    top:3vh;
+  }
+  .signup-prg p{
+      font-size: 0.4rem;
+
+    }
   @media screen and (max-width: 1024px) {
   
     .picAuth-container {
@@ -120,5 +131,15 @@ body {
     .email-password input {
       max-width: 85vw;
       width: 20rem;
+    }
+
+    .login-form button {
+      font-size: 0.9rem;
+  }
+
+  .login-form p {
+      font-size: 0.7rem;
+      position: relative;
+      top:1vh;
     }
   }
