@@ -40,8 +40,8 @@ def extractData(pdf_file):
         "texte_integral": "",
         "pdf_url": "",
         "references": [],
-        "publication_date":''
-
+        "publication_date":'',
+        "corrected": False
     }
     
     filter1=[]
