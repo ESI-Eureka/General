@@ -34,7 +34,7 @@ const SearchPage = () => {
 
   // Navigation items pour la barre de navigation
   const navItems = [
-    { text: 'Accueil', path: '/home1', className: 'Home' },
+    { text: 'Accueil', path: '/home', className: 'Home' },
     { text: 'Favoris', path: '/favorite', className: 'Favoris' },
     { text: 'Profil', path: '/profil', className: 'Profile' },
   ];

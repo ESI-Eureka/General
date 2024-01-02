@@ -13,7 +13,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   
   const navItems = [
-    { text: "Home", path: "/", className: "Home" },
+    { text: "Home", path: "/home", className: "Home" },
     { text: "Moderatos", path: "/moderators", className: "Favoris" },
     { text: "Profil", path: "/profil", className: "Profile" },
     // Ajoutez d'autres liens selon vos besoins

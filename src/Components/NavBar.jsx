@@ -20,7 +20,7 @@ const NavBar = ({ navItems }) => {
     // Clear the stored access token (and refresh token if stored)
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-
+    localStorage.removeItem('user_role');
     // Redirect to the login page or perform other post-logout actions
     window.location.href = '/login';
   };

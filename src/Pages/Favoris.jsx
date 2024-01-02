@@ -6,7 +6,7 @@ import './Filtre.css';
 const Favoris = () => {
 
     const navItems = [
-        { text: "Home", path: "/home1", className: "Home" },
+        { text: "Home", path: "/home", className: "Home" },
         { text: "Favorite", path: "/favorite", className: "Favoris" },
         { text: "Profil", path: "/profil", className: "Profile" },
         // Ajoutez d'autres liens selon vos besoins
