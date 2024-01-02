@@ -41,7 +41,7 @@ def index_article(article):
                     "pdf_url": {"type": "text"},
                     "references": {"type": "text"},
                     "publication_date": {"type": "date"},  # Utilisation du type de données date
-                    "etat": {"type": "text"} # Pour la correction
+                    "etat": {"type": "boolean"} # Pour la correction
                 }
             }
         }
