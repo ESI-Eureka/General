@@ -40,7 +40,7 @@ def extractData(pdf_file):
         "texte_integral": "",
         "pdf_url": "",
         "references": [],
-        "publication_date":""
+        "publication_date":''
 
     }
     
@@ -156,7 +156,7 @@ def extractData(pdf_file):
                 
     
     metadata = pdf_reader.metadata
-    readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
-    Data['publication_date']=readable_date
+    #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
+    Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
     return Data 
