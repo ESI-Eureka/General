@@ -10,6 +10,8 @@ import SearchPage from "./Pages/Search";
 import Favoris from "./Pages/Favoris";
 import Details from "./Pages/Details";
 import NotAuthorized from "./Pages/NotAuthorized";
+import ModArticles from "./Pages/modArticles";
+
 
 const PrivateRoute = ({ element: Element, role, authenticated, ...rest }) => {
   const roles = {
@@ -54,6 +56,7 @@ function App() {
         <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
+        <Route path="/mod" element={<ModArticles />} />
       </Routes>
     </BrowserRouter>
   );

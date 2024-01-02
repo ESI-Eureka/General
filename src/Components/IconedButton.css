@@ -1,0 +1,41 @@
+.buttonContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2px solid #ccc; /* Set the border color and thickness for the container */
+  padding: 10px;
+}
+
+.Corriger {
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: blue;
+  padding: 10px;
+  padding-right: 4vw;
+  padding-left: 4vw;
+  color: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: none; /* Remove the border for the individual button */
+}
+
+/* Media query for smaller screens */
+@media only screen and (max-width: 600px) {
+  .buttonContainer {
+    border-width: 1px; 
+  }
+
+  .Corriger {
+    width: 90px; 
+    font-size: 12px;
+    padding-left: 3vw;
+    padding-right: 2vw;
+  }
+
+  .Corriger svg {
+    width: 20px;
+    height: 20px;
+  }
+}
