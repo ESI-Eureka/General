@@ -53,3 +53,6 @@ elastic/migrations/__pycache__/
 user/migrations/__pycache__/
 Upload/migrations/__pycache__/
 Eureka/migrations/__pycache__/
+elastic/__pycache__/views.cpython-312.pyc
+
+media/
