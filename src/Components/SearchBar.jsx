@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import './SearchBar.css';
 
 const SearchBar = ({ label, icon, onSearch }) => {
-
   const [search, setSearch] = useState('');
 
   const handleSearchChange = (e) => {
@@ -27,7 +25,7 @@ const SearchBar = ({ label, icon, onSearch }) => {
         onKeyDown={handleKeyDown}
       />
       <div className="DivIcon">
-        <a> {icon} </a>
+        <a onClick={() => onSearch(search)}> {icon} </a>
       </div>
     </div>
   );

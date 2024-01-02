@@ -104,6 +104,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 99999;
+    padding: 24px;
 }
 
 .bg{
@@ -127,9 +128,22 @@ body {
     line-height: normal;
     word-wrap: break-word;
     text-align: center;
+    padding: 24px;
 }
 .overlayContainer.success{
+    padding: 24px;
     border: 2px solid green;
+    
+}
+.overlay.success p{
+    font-family: Montserrat;
+    font-size: 1.125rem; /* Initial font size using vw unit */
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    word-wrap: break-word;
+    text-align: center;
+    margin-top: 4vh;
 }
 .contin{
     width: 12vw;
@@ -140,6 +154,8 @@ body {
     justify-content: flex-end;
     position: absolute;
     top: 25vh;
+    left: 8.5vw;
+    cursor: pointer;
 }
 .cross{
     position: absolute;
@@ -152,4 +168,13 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+.done{
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: -10vh;
 }
