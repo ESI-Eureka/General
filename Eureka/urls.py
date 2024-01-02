@@ -23,6 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('elastic/', include('elastic.urls')),
     path('', RedirectView.as_view(url='/elastic/search/')),
-    path('Upload/',include('Upload.urls')),# Redirect the root URL to /elastic/search/
+    path('Upload/',include('Upload.urls')),
     path('users/', include('user.urls')),
 ]
