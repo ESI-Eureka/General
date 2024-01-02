@@ -104,6 +104,7 @@ ul{
     align-items: center;
     justify-content: center;
     z-index: 99999;
+    padding: 24px;
 }
 
 .bg{
@@ -127,8 +128,10 @@ ul{
     line-height: normal;
     word-wrap: break-word;
     text-align: center;
+    padding: 24px;
 }
 .overlayContainer.success{
+    padding: 24px;
     border: 2px solid green;
     
 }

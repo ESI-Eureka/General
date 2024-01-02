@@ -26,27 +26,32 @@ const Upload = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
     const [droppedFiles, setDroppedFiles] = useState([]);
-    const handleWhitePlusClick = async () => {
+    const handleWhitePlusClick = async (search) => {
       setLoading(true);
       
       try {
         const formData = new FormData();
+        if (droppedFiles.length === 0 && !search) {
+          setError("No files to upload please drop files or enter url");
+          return;
+        }
         droppedFiles.forEach((file) => {
           formData.append("files", file);
         });
-
+        if (search) {
+          formData.append("url", search);
+        }
         // Make a POST request to the Django endpoint
         const response = await axios.post(
           "http://127.0.0.1:8000/Upload/pdff/",
           formData
         );
-
         console.log(response.data);
         setSuccess(true);
         setDroppedFiles([]); // Handle the response as needed
       } catch (error) {
         console.error("Error uploading files:", error);
-        setError(error); // Handle the error response as needed
+        setError("Error during upload"); // Handle the error response as needed
       } finally {
         setLoading(false);
       }
@@ -126,7 +131,7 @@ const Upload = () => {
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
         {/* Pass handleAddClick as a callback to the SearchBar component */}
-        <SearchBar label={"Enter URL"} icon={<WhitePlus onClick={handleWhitePlusClick} />} />
+        <SearchBar label={"Enter URL"} onSearch={handleWhitePlusClick} icon={<WhitePlus />} />
       </div>
       <div className="parent"  
       draggable="true"
@@ -179,7 +184,7 @@ const Upload = () => {
       }
       {error && <div className="erorUpload">
       <Cross onClick={handleCrossClick} className="cross"/>  
-      Error during upload</div>}
+      {error}</div>}
       {success && (
         <>
           {/* Add your success overlay content here */}
