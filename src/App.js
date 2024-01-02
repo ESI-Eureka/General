@@ -11,7 +11,7 @@ import Favoris from "./Pages/Favoris";
 import Details from "./Pages/Details";
 import NotAuthorized from "./Pages/NotAuthorized";
 import ModArticles from "./Pages/modArticles";
-
+import ModerateurDetails from "./Pages/ModerateurDetails";
 
 const PrivateRoute = ({ element: Element, role, authenticated, ...rest }) => {
   const roles = {
@@ -57,6 +57,7 @@ function App() {
         <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
         <Route path="/mod" element={<ModArticles />} />
+        <Route path="/det" element={<ModerateurDetails />} />
       </Routes>
     </BrowserRouter>
   );
