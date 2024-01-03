@@ -3,21 +3,9 @@
 import React, { useState,useEffect } from "react";
 import './MoreDetails.css';
 
-const MoreDetails = ({ editMode, institution = "Value 1", keywords = "Value 2", summary = "Value 3", fourthVariable = "Value 4" }) => {
-  const [data, setData] = useState({
-    institution: institution,
-    keywords: keywords,
-    summary: summary,
-    fourthVariable: fourthVariable,
-  });
-  useEffect(() => {
-    setData({
-      institution: institution,
-      keywords: keywords,
-      summary: summary,
-      fourthVariable: fourthVariable,
-    });
-  }, [institution, keywords, summary, fourthVariable]);
+const MoreDetails = ({ editMode,data,setData}) => {
+  
+  
 
   const handleInstitutionChange = (e) => {
     setData((prevData) => ({ ...prevData, institution: e.target.value }));
@@ -40,33 +28,33 @@ const MoreDetails = ({ editMode, institution = "Value 1", keywords = "Value 2", 
       <div>
         <h4>Institutions</h4>
         {editMode ? (
-          <textarea className="textarea-as-p" defaultValue={data.institution} onChange={handleInstitutionChange} />
+          <textarea className="textarea-as-p" defaultValue={data.institutions} onChange={handleInstitutionChange} />
         ) : (
-          <p>{data.institution}</p>
+          <p>{data.institutions}</p>
         )}
       </div>
       <div>
         <h4>Mots clés</h4>
         {editMode ? (
-          <textarea className="textarea-as-p" defaultValue={data.keywords} onChange={handleKeywordsChange} />
+          <textarea className="textarea-as-p" defaultValue={data.mots_cles} onChange={handleKeywordsChange} />
         ) : (
-          <p>{data.keywords}</p>
+          <p>{data.mots_cles}</p>
         )}
       </div>
       <div>
         <h4>Résumé</h4>
         {editMode ? (
-          <textarea className="textarea-as-p" defaultValue={data.summary} onChange={handleSummaryChange} />
+          <textarea className="textarea-as-p" defaultValue={data.resume} onChange={handleSummaryChange} />
         ) : (
-          <p>{data.summary}</p>
+          <p>{data.resume}</p>
         )}
       </div>
       <div>
         <h4>Références bibliographiques</h4>
         {editMode ? (
-          <textarea className="textarea-as-p" defaultValue={data.fourthVariable} onChange={handleFourthVariableChange} />
+          <textarea className="textarea-as-p" defaultValue={data.references} onChange={handleFourthVariableChange} />
         ) : (
-          <p>{data.fourthVariable}</p>
+          <p>{data.references}</p>
         )}
       </div>
     </div>

@@ -5,20 +5,11 @@ import './ResultatDetails.css';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 
-const ResultatDetails = ({articleTitre, nomAuteur, date ,editMode ,pdf_url,texte_integral}) => {
-    const [data, setData] = useState({
-        titre: articleTitre,
-        auteurs: nomAuteur,
-        publication_date: date,
-      
-    });  
-    useEffect(() => {
-        setData({titre: articleTitre,
-            auteurs: nomAuteur,
-            publication_date: date,})
-        }, [articleTitre,nomAuteur,date]);
+const ResultatDetails = ({data,setData,editMode}) => {
+    
+    
     const handleDownloadTxt = () => {
-        const textContent = texte_integral;
+        const textContent = data.texte_integral;
         
         // Create a Blob with the text content
         const blob = new Blob([textContent], { type: 'text/plain' });
@@ -33,7 +24,7 @@ const ResultatDetails = ({articleTitre, nomAuteur, date ,editMode ,pdf_url,texte
       };
     const handleArticleTitre = (e) => {
         setData((prevData) => ({ ...prevData, titre: e.target.value }));
-        console.log(data.titre)
+        
       };
     const handleNomAuteur = (e) => {
         setData((prevData) => ({ ...prevData, auteurs: e.target.value }));
@@ -70,7 +61,7 @@ const ResultatDetails = ({articleTitre, nomAuteur, date ,editMode ,pdf_url,texte
 
             <div className="Format"> 
                 <div className="Pdf">
-                <Link to={pdf_url} target="_blank">
+                <Link to={data.pdf_url} target="_blank">
             <Pdf />
           </Link>
                     
