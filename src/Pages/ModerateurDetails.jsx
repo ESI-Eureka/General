@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState,useEffect } from 'react';
 import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
@@ -13,9 +13,7 @@ const ModerateurDetails = () => {
     { text: "Articles", path: "/article", className: "ModerateurDetails" },
     { text: "Profile", path: "/profil", className: "Profile" },
   ];
-  
-  const location = useLocation();
-  const item = location.state.data || {
+  const [data,setData]=useState({
     auteurs: "Auteurs",
     institutions: "Institutions",
     mots_cles: "Mots_cles",
@@ -25,8 +23,12 @@ const ModerateurDetails = () => {
     resume: "resume",
     texte_integral: "texte_integral",
     titre: "titre",
-  }
-  console.log(item);
+  });
+  const location = useLocation();
+  useEffect(() => {
+  setData( location.state?.data)}
+  , [location.state?.data]);
+  
   return (
     <div>
       <NavBar navItems={navItems} />
@@ -37,17 +39,17 @@ const ModerateurDetails = () => {
         </div>
         <div className="ResultatDetailsContainer">
           <ResultatDetails
-            articleTitre={item.titre}
-            nomAuteur={item.auteurs}
-            date={item.publication_date}
+            articleTitre={data.titre}
+            nomAuteur={data.auteurs}
+            date={data.publication_date}
           />
 
           <div className="moreDetails">
             <MoreDetails
-              institution={item.institutions}
-              keywords={item.mots_cles}
-              summary={item.resume}
-              fourthVariable={item.references}
+              institution={data.institutions}
+              keywords={data.mots_cles}
+              summary={data.resume}
+              fourthVariable={data.references}
             />
           </div>
         </div>

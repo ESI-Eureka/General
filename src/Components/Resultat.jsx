@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 const Resultat = (props) => {
   const [isIconFilled, setIconFilled] = useState(false);
-  const history = useNavigate();
+  const navigate = useNavigate();
 
   const handleIconClick = () => {
     setIconFilled(!isIconFilled);
@@ -15,10 +15,20 @@ const Resultat = (props) => {
 
   const handleDetailsClick = () => {
     // Ensure that props.Data is defined and has expected properties before navigating
-    history({
-      pathname: '/det',
-      state: { data: props.Data },
-    });
+    navigate(
+     '/det',
+      {state: { data: {
+        "auteurs": props.Data.auteurs,
+        "institutions": props.Data.institutions,
+        "mots_cles": props.Data.mots_cles,
+        "pdf_url": props.Data.pdf_url,
+        "publication_date": props.Data.publication_date,
+        "references": props.Data.references,  
+        "resume": props.Data.resume,
+        "texte_integral": props.Data.texte_integral,
+        "titre": props.Data.titre,
+      } }}
+    );
   };
 
   return (
@@ -32,14 +42,8 @@ const Resultat = (props) => {
       </div>
 
       <div className="Details">
-        <Link
-          to={{
-            pathname: "/det",
-            state: { data: props.Data } // Pass data as state
-          }}
-        >
-          Afficher Details
-        </Link>
+        <a onClick={handleDetailsClick}>Afficher Details</a>
+          
         <Fleche2 />
       </div>
     </div>
