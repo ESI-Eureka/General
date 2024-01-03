@@ -14,9 +14,9 @@ const Resultat = ({ titre, auteur, institution, date }) => {
     <div className="resultats">
       <div className="Information">
         <div className='info1'> {titre}</div>
-        <div className='info'>{auteur}</div>
-        <div className='info'>{institution}</div>
-        <div className='info'>{date}</div>
+        <div className='info'> <h4>Auteurs</h4> {auteur}</div>
+        <div className='info'> <h4>Institutions</h4> {institution}</div>
+        <div className='info'> <h4>Date de publication</h4>{date}</div>
         <Favoris className={isIconFilled ? 'filled' : 'none'} onClick={handleIconClick} />
       </div>
 
