@@ -70,10 +70,10 @@ const Filtre = () => {
         <NavFiltre data={searchResults} onFilterResultUpdate={handleFilterResultUpdate} />
         <div className="ResultatContainer">
           <span className='SpanFiltre'> Résultats </span>
-          {filteredResults && filteredResults.map((result, index) => (
+          {searchResults && searchResults.map((result, index) => (
             <Resultat
               key={index}
-              data={result._source}
+              props={result._source}
             />
           ))}
         </div>
