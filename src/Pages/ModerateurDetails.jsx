@@ -11,7 +11,7 @@ const Details = () => {
 
     const navItems = [
         { text: "Articles", path: "/article", className: "ModerateurDetails" },
- { text: "Profile", path: "/profil", className: "Profile" },
+        { text: "Profile", path: "/profil", className: "Profile" },
         
       ];
     return (

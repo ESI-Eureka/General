@@ -25,6 +25,7 @@ const Filtre = () => {
     try {
       // Effectuer une requête pour obtenir les résultats de la recherche
       const response = await fetch(`http://127.0.0.1:8000/elastic/search/?query=${query}`);
+      console.log(query)
       const data = await response.json();
       console.log(data);
 
