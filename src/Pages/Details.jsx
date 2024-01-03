@@ -6,7 +6,7 @@ import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
 
 
-const Details = () => {
+const Details = (Data) => {
 
     const navItems = [
         { text: 'Accueil', path: '/home1', className: 'Home' },
