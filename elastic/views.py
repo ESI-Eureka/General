@@ -41,7 +41,7 @@ def index_article(article):
                     "pdf_url": {"type": "text"},
                     "references": {"type": "text"},
                     "publication_date": {"type": "date"},  # Utilisation du type de données date
-                    "etat": {"type": "boolean"} # Pour la correction
+                    "corrected":{"type": "boolean"} # Pour la correction
                 }
             }
         }
@@ -279,6 +279,48 @@ def mettre_jour_article(doc_id, nouveau_article):
 
 
 #------------------------------------------------------------------------------------------------------------#
+# Requete POST pour mettre à jour un article dans elasticsearch
+        
+@require_POST
+@csrf_exempt
+def mettre_a_jour_article(request):
+    try:
+        # Obtenir les données du corps de la requête
+        try:
+            data = json.loads(request.body)
+            nouveau_article = data.get('nouveau_article')
+
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+               
+        doc_id = request.GET.get('doc_id')
+
+        # Construction du corps de la requête de mise à jour
+        body = {
+            "doc": nouveau_article
+        }
+
+        # Exécution de la requête de mise à jour
+        es.update(index=nom_index, id=doc_id, body=body)
+        message = "Mise à jour réussie."
+
+        return JsonResponse({'message': message})
+
+    except NotFoundError:
+        message = f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}."
+        return JsonResponse({'message': message}, status=404)
+
+    except RequestError as e:
+        message = f"Erreur de requête: {e}"
+        return JsonResponse({'message': message}, status=400)
+
+    except Exception as e:
+        message = f"Erreur inattendue: {e}"
+        return JsonResponse({'message': message}, status=500)
+    
+
+#------------------------------------------------------------------------------------------------------------#
+
 # Exemple pour tester l'indexation
 # {
 #     "titre": "Titre de l'article", 
