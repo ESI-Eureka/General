@@ -2,9 +2,9 @@
 import React from 'react';
 import './IconedButton.css';
 
-const IconedButton = ({ icon: Icon, text }) => {
+const IconedButton = ({ icon: Icon, text , onClick }) => {
   return (
-    <div className='Corriger'>
+    <div onClick={onClick} className='Corriger'>
       {Icon && <Icon />}
       <span>{text}</span>
     </div>
