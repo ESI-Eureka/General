@@ -1,0 +1,48 @@
+body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  box-sizing: border-box;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.DetailsContainer {
+  width: auto;
+  margin: 50px;
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+
+.ResultatDetailsContainer {
+  overflow-y: auto;
+}
+
+.moreDetails {
+  overflow-y: auto;
+  overflow-x: hidden;   
+}
+
+@media screen and (max-width: 500px) {
+
+  .DetailsContainer {
+      margin: 20px;
+      padding: 0px;
+  }
+  
+}
+.NavCorriger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px;
+  border: 2px ; 
+}
