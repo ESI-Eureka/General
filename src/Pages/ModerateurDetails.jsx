@@ -7,9 +7,10 @@ import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './ModerateurDetails.css';
 import { ReactComponent as Ecrire } from '../Icons/Ecrire.svg';
+import { ReactComponent as Save } from '../Icons/Save.svg';
 import IconedButton from '../Components/IconedButton';
 import { Link, useLocation } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom';
 const ModerateurDetails = () => {
   const navItems = [
     { text: "Articles", path: "/article", className: "ModerateurDetails" },
@@ -38,35 +39,41 @@ const ModerateurDetails = () => {
 
   const handleEditClick = () => {
     setEditMode(!editMode);
-    console.log(editMode);
+    
   };
-
+  const navigate = useNavigate();
+const handleReturn = () => {
+    navigate(-1);
+  };
   return (
     <div>
       <NavBar navItems={navItems} />
       <div className="DetailsContainer">
         <div className="NavCorriger">
-          <Link to="/mod">
-            <RightFleche />
-          </Link>
-          <IconedButton icon={Ecrire} text="Corriger" onClick={handleEditClick} />
+          
+            <RightFleche onClick={handleReturn} />
+          {!editMode ? (
+            
+          <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />):
+          (<><IconedButton icon={Save} text="Save" onClick={handleEditClick} />
+          <span className='cancle'>Cancel</span>
+          </>
+          
+          )}
+
         </div>
         <div className="ResultatDetailsContainer">
           <ResultatDetails
-            articleTitre={data.titre}
-            nomAuteur={data.auteurs}
-            date={data.publication_date}
-            editMode={editMode}
-            texte_integral={data.texte_integral}
+            data={data}
+            setData={setData}
+              editMode={editMode}
           />
 
           <div className="moreDetails">
             <MoreDetails
-              institution={data.institutions}
-              keywords={data.mots_cles}
-              summary={data.resume}
-              fourthVariable={data.references}
+              data={data}
               editMode={editMode}
+              setData={setData}
             />
           </div>
         </div>

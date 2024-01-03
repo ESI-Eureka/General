@@ -73,10 +73,7 @@ const Filtre = () => {
           {filteredResults && filteredResults.map((result, index) => (
             <Resultat
               key={index}
-              institution={result._source.institutions.join(', ')}
-              titre={result._source.titre}
-              auteur={result._source.auteurs.join(', ')}
-              date={result._source.publication_date}
+              data={result._source}
             />
           ))}
         </div>

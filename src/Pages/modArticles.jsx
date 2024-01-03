@@ -5,13 +5,13 @@ import NavBar from '../Components/NavBar';
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 
-
 const ModArticles = () => {
     const navItems = [
         { text: "Articles", path: "/mod", className: "Articles" },
         { text: "Profil", path: "/profil", className: "Profile" },
       ];
     const [data,setData]=useState([]);
+
     useEffect(() => {
         
         const fetchData = async () => {

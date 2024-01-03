@@ -46,3 +46,16 @@ body {
   padding: 30px;
   border: 2px ; 
 }
+.cancel{
+  display: flex;
+  width: 9.625rem;
+  height: 3.25rem;
+  padding: 0.5rem 2.25rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  border-radius: 0.125rem;
+  background: var(--Neutral04, #FFF);
+  color: Blue secondary;
+}
