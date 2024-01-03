@@ -27,22 +27,6 @@ const PrivateRoute = ({ element: Element, role, authenticated, ...rest }) => {
 };
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
-
-  useEffect(() => {
-    const accessToken = localStorage.getItem("access_token");
-    const storedUserRole = localStorage.getItem("user_role");
-
-    if (accessToken) {
-      setAuthenticated(true);
-    } else {
-      setAuthenticated(false);
-    }
-
-    setUserRole(storedUserRole);
-  }, []);
-
   return (
     <BrowserRouter>
       <Routes>

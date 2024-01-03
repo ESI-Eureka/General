@@ -10,7 +10,6 @@ body {
 
 .SearchContainer {
     width: 100vw;
-    height: 50vh;
     display: flex;
     flex-direction: column;
     align-items: center;
