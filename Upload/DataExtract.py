@@ -156,8 +156,21 @@ def extractData(pdf_file):
                 
     
     metadata = pdf_reader.metadata
+    dattee = metadata.get("modDate", "N/A")
+
+    # Extraction des composants de la date
+    year = int(dattee[2:6])
+    month = int(dattee[6:8])
+    day = int(dattee[8:10])
+
+    # Création de l'objet datetime
+    date_object = datetime(year, month, day)
+
+    # La conversion au format ISO 8601 n'inclura que l'année, le mois et le jour
+    Data['publication_date'] = date_object.isoformat()
+
     #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
-    Data['publication_date']=metadata.get("modDate", "N/A")
+    # Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
     Data['etat']=0
     return Data 
