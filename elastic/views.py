@@ -254,9 +254,17 @@ def recuperer_article(request):
 
 #------------------------------------------------------------------------------------------------------------#
 # Fonction pour mettre à jour les informations d'un article scientifique
+from django.views.decorators.csrf import csrf_exempt
 
-def mettre_jour_article(doc_id, nouveau_article):
+@csrf_exempt
+def mettre_jour_article(request):
+    # Extracting values from the POST request
+    # Parse JSON data from the request body
+    data = json.loads(request.body.decode('utf-8'))
 
+        # Extract values from the parsed JSON data
+    doc_id = data.get('doc_id')
+    nouveau_article = data.get('nouveau_article')
     # Construction de corps de la requete de mise à jour
     try:
         body = {
@@ -267,16 +275,21 @@ def mettre_jour_article(doc_id, nouveau_article):
 
         es.update(index=nom_index, id=doc_id, body=body)
         print("Mise à jour réussie.")
-
+        return JsonResponse({'message': 'Update successful'}, status=200)
     except NotFoundError:
         print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
 
     except RequestError as e:
         print(f"Erreur de requête: {e}")
-
+    
+    # except Exception as e:
+    #     print(f"Erreur inattendue: {e}")  
+    
     except Exception as e:
-        print(f"Erreur inattendue: {e}")  
-
+        # Handle unexpected errors
+        print(f"Unexpected error: {e}")
+        # Return an error response
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
 
 #------------------------------------------------------------------------------------------------------------#
 # Requete POST pour mettre à jour un article dans elasticsearch
