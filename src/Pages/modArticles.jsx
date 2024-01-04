@@ -46,7 +46,7 @@ const ModArticles = () => {
                 "pdf_url": item._source.pdf_url,
                 "references": item._source.references,  
                 "publication_date": item._source.publication_date,
-                "etat": item._source.etat,  } 
+                "corrected": item._source.etat,  } 
             }
             />
             

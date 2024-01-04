@@ -35,7 +35,7 @@ const ModerateurDetails = () => {
   const handleSaveClick = async() => {
     const editedData={
       ...data,
-      "etat": 1,
+      "corrected": 1,
     }
     // Perform save logic here
     setEditMode(0);
@@ -72,17 +72,15 @@ const ModerateurDetails = () => {
   };
 
   const navigate = useNavigate();
-  const handleReturn = () => {
-    navigate(-1);
-  };
+  
 
   return (
     <div>
       <NavBar navItems={navItems} />
       <div className="DetailsContainer">
         <div className="NavCorriger">
-        <Link>
-          <RightFleche onClick={handleReturn}  />
+        <Link to={'/mod'}>
+          <RightFleche   />
         </Link>
           {!editMode ? (
             <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />

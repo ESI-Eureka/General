@@ -4,7 +4,7 @@ import { ReactComponent as Favoris } from '../Icons/Favoris.svg';
 import './Resultat.css';
 import { useNavigate } from 'react-router-dom';
 
-const Resultat = ({props}) => {
+const Resultat = (props) => {
   const [isIconFilled, setIconFilled] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ const Resultat = ({props}) => {
         "pdf_url": props.Data.pdf_url,
         "references": props.Data.references,
         "publication_date": props.Data.publication_date,
-        "etat": props.Data.etat,
+        "corrected": props.Data.etat,
       } }}
     );
   };
@@ -37,10 +37,10 @@ const Resultat = ({props}) => {
   return (
     <div className="resultats">
       <div className="Information">
-        <div className='info1'> {props.titre}</div>
-        <div className='info'>{props.auteurs}</div>
-        <div className='info'>{props.institutions}</div>
-        <div className='info'>{props.publication_date}</div>
+        <div className='info1'> {props.Data.titre}</div>
+        <div className='info'>{props.Data.auteurs}</div>
+        <div className='info'>{props.Data.institutions}</div>
+        <div className='info'>{props.Data.publication_date}</div>
         <Favoris className={isIconFilled ? 'filled' : 'none'} onClick={handleIconClick} />
       </div>
 
