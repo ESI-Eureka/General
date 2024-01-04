@@ -41,7 +41,7 @@ def extractData(pdf_file):
         "pdf_url": "",
         "references": [],
         "publication_date":'',
-        "corrected": False
+        "etat": 1
     }
     
     filter1=[]
@@ -159,4 +159,5 @@ def extractData(pdf_file):
     #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
     Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
+    Data['etat']=0
     return Data 
