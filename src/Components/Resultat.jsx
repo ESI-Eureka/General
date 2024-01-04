@@ -10,6 +10,7 @@ const Resultat = (props) => {
   const navigate = useNavigate();
 
   const handleIconClick = () => {
+    console.log(props.id);
     setIconFilled(!isIconFilled);
   };
 
@@ -17,16 +18,19 @@ const Resultat = (props) => {
     // Ensure that props.Data is defined and has expected properties before navigating
     navigate(
      '/det',
-      {state: { data: {
+      {state: { 
+        id: props.id,
+        data: {
+        "titre": props.Data.titre,
+        "resume": props.Data.resume,
         "auteurs": props.Data.auteurs,
         "institutions": props.Data.institutions,
         "mots_cles": props.Data.mots_cles,
-        "pdf_url": props.Data.pdf_url,
-        "publication_date": props.Data.publication_date,
-        "references": props.Data.references,  
-        "resume": props.Data.resume,
         "texte_integral": props.Data.texte_integral,
-        "titre": props.Data.titre,
+        "pdf_url": props.Data.pdf_url,
+        "references": props.Data.references,
+        "publication_date": props.Data.publication_date,
+        "etat": props.Data.etat,
       } }}
     );
   };

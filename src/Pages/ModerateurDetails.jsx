@@ -9,6 +9,7 @@ import { ReactComponent as Save } from '../Icons/Save.svg';
 import IconedButton from '../Components/IconedButton';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ModerateurDetails = () => {
   const navItems = [
@@ -20,20 +21,48 @@ const ModerateurDetails = () => {
   const [initialData, setInitialData] = useState(location.state?.data);
   const [data, setData] = useState(location.state?.data);
   const [editMode, setEditMode] = useState(false);
-
+  const [id, setId] = useState(location.state?.id);
   useEffect(() => {
     setInitialData(location.state?.data);
     setData(location.state?.data);
+    setId(location.state?.id);
   }, [location.state?.data]);
 
   const handleEditClick = () => {
     setEditMode(!editMode);
   };
 
-  const handleSaveClick = () => {
+  const handleSaveClick = async() => {
+    const editedData={
+      ...data,
+      "etat": 1,
+    }
     // Perform save logic here
-    setEditMode(false);
+    setEditMode(0);
+    setData(editedData);
     setInitialData(data);
+    console.log(id);
+    try {
+      console.log(id,data);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/elastic/maj/",
+        {
+          doc_id: id,  // Pass the doc_id as a parameter
+          nouveau_article: data,  // Pass the updated data as a parameter
+        }
+        
+      );
+      if (response.status === 200) {
+        // Perform additional logic if the save was successful
+        console.log('Save successful');
+      } else {
+        // Handle errors if the save fails
+        console.error('Save failed');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error('Error:', error);
+    }
   };
 
   const handleCancelClick = () => {
@@ -52,7 +81,9 @@ const ModerateurDetails = () => {
       <NavBar navItems={navItems} />
       <div className="DetailsContainer">
         <div className="NavCorriger">
-          <RightFleche onClick={handleReturn} />
+        <Link>
+          <RightFleche onClick={handleReturn}  />
+        </Link>
           {!editMode ? (
             <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />
           ) : (
