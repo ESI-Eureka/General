@@ -10,18 +10,194 @@ import os
 
 es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
 nom_index = 'articles_scientifiques'
+nom_index_fav = 'favoris'
 dernier_id = 0
 
-# Chemin vers les fichier JSON
+# Chemin vers les fichiers JSON
 
 fichier_json_path = './elastic/resultat_recherche.json'
-
 fichier2_json_path = './elastic/document.json'
+
+# Chemin vers les fichiers JSON des favoris
+
+fichier_json_path_fav = './elastic/resultat_recherche_fav.json'
+fichier2_json_path_fav = './elastic/document_fav.json'
+
+#------------------------------------------------------------------------------------------------------------#
+#Partie des articles favoris
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour indexer les articles favoris dans Elasticsearch
+
+def index_article_fav(article):
+
+    # Vérifiez si l'index existe avant de le créer
+    if not es.indices.exists(index=nom_index_fav):
+
+        # Mapping pour les articles (à définir avant la création de l'index)
+        # Identification du type de chaque field
+        mapping = {
+            "mappings": {
+                "properties": {
+                    "idArticle": {"type": "text"},
+                    "idUser": {"type": "text"},
+                }
+            }
+        }
+
+        # Création de l'index avec le mapping
+        es.indices.create(index=nom_index_fav, body=mapping, ignore=400) 
+        # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
+
+    # Indexation du contenu dans l'index Elasticsearch (favoris)
+    es.index(index=nom_index_fav, body=article, ignore=400)
+
+    # Récupération des élements dans le fichier JSON
+    try:
+        if os.path.getsize(fichier2_json_path_fav) > 0:
+            with open(fichier2_json_path_fav, 'r') as fichier_json:
+                articles_existants = json.load(fichier_json)
+        else:
+            articles_existants = []
+    except FileNotFoundError:
+        articles_existants = []
+
+    # Ajout du nouvel élement à la liste des articles déjà existants
+    # articles_existants.append(article)
+
+    # Sauvegarde de la liste dans le fichier JSON
+    with open(fichier2_json_path_fav, 'w') as fichier_json:
+        json.dump(articles_existants, fichier_json, indent=2)
 
 
 #------------------------------------------------------------------------------------------------------------#
-# Fonction pour indexer les articles scientifiques dans elasticsearch
+
+        
+@require_POST
+@csrf_exempt 
+# Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
+
+def index_article_view_fav(request):
     
+    if request.method == 'POST':
+        # 1. Récupérer les données JSON de la requête
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+        
+        # 2. Vérifier que les champs nécessaires sont présents dans les données
+        required_fields = ['idArticle', 'idUser']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
+        
+        # 3. Appeler la fonction pour indexer l'élement dans Elasticsearch
+        try:
+            index_article_fav(data)
+            return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': f'Erreur lors de l\'indexation : {e}'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
+#------------------------------------------------------------------------------------------------------------#
+#Suppression de favoris selon le idArticle et idUser
+
+@require_POST
+@csrf_exempt
+def delete_favoris_document(request):
+
+    if request.method == 'POST':
+        #  récupérer idArticle et idUser de la requete
+        try:
+            data = json.loads(request.body)
+            idArticle = data.get('idArticle')
+            idUser = data.get('idUser')
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+
+        # Vérifier si l'élément existe déja
+        try:
+            result = es.search(index=nom_index_fav, body={
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"match": {"idArticle": idArticle}},
+                            {"match": {"idUser": idUser}}
+                        ]
+                    }
+                }
+            })
+
+            if result['hits']['total']['value'] > 0:
+                document_id = result['hits']['hits'][0]['_id']
+                print(f"Document trouvé avec succès : {result['hits']['hits'][0]['_source']}")
+            else:
+                print(f"Document non trouvé pour idArticle={idArticle}, idUser={idUser}")
+                return JsonResponse({'status': 'error', 'message': 'Document non trouvé'})
+
+        except Exception as e:
+            print(f"Erreur lors de la recherche : {e}")
+            return JsonResponse({'status': 'error', 'message': f'Erreur lors de la recherche : {e}'})
+
+        # 3. Supression de l'element du cluster
+        try:
+            es.delete(index=nom_index_fav, id=document_id)
+            print(f"Document supprimé avec succès : {document_id}")
+
+        except Exception as e:
+            print(f"Erreur lors de la suppression : {e}")
+            return JsonResponse({'status': 'error', 'message': f'Erreur lors de la suppression : {e}'})
+
+
+        return JsonResponse({'status': 'success', 'message': 'Document supprimé avec succès'})
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
+@require_GET
+def retrieve_and_save_favorite_articles(request):
+    try:
+        #  Récupérer UserId à partir de la requete
+        UserId = request.GET.get('UserId', '')
+
+        # 2. faire la recherche
+        result = es.search(index=nom_index_fav, body={
+            "query": {
+                "match": {
+                    "idUser": UserId
+                }
+            }
+        })
+
+        #  vérifier si on a des correspondances avec UserId
+        if result['hits']['total']['value'] > 0:
+            favorite_articles = result['hits']['hits']
+
+           
+            idArticles = [article['_source']['idArticle'] for article in favorite_articles]
+
+            #  Chercher les correspondances
+            articles_search_results = []
+            for idArticle in idArticles:
+                result_article = es.get(index=nom_index, id=idArticle)
+                articles_search_results.append({'_id': result_article['_id'], '_source': result_article['_source']})
+
+            #  Sauvegarder les résultats de la recherche dans le fichier JSON
+            with open(fichier_json_path_fav, 'w') as json_file:
+                json.dump(articles_search_results, json_file, indent=2)
+
+            return JsonResponse(articles_search_results, safe=False)
+
+        else:
+            return JsonResponse([], safe=False)
+
+    except Exception as e:
+        # En cas de probleme dans la sauvegarde
+        print(f"Error during retrieval and saving: {e}")
+        return JsonResponse({'status': 'error', 'message': f'Error during retrieval and saving: {e}'})
+
+#-------------------------------------------------------------------------------------------------
+    #Partie de l'index des articles scientifiques
 def index_article(article):
 
     # Vérifiez si l'index existe avant de le créer
@@ -254,17 +430,9 @@ def recuperer_article(request):
 
 #------------------------------------------------------------------------------------------------------------#
 # Fonction pour mettre à jour les informations d'un article scientifique
-from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
-def mettre_jour_article(request):
-    # Extracting values from the POST request
-    # Parse JSON data from the request body
-    data = json.loads(request.body.decode('utf-8'))
+def mettre_jour_article(doc_id, nouveau_article):
 
-        # Extract values from the parsed JSON data
-    doc_id = data.get('doc_id')
-    nouveau_article = data.get('nouveau_article')
     # Construction de corps de la requete de mise à jour
     try:
         body = {
@@ -275,21 +443,16 @@ def mettre_jour_article(request):
 
         es.update(index=nom_index, id=doc_id, body=body)
         print("Mise à jour réussie.")
-        return JsonResponse({'message': 'Update successful'}, status=200)
+
     except NotFoundError:
         print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
 
     except RequestError as e:
         print(f"Erreur de requête: {e}")
-    
-    # except Exception as e:
-    #     print(f"Erreur inattendue: {e}")  
-    
+
     except Exception as e:
-        # Handle unexpected errors
-        print(f"Unexpected error: {e}")
-        # Return an error response
-        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
+        print(f"Erreur inattendue: {e}")  
+
 
 #------------------------------------------------------------------------------------------------------------#
 # Requete POST pour mettre à jour un article dans elasticsearch
