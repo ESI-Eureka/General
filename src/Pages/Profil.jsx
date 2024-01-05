@@ -12,11 +12,7 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const user_role = localStorage.getItem("user_role");
-  const navItems = [
-    { text: "Home", path: "/home", className: "Home" },
-    { text: "Moderatos", path: "/moderators", className: "Favoris" },
-    { text: "Profil", path: "/profil", className: "Profile" },
-  ];
+  
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -77,7 +73,7 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      <NavBar navItems={navItems} />
+      <NavBar />
       <div className="profile-form">
         <form onSubmit={handleSubmit}>
           <div className="form-header">

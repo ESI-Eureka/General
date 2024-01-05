@@ -12,10 +12,7 @@ import IconedButton from '../Components/IconedButton';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 const ModerateurDetails = () => {
-  const navItems = [
-    { text: "Articles", path: "/article", className: "ModerateurDetails" },
-    { text: "Profile", path: "/profil", className: "Profile" },
-  ];
+  
 
   const [data, setData] = useState({
     auteurs: "Auteurs",
@@ -47,7 +44,7 @@ const handleReturn = () => {
   };
   return (
     <div>
-      <NavBar navItems={navItems} />
+      <NavBar />
       <div className="DetailsContainer">
         <div className="NavCorriger">
           

@@ -6,8 +6,20 @@ import { useRef } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { ReactComponent as LogoutIcon } from "../Icons/Logout.svg";
 
+const user_role = localStorage.getItem("user_role");
 
-const NavBar = ({ navItems }) => {
+const allNavItems = [
+  { text: "Home", path: "/home", className: "Home" },
+  { text: "Moderators", path: "/moderators", className: "Moderators", visibleFor: "admin" },
+  { text: "Favorite", path: "/favorite", className: "Favoris", visibleFor: "user" },
+  { text: "Profil", path: "/profil", className: "Profile" },
+];
+
+const navItems = allNavItems.filter((item) => {
+  return item.visibleFor === user_role || !item.visibleFor;
+});
+
+const NavBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const navRef = useRef();

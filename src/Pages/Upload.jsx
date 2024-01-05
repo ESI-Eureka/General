@@ -16,12 +16,6 @@ import {ReactComponent as Cross} from '../Icons/Cross.svg'
 import done from '../Icons/done.png'
 
 const Upload = () => {
-  const navItems = [
-    { text: "Home", path: "/home", className: "Home" },
-    { text: "Moderators", path: "/moderators", className: "Favoris" },
-    { text: "Profil", path: "/profil", className: "Profile" },
-    // Add other links as needed
-  ];
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
@@ -127,7 +121,7 @@ const Upload = () => {
 
   return (
     <div>
-      <NavBar navItems={navItems} />
+      <NavBar />
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
         {/* Pass handleAddClick as a callback to the SearchBar component */}

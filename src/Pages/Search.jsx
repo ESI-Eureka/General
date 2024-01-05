@@ -33,16 +33,10 @@ const SearchPage = () => {
     }
   };
 
-  // Navigation items pour la barre de navigation
-  const navItems = [
-    { text: 'Accueil', path: '/home', className: 'Home' },
-    { text: 'Favoris', path: '/favorite', className: 'Favoris' },
-    { text: 'Profil', path: '/profil', className: 'Profile' },
-  ];
 
   return (
     <div>
-      <NavBar navItems={navItems} />
+      <NavBar />
 
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
