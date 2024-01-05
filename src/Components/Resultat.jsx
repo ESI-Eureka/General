@@ -9,23 +9,27 @@ const Resultat = (props) => {
   const navigate = useNavigate();
 
   const handleIconClick = () => {
+    console.log(props.id);
     setIconFilled(!isIconFilled);
   };
 
   const handleDetailsClick = () => {
     // Ensure that props.Data is defined and has expected properties before navigating
     navigate(
-     '/details',
-      {state: { data: {
+     '/det',
+      {state: { 
+        id: props.id,
+        data: {
+        "titre": props.Data.titre,
+        "resume": props.Data.resume,
         "auteurs": props.Data.auteurs,
         "institutions": props.Data.institutions,
         "mots_cles": props.Data.mots_cles,
-        "pdf_url": props.Data.pdf_url,
-        "publication_date": props.Data.publication_date,
-        "references": props.Data.references,  
-        "resume": props.Data.resume,
         "texte_integral": props.Data.texte_integral,
-        "titre": props.Data.titre,
+        "pdf_url": props.Data.pdf_url,
+        "references": props.Data.references,
+        "publication_date": props.Data.publication_date,
+        "corrected": props.Data.etat,
       } }}
     );
   };
@@ -33,10 +37,10 @@ const Resultat = (props) => {
   return (
     <div className="resultats">
       <div className="Information">
-        <div className='info1'> {props.titre}</div>
-        <div className='info'>{props.auteurs}</div>
-        <div className='info'>{props.institutions}</div>
-        <div className='info'>{props.publication_date}</div>
+        <div className='info1'> {props.Data.titre}</div>
+        <div className='info'>{props.Data.auteurs}</div>
+        <div className='info'>{props.Data.institutions}</div>
+        <div className='info'>{props.Data.publication_date}</div>
         <Favoris className={isIconFilled ? 'filled' : 'none'} onClick={handleIconClick} />
       </div>
 

@@ -1,5 +1,3 @@
-// ModerateurDetails.js
-
 import React, { useState, useEffect } from 'react';
 import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
@@ -11,59 +9,90 @@ import { ReactComponent as Save } from '../Icons/Save.svg';
 import IconedButton from '../Components/IconedButton';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 const ModerateurDetails = () => {
   
 
-  const [data, setData] = useState({
-    auteurs: "Auteurs",
-    institutions: "Institutions",
-    mots_cles: "Mots_cles",
-    pdf_url: "pdf_url",
-    publication_date: "publication_date",
-    references: "references",
-    resume: "resume",
-    texte_integral: "texte_integral",
-    titre: "titre",
-  });
-
-  const [editMode, setEditMode] = useState(false);
-
   const location = useLocation();
-
+  const [initialData, setInitialData] = useState(location.state?.data);
+  const [data, setData] = useState(location.state?.data);
+  const [editMode, setEditMode] = useState(false);
+  const [id, setId] = useState(location.state?.id);
   useEffect(() => {
+    setInitialData(location.state?.data);
     setData(location.state?.data);
+    setId(location.state?.id);
   }, [location.state?.data]);
 
   const handleEditClick = () => {
     setEditMode(!editMode);
-    
   };
+
+  const handleSaveClick = async() => {
+    const editedData={
+      ...data,
+      "corrected": 1,
+    }
+    // Perform save logic here
+    setEditMode(0);
+    setData(editedData);
+    setInitialData(data);
+    console.log(id);
+    try {
+      console.log(id,data);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/elastic/maj/",
+        {
+          doc_id: id,  // Pass the doc_id as a parameter
+          nouveau_article: data,  // Pass the updated data as a parameter
+        }
+        
+      );
+      if (response.status === 200) {
+        // Perform additional logic if the save was successful
+        console.log('Save successful');
+      } else {
+        // Handle errors if the save fails
+        console.error('Save failed');
+      }
+    } catch (error) {
+      // Handle network or other errors
+      console.error('Error:', error);
+    }
+  };
+
+  const handleCancelClick = () => {
+    // Revert back to the initial data on cancel
+    setData(initialData);
+    setEditMode(false);
+  };
+
   const navigate = useNavigate();
-const handleReturn = () => {
-    navigate(-1);
-  };
+  
+
   return (
     <div>
       <NavBar />
       <div className="DetailsContainer">
         <div className="NavCorriger">
-          
-            <RightFleche onClick={handleReturn} />
+        <Link to={'/mod'}>
+          <RightFleche   />
+        </Link>
           {!editMode ? (
-            
-          <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />):
-          (<><IconedButton icon={Save} text="Save" onClick={handleEditClick} />
-          <span className='cancle'>Cancel</span>
-          </>
-          
+            <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />
+          ) : (
+            <div className='correction'>
+              <IconedButton icon={Save} text="Save" onClick={handleSaveClick} />
+              <span className='cancel' onClick={handleCancelClick}>Cancel</span>
+            </div>
           )}
-
         </div>
         <div className="ResultatDetailsContainer">
           <ResultatDetails
             data={data}
             setData={setData}
-              editMode={editMode}
+            editMode={editMode}
           />
 
           <div className="moreDetails">

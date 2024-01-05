@@ -34,15 +34,16 @@ const ModArticles = () => {
             key={item._id}
             id={item._id}
             Data={
-                {"auteurs": item._source.auteurs,
+                {"titre": item._source.titre,
+                "resume": item._source.resume,
+                "auteurs": item._source.auteurs,
                 "institutions": item._source.institutions,
                 "mots_cles": item._source.mots_cles,
-                "pdf_url": item._source.pdf_url,
-                "publication_date": item._source.publication_date,
-                "references": item._source.references,  
-                "resume": item._source.resume,
                 "texte_integral": item._source.texte_integral,
-                "titre": item._source.titre,  } 
+                "pdf_url": item._source.pdf_url,
+                "references": item._source.references,  
+                "publication_date": item._source.publication_date,
+                "corrected": item._source.etat,  } 
             }
             />
             
