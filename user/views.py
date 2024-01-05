@@ -35,14 +35,17 @@ class SignupView(APIView):
         user = Account.objects.create(email=email, password=password, role=role)
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
+        user_id = user.id  # Get the user ID
+        user_role = user.role.name  # Get the user's role
         serializer = AccountSerializer(user)        
 
-        return Response({'access_token': access_token}, status=status.HTTP_201_CREATED)
+        return Response({'access_token': access_token,'user_id': user_id,'email': email, 'password': password, 'user_role': user_role}, status=status.HTTP_200_OK)
 
 class LoginView(APIView):
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
+
         if not email or not password:
             return Response({'detail': 'Email and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -50,11 +53,13 @@ class LoginView(APIView):
             user = Account.objects.get(email=email)
 
             if check_password(password, user.password):
-                user = Account.objects.get(email=email)
+                # Include user ID and role in the response
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
+                user_id = user.id  # Get the user ID
+                user_role = user.role.name  # Get the user's role
 
-                return Response({'access_token': access_token}, status=status.HTTP_200_OK)
+                return Response({'access_token': access_token,'user_id': user_id,'email': email, 'password': password, 'user_role': user_role}, status=status.HTTP_200_OK)
             else:
                 return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -62,12 +67,6 @@ class LoginView(APIView):
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class RoleView(APIView):
-    def post(self, request):
-        email = request.data.get('email')
-        user = Account.objects.get(email=email)
-        role = user.role.name
-        return Response({'role': role}, status=status.HTTP_200_OK)
     
 
 class AccountViewSet(viewsets.ModelViewSet):
@@ -104,7 +103,9 @@ class AccountViewSet(viewsets.ModelViewSet):
         password = request.data.get('password', '')
         current_email = request.data.get('current_email', '')
 
-        if not current_email:
+        print("current-email : ",current_email)
+
+        if not current_email :
             return Response({'detail': 'Current email is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
@@ -124,7 +125,8 @@ class AccountViewSet(viewsets.ModelViewSet):
             user.email = email
 
         if password:
-            user.password = make_password(password)
+            if not (check_password(password, user.password)):
+                user.password = password
 
         user.save()
 
@@ -168,3 +170,6 @@ class AccountViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'Role does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({'detail': 'Role ID is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
