@@ -73,7 +73,7 @@ const Filtre = () => {
           {searchResults && searchResults.map((result, index) => (
             <Resultat
               key={index}
-              props={result._source}
+              Data={result._source}
             />
           ))}
         </div>

@@ -25,7 +25,7 @@ const SearchPage = () => {
       console.log(data);
 
       // Rediriger vers la page Filtre avec les résultats en tant que paramètre
-      navigate('/filtrage', { state: { searchResults: data } });
+      navigate('/filtre', { state: { searchResults: data } });
 
     } catch (error) {
       // Gérer les erreurs liées à la requête
