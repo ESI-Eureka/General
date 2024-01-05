@@ -16,7 +16,7 @@ const Resultat = (props) => {
   const handleDetailsClick = () => {
     // Ensure that props.Data is defined and has expected properties before navigating
     navigate(
-     '/det',
+     '/details',
       {state: { 
         id: props.id,
         data: {
