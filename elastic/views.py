@@ -62,7 +62,7 @@ def index_article_fav(article):
         articles_existants = []
 
     # Ajout du nouvel élement à la liste des articles déjà existants
-    # articles_existants.append(article)
+    articles_existants.append(article)
 
     # Sauvegarde de la liste dans le fichier JSON
     with open(fichier2_json_path_fav, 'w') as fichier_json:
