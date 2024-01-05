@@ -21,6 +21,7 @@ const NavBar = ({ navItems }) => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user_role');
+    localStorage.removeItem('user_id');
     // Redirect to the login page or perform other post-logout actions
     window.location.href = '/login';
   };

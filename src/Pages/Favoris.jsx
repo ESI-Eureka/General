@@ -13,7 +13,7 @@ const Favoris = () => {
       ];
     return (
         <div>
-            <NavBar navItems={navItems} />
+            <NavBar />
             <div className="FavorisContainer">
                 <span className='SpanFavoris'> Favoris </span>
                 <Resultat

@@ -8,7 +8,7 @@ const Login = ({ setAuthenticated }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleLogin = () => {
     setLoading(true);
     let loginRes;
@@ -16,8 +16,6 @@ const navigate = useNavigate();
       email: email,
       password: password,
     };
-
-    
 
     fetch("http://localhost:8000/users/login/", {
       method: "POST",
@@ -28,61 +26,35 @@ const navigate = useNavigate();
     })
       .then((response) => {
         loginRes = response.status;
-        console.log("response : ", loginRes);
-
+        console.log(response);
         if (response.ok) {
-          console.log("Login successfull:", response.body);
-          // Call the parent function with the added moderator details
-          setError(null);
-          return response.json();
+          return response.json(); // Add this line to parse the JSON response
         } else {
           throw new Error("Failed to login.");
         }
       })
       .then((data) => {
-        const { access_token } = data;
+        // Destructure the response data
+        const { access_token, user_id,email,password, user_role } = data;
 
-        // Store the access token in local storage
+        // Store the access token, user ID, and user role in local storage
         localStorage.setItem("access_token", access_token);
+        localStorage.setItem("user_id", user_id);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("user_role", user_role);
 
-        // Fetch user's role after login
-        fetch("http://localhost:8000/users/role/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            const { role } = data;
-            console.log(data);
-            
-            // Store the user's role in local storage
-            localStorage.setItem("user_role", role);
-
-            
-            setAuthenticated(true);
-            navigate('/home');
-          })
-          .catch((error) => {
-            console.error("Error fetching user role:", error);
-            setError("Failed to fetch user role. Please try again.");
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        setAuthenticated(true);
+        navigate("/home");
       })
       .catch((error) => {
         console.error("Error during login:", error);
         if (loginRes === 404) {
-          setError("User with the provided email  doesn't exist.");
+          setError("User with the provided email doesn't exist.");
         } else if (loginRes === 401) {
           setError("Password incorrect.");
         } else {
-          setError("Erreur during login. Please try again.");
+          setError("Error during login. Please try again.");
         }
         setLoading(false);
       });
