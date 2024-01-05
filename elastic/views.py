@@ -41,7 +41,7 @@ def index_article(article):
                     "pdf_url": {"type": "text"},
                     "references": {"type": "text"},
                     "publication_date": {"type": "date"},  # Utilisation du type de données date
-                    "corrected":{"type": "boolean"} # Pour la correction
+                    "corrected":{"type": "long"} # Pour la correction
                 }
             }
         }
@@ -254,7 +254,6 @@ def recuperer_article(request):
 
 #------------------------------------------------------------------------------------------------------------#
 # Fonction pour mettre à jour les informations d'un article scientifique
-from django.views.decorators.csrf import csrf_exempt
 
 @csrf_exempt
 def mettre_jour_article(request):
