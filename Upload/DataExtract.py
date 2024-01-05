@@ -32,18 +32,20 @@ def extractData(pdf_file):
     pdf_reader =fitz.open("pdf",pdf_content)
     num_pages = pdf_reader.page_count
     Data= {
-        'titre': "",
-        'auteurs' : [],
-        'institutions' : [],
-        'resume':"",
-        'mots_cles': [] ,
-        'texte_integral': '',
-        'references': [],
-        'publication_date':''
+        "titre": "",
+        "resume":"",
+        "auteurs" : [],
+        "institutions" : [],
+        "mots_cles": [] ,
+        "texte_integral": "",
+        "pdf_url": "",
+        "references": [],
+        "publication_date":'',
+        "corrected": 1
     }
     
     filter1=[]
-    for page_num in range(3):
+    for page_num in range(2):
         page = pdf_reader[page_num]
         blocks = page.get_text("blocks")
         fourth_elements = [block[4] for block in blocks]
@@ -114,13 +116,14 @@ def extractData(pdf_file):
             if match:
                 matched_paragraph = match.group()
                 matched_paragraph=re.sub(r'(Keywords|KEYWORDS|Index Terms)','',matched_paragraph)
-        keywords=matched_paragraph
+        matched_paragraph=re.sub(r'\n',' ',matched_paragraph)
+        keywords=matched_paragraph.split(',')
     else:
         #if there wasn't we use spacy to extract most used words in the document 
         keywords = extract_most_used_words(text)
         keywords= [f'{word}' for word, count in keywords]
-    keywords=re.sub(r'(\n)','',keywords)
-    Data['mots_cles']=keywords.split(',')
+    
+    Data['mots_cles']=keywords
     
     pattern = re.compile(r'\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){3}', re.DOTALL)
 
@@ -153,7 +156,21 @@ def extractData(pdf_file):
                 
     
     metadata = pdf_reader.metadata
-    readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
-    Data['publication_date']=readable_date
+    dattee = metadata.get("modDate", "N/A")
+
+    # Extraction des composants de la date
+    year = int(dattee[2:6])
+    month = int(dattee[6:8])
+    day = int(dattee[8:10])
+
+    # Création de l'objet datetime
+    date_object = datetime(year, month, day)
+
+    # La conversion au format ISO 8601 n'inclura que l'année, le mois et le jour
+    Data['publication_date'] = date_object.isoformat()
+
+    #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
+    # Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
+    Data['corrected']=0
     return Data 

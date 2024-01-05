@@ -19,6 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -47,13 +48,8 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl',
     'django_elasticsearch_dsl_drf',
     'user',
+    'Upload',
 ]
-
-
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React frontend
-]
-
 
 ELASTICSEARCH_DSL = {
     'default': {
@@ -113,16 +109,16 @@ WSGI_APPLICATION = 'Eureka.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'EurekaDB',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'EurekaDB',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation

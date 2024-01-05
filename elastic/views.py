@@ -1,20 +1,108 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 from django.views.decorators.csrf import csrf_exempt
-from elasticsearch import Elasticsearch, NotFoundError
+from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import NotFoundError, RequestError
 import json
 import os
 
-# Initialiser Elasticsearch
+# Initialisation de Elasticsearch
+
 es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
 nom_index = 'articles_scientifiques'
 dernier_id = 0
 
-# Chemin vers le fichier JSON
+# Chemin vers les fichier JSON
 
 fichier_json_path = './elastic/resultat_recherche.json'
 
 fichier2_json_path = './elastic/document.json'
+
+
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour indexer les articles scientifiques dans elasticsearch
+    
+def index_article(article):
+
+    # Vérifiez si l'index existe avant de le créer
+    if not es.indices.exists(index=nom_index):
+
+        # Mapping pour les articles (à définir avant la création de l'index)
+        # Identification du type de chaque field
+        mapping = {
+            "mappings": {
+                "properties": {
+                    "titre": {"type": "text"},
+                    "resume": {"type": "text"},
+                    "auteurs": {"type": "text"},
+                    "institutions": {"type": "text"},
+                    "mots_cles": {"type": "text"},
+                    "texte_integral": {"type": "text"},
+                    "pdf_url": {"type": "text"},
+                    "references": {"type": "text"},
+                    "publication_date": {"type": "date"},  # Utilisation du type de données date
+                    "corrected":{"type": "boolean"} # Pour la correction
+                }
+            }
+        }
+
+        # Création de l'index avec le mapping
+        es.indices.create(index=nom_index, body=mapping, ignore=400) # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
+
+    # Indexation de l'article dans l'index elasticsearch
+    es.index(index=nom_index, body=article, ignore=400)
+
+    # Récupération des articles sauvegardés dans le fichier JSON
+    try:
+        if os.path.getsize(fichier2_json_path) > 0:
+            with open(fichier2_json_path, 'r') as fichier_json:
+                articles_existants = json.load(fichier_json)
+        else:
+            articles_existants = []
+    except FileNotFoundError:
+        articles_existants = []
+
+    # Ajout de nouvel article à la liste des articles déja existants
+    articles_existants.append(article)
+
+    # Sauvegarde de la liste dans le fichier JSON
+    with open(fichier2_json_path, 'w') as fichier_json:
+        json.dump(articles_existants, fichier_json, indent=2)
+
+
+#------------------------------------------------------------------------------------------------------------#
+# Requete POST pour indexer un nouvel article dans elasticsearch
+        
+@require_POST
+@csrf_exempt 
+#Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
+
+def index_article_view(request):
+    
+    if request.method == 'POST':
+        # 1. Récupérer les données JSON de la requête
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+        
+        # 2. Vérifier que les champs nécessaires sont présents dans les données
+        required_fields = ['titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
+                            'texte_integral', 'pdf_url', 'references', 'publication_date']
+        for field in required_fields:
+            if field not in data:
+                return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
+
+        # 3. Appeler la fonction pour indexer l'article dans Elasticsearch
+        try:
+            index_article(data)
+            return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
+        
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': f'Erreur lors de l\'indexation : {e}'})
+
+    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
 
 #------------------------------------------------------------------------------------------------------------#
 # Requete GET pour avoir les résultats de la recherche
@@ -27,13 +115,20 @@ def search_articles(request):
 
     # 2. Construction du corps de la requête Elasticsearch
     body = {
-        "query": {
-            "multi_match": {
-                "query": query,
-                "fields": ["titre", "auteurs", "mots_cles", "texte_integral"]
-            }
+            "query": {
+                "multi_match": {
+                    "query": query,
+                    "fields": ["titre", "auteurs", "mots_cles", "texte_integral"]
+                }
+            },
+            "sort": [
+                {
+                    "publication_date": {
+                        "order": "desc"  # Tri par publication_date en ordre décroissant (du plus récent au plus ancien)
+                    }
+                }
+            ]
         }
-    }
 
     try:
         # 3. Exécution de la recherche Elasticsearch avec le corps de la requête construite
@@ -63,120 +158,10 @@ def search_articles(request):
         # retourner une liste vide
         return JsonResponse([], safe=False)
 
-#------------------------------------------------------------------------------------------------------------#
-# Fonction pour obtenir le dernier ID attribué
-def get_dernier_id():
-
-    body = {
-        "query": {
-            "match_all": {}
-        },
-        "sort": [
-            {
-                "id": {
-                    "order": "desc"
-                }
-            }
-        ],
-        "size": 1
-    }
-
-    resultats = es.search(index=nom_index, body=body)
-    hits = resultats['hits']['hits']
-
-    if hits:
-        # Si des documents sont trouvés, récupérez le dernier ID attribué
-        dernier_id_attribue = hits[0]['_source']['id']
-        return dernier_id_attribue
-    else:
-        # Aucun document trouvé, l'index est peut-être vide
-        return 0  # Ou tout autre valeur par défaut que vous souhaitez utiliser
-    
-#------------------------------------------------------------------------------------------------------------#
-# Fonction pour indexer les articles scientifiques dans elasticsearch
-    
-def index_article(article):
-
-    # Vérifiez si l'index existe avant de le créer
-    if not es.indices.exists(index=nom_index):
-
-        # Mapping pour les articles (à définir avant la création de l'index)
-        # Identification du type de chaque field
-        mapping = {
-            "mappings": {
-                "properties": {
-                    "titre": {"type": "text"},
-                    "resume": {"type": "text"},
-                    "auteurs": {"type": "text"},
-                    "institutions": {"type": "text"},
-                    "mots_cles": {"type": "text"},
-                    "texte_integral": {"type": "text"},
-                    "pdf_url": {"type": "text"},
-                    "references": {"type": "text"},
-                    "publication_date": {
-                        "type": "date",
-                        "format": "dd/MM/yyyy"  # Spécifiez le format de date ici
-                    }
-                }
-            }
-        }
-
-        # Création de l'index avec le mapping
-        es.indices.create(index=nom_index, body=mapping, ignore=400) # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
-
-    # Indexation de l'article dans l'index elasticsearch
-    es.index(index=nom_index, body=article, ignore=400)
-
-    # Récupération des articles sauvegardés dans le fichier JSON
-    try:
-        if os.path.getsize(fichier2_json_path) > 0:
-            with open(fichier2_json_path, 'r') as fichier_json:
-                articles_existants = json.load(fichier_json)
-        else:
-            articles_existants = []
-    except FileNotFoundError:
-        articles_existants = []
-
-    # Ajout de nouvel article à la liste des articles déja existants
-    articles_existants.append(article)
-
-    # Sauvegarde de la liste dans le fichier JSON
-    with open(fichier2_json_path, 'w') as fichier_json:
-        json.dump(articles_existants, fichier_json, indent=2)
 
 #------------------------------------------------------------------------------------------------------------#
-# Requete POST pour indexer un nouvel article dans elasticsearch
-        
-@require_POST
-@csrf_exempt 
-#Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
+# Requete POST pour supprimer un article de l'index
 
-def index_article_view(request):
-    
-    if request.method == 'POST':
-        # 1. Récupérer les données JSON de la requête
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
-        
-        # 2. Vérifier que les champs nécessaires sont présents dans les données
-        required_fields = ['titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
-                            'texte_integral', 'pdf_url', 'references', 'publication_date']
-        for field in required_fields:
-            if field not in data:
-                return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
-
-        # 3. Appeler la fonction pour indexer l'article dans Elasticsearch
-        try:
-            index_article(data)
-            return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': f'Erreur lors de l\'indexation : {e}'})
-
-    return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
-
-#------------------------------------------------------------------------------------------------------------#
 @require_POST
 @csrf_exempt
 def delete_article_view(request):
@@ -185,7 +170,7 @@ def delete_article_view(request):
         # 1. Get the article ID from the request
         try:
             data = json.loads(request.body)
-            article_id = data.get('id')
+            article_id = data.get('_id')
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
 
@@ -197,6 +182,7 @@ def delete_article_view(request):
             else:
                 print(f"Article non trouvé pour l'ID : {article_id}")
                 return JsonResponse({'status': 'error', 'message': 'Article non trouvé'})
+            
         except NotFoundError:
             print(f"Article non trouvé pour l'ID : {article_id}")
             return JsonResponse({'status': 'error', 'message': 'Article non trouvé'})
@@ -205,18 +191,20 @@ def delete_article_view(request):
         try:
             es.delete(index=nom_index, id=article_id)
             print(f"Article supprimé avec succès : {article_id}")
+
         except Exception as e:
             print(f"Erreur lors de la suppression : {e}")
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de la suppression : {e}'})
-        
+
         # 4. Remove the article from the list of existing articles in the JSON file
         try:
             with open(fichier2_json_path, 'r') as fichier_json:
                 articles_existants = json.load(fichier_json)
+           
         except FileNotFoundError:
             articles_existants = []
 
-        articles_existants = [article for article in articles_existants if article.get('id') != article_id]
+        articles_existants = [article for article in articles_existants if article.get('_id') != article_id]
 
         with open(fichier2_json_path, 'w') as fichier_json:
             json.dump(articles_existants, fichier_json, indent=2)
@@ -224,3 +212,142 @@ def delete_article_view(request):
         return JsonResponse({'status': 'success', 'message': 'Article supprimé avec succès'})
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
+
+
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour récupérer tous les articles scientifiques depuis l'index 
+
+@require_GET
+def recuperer_article(request):
+
+    try:
+        # Construction du corps de la requete pour récupérer tous les articles scientifiques depuis l'index
+        body = {
+            "query": {
+                "match_all":{}
+            }
+        }
+
+        # Exécution de la recherche 
+        articles = es.search(index=nom_index, body=body)
+
+        # le terme "hits" fait référence aux documents correspondants à une requête de recherche
+        hits = articles['hits']['hits']
+
+        # 4. Avoir la liste des artilces
+        articles_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
+
+        return JsonResponse(articles_results, safe=False)
+    
+    except NotFoundError:
+        print(f"Erreur: Index {nom_index} non trouvé.")
+        return JsonResponse({'error': f"Index {nom_index} non trouvé."}, status=500)
+
+    except RequestError as e:
+        print(f"Erreur de requête: {e}")
+        return JsonResponse({'error': f"Erreur de requête: {e}"}, status=500)
+
+    except Exception as e:
+        print(f"Erreur inattendue: {e}")
+        return JsonResponse({'error': f"Erreur inattendue: {e}"}, status=500)
+
+
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour mettre à jour les informations d'un article scientifique
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def mettre_jour_article(request):
+    # Extracting values from the POST request
+    # Parse JSON data from the request body
+    data = json.loads(request.body.decode('utf-8'))
+
+        # Extract values from the parsed JSON data
+    doc_id = data.get('doc_id')
+    nouveau_article = data.get('nouveau_article')
+    # Construction de corps de la requete de mise à jour
+    try:
+        body = {
+            "doc": nouveau_article
+        }
+
+        # Exécution de la requete de mise à jour
+
+        es.update(index=nom_index, id=doc_id, body=body)
+        print("Mise à jour réussie.")
+        return JsonResponse({'message': 'Update successful'}, status=200)
+    except NotFoundError:
+        print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
+
+    except RequestError as e:
+        print(f"Erreur de requête: {e}")
+    
+    # except Exception as e:
+    #     print(f"Erreur inattendue: {e}")  
+    
+    except Exception as e:
+        # Handle unexpected errors
+        print(f"Unexpected error: {e}")
+        # Return an error response
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
+
+#------------------------------------------------------------------------------------------------------------#
+# Requete POST pour mettre à jour un article dans elasticsearch
+        
+@require_POST
+@csrf_exempt
+def mettre_a_jour_article(request):
+    try:
+        # Obtenir les données du corps de la requête
+        try:
+            data = json.loads(request.body)
+            nouveau_article = data.get('nouveau_article')
+
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
+               
+        doc_id = request.GET.get('doc_id')
+
+        # Construction du corps de la requête de mise à jour
+        body = {
+            "doc": nouveau_article
+        }
+
+        # Exécution de la requête de mise à jour
+        es.update(index=nom_index, id=doc_id, body=body)
+        message = "Mise à jour réussie."
+
+        return JsonResponse({'message': message})
+
+    except NotFoundError:
+        message = f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}."
+        return JsonResponse({'message': message}, status=404)
+
+    except RequestError as e:
+        message = f"Erreur de requête: {e}"
+        return JsonResponse({'message': message}, status=400)
+
+    except Exception as e:
+        message = f"Erreur inattendue: {e}"
+        return JsonResponse({'message': message}, status=500)
+    
+
+#------------------------------------------------------------------------------------------------------------#
+
+# Exemple pour tester l'indexation
+# {
+#     "titre": "Titre de l'article", 
+#     "resume": "Résumé de l'article",
+#     "auteurs": ["Auteur 1", "Auteur 2", "Auteur 3"],
+#     "institutions": ["Institution 1", "Institution 2"],
+#     "mots_cles": ["Mot clé 1"],
+#     "texte_integral": "Texte intégral de l'article",
+#     "pdf_url": "https://exemple.com/chemin/vers/le/pdf",
+#     "references": ["Référence 1", "Référence 2"], 
+#     "publication_date": "29/12/2023"                   
+# }
+
+# Exemple pour tester la suppression
+# {
+#     "_id": ""                  
+# }
