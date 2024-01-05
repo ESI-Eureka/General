@@ -68,6 +68,7 @@ const Filtre = () => {
             <Resultat
               key={index}
               Data={result._source}
+              id={result._id}
             />
           ))}
         </div>

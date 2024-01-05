@@ -42,7 +42,9 @@
   margin-bottom: 10px;
   font-weight: 800;
 }
-
+.resultats .favoris-icon{
+  cursor: pointer;
+}
 @media (max-width: 550px) {
   .resultats {
     display: flex;

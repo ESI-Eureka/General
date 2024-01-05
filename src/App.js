@@ -56,7 +56,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={authenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        <Route path="/home" element={<PrivateRoute element={userRole === "admin" ? Upload : userRole === "user" ? SearchPage : ModArticles} authenticated={authenticated} role={userRole} />} />
+        <Route path="/home" element={<PrivateRoute element={userRole === "admin" ? Upload : userRole === "user" ? SearchPage :userRole === "moderator" ? ModArticles : NotAuthorized} authenticated={authenticated} role={userRole} />} />
         <Route path="/favorite" element={<PrivateRoute element={Favoris} authenticated={authenticated} role="user" />} />
         <Route path="/filtre" element={<PrivateRoute element={Filtre} authenticated={authenticated} role="user" />} />
         <Route path="/moderators" element={<PrivateRoute element={Moderators} authenticated={authenticated} role="admin" />} />
