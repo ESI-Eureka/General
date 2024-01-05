@@ -25,6 +25,7 @@ const Filtre = () => {
     try {
       // Effectuer une requête pour obtenir les résultats de la recherche
       const response = await fetch(`http://127.0.0.1:8000/elastic/search/?query=${query}`);
+      console.log(query)
       const data = await response.json();
       console.log(data);
 
@@ -69,13 +70,10 @@ const Filtre = () => {
         <NavFiltre data={searchResults} onFilterResultUpdate={handleFilterResultUpdate} />
         <div className="ResultatContainer">
           <span className='SpanFiltre'> Résultats </span>
-          {filteredResults && filteredResults.map((result, index) => (
+          {searchResults && searchResults.map((result, index) => (
             <Resultat
               key={index}
-              institution={result._source.institutions.join(', ')}
-              titre={result._source.titre}
-              auteur={result._source.auteurs.join(', ')}
-              date={result._source.publication_date}
+              props={result._source}
             />
           ))}
         </div>

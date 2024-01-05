@@ -6,8 +6,6 @@ import FiltreMotCle from './FiltreMotCle';
 import FiltreInstitution from './FiltreInstitution';
 import FiltreDate from './FiltreDate';
 
-
-
 const NavFiltre = ({ data, onFilterResultUpdate }) => {
 
     const [filtreAuteurVisible, setFiltreAuteurVisible] = useState(false);
@@ -76,7 +74,6 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
         setInstitutions(institution);
         const motCle = Array.from(new Set(data.map(result => result._source.mots_cles).flat()));
         setMotsCles(motCle);
-
     };
 
     return (
@@ -118,53 +115,16 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
             </div>
 
             <div className="Button">
-
                 <button
                     onClick={() => {
                         // Appeler la fonction de filtrage avec les états actuels
                         const filteredData = applyFilters(data, selectedAuteurs, selectedMotsCles, selectedInstitutions, selectedDateDebut, selectedDateFin);
                         console.log('Données filtrées :', filteredData);
                         onFilterResultUpdate(filteredData); // pour passer les résultats de filtre au parent Filtre
-          }}
-        >
-          Filtrer par
-        </button>
-            {/* <button
-          onClick={() => {
-            // Appliquer les filtres ici en utilisant les états selectedAuteurs, selectedMotsCles, etc.
-            console.log('Filtrer par :', {
-              selectedAuteurs,
-              selectedMotsCles,
-              selectedInstitutions,
-              selectedDateDebut,
-              selectedDateFin,
-            });
-          }}
-        >
-          Filtrer par
-        </button> */}
-        {/* <button
-          onClick={() => {
-            // Appliquer les filtres ici en utilisant les états selectedAuteurs, selectedMotsCles, etc.
-            const filteredDataByAuteurs = data.filter(article =>
-              selectedAuteurs.length === 0 || selectedAuteurs.some(auteur => article.auteurs.includes(auteur))
-            );
-            const filteredDataByMotsCles = filteredDataByAuteurs.filter(article =>
-              selectedMotsCles.length === 0 || selectedMotsCles.some(motCle => article.mots_cles.includes(motCle))
-            );
-            const filteredDataByInstitutions = filteredDataByMotsCles.filter(article =>
-              selectedInstitutions.length === 0 || selectedInstitutions.some(institution => article.institutions.includes(institution))
-            );
-            const filteredDataByDate = filteredDataByInstitutions.filter(article =>
-              (!selectedDateDebut || article.publication_date >= selectedDateDebut) &&
-              (!selectedDateFin || article.publication_date <= selectedDateFin)
-            );
-            console.log('Données filtrées :', filteredDataByDate);
-          }}
-        >
-          Filtrer par
-        </button> */}
+                    }}
+                > Filtrer par </button>
             </div>
+            
         </div>
     );
 };

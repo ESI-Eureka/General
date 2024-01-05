@@ -1,47 +1,85 @@
-import React from 'react';
+// ModerateurDetails.js
+
+import React, { useState, useEffect } from 'react';
 import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './ModerateurDetails.css';
 import { ReactComponent as Ecrire } from '../Icons/Ecrire.svg';
+import { ReactComponent as Save } from '../Icons/Save.svg';
 import IconedButton from '../Components/IconedButton';
+import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+const ModerateurDetails = () => {
+  const navItems = [
+    { text: "Articles", path: "/article", className: "ModerateurDetails" },
+    { text: "Profile", path: "/profil", className: "Profile" },
+  ];
 
-const Details = () => {
+  const [data, setData] = useState({
+    auteurs: "Auteurs",
+    institutions: "Institutions",
+    mots_cles: "Mots_cles",
+    pdf_url: "pdf_url",
+    publication_date: "publication_date",
+    references: "references",
+    resume: "resume",
+    texte_integral: "texte_integral",
+    titre: "titre",
+  });
 
-    const navItems = [
-        { text: "Articles", path: "/article", className: "ModerateurDetails" },
- { text: "Profile", path: "/profil", className: "Profile" },
-        
-      ];
-    return (
-        <div>
-            <NavBar navItems={navItems} />
-            <div className="DetailsContainer">
-            <div className="NavCorriger">
-                <RightFleche/>
-                <IconedButton icon={Ecrire} text="Corriger" />
-           </div>
-                <div className="ResultatDetailsContainer">
-                    <ResultatDetails
-                        articleTitre={"Article Title"} 
+  const [editMode, setEditMode] = useState(false);
 
-                        nomAuteur={"Nom de l'auteur"} 
-                        date={"02-12-2023"} 
-                    />
+  const location = useLocation();
 
-                    <div className="moreDetails"> 
-                        <MoreDetails
-                            institution="ESI"
-                            keywords="key words"
-                            summary="resume"
-                            fourthVariable="references"
-                        />
-                    </div>
-                </div>
-            </div>
+  useEffect(() => {
+    setData(location.state?.data);
+  }, [location.state?.data]);
+
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+    
+  };
+  const navigate = useNavigate();
+const handleReturn = () => {
+    navigate(-1);
+  };
+  return (
+    <div>
+      <NavBar navItems={navItems} />
+      <div className="DetailsContainer">
+        <div className="NavCorriger">
+          
+            <RightFleche onClick={handleReturn} />
+          {!editMode ? (
+            
+          <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />):
+          (<><IconedButton icon={Save} text="Save" onClick={handleEditClick} />
+          <span className='cancle'>Cancel</span>
+          </>
+          
+          )}
+
         </div>
-    );
-}
+        <div className="ResultatDetailsContainer">
+          <ResultatDetails
+            data={data}
+            setData={setData}
+              editMode={editMode}
+          />
 
-export default Details;
+          <div className="moreDetails">
+            <MoreDetails
+              data={data}
+              editMode={editMode}
+              setData={setData}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModerateurDetails;
