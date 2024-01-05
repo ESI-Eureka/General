@@ -4,7 +4,7 @@ import { ReactComponent as Favoris } from '../Icons/Favoris.svg';
 import './Resultat.css';
 import { useNavigate } from 'react-router-dom';
 
-const Resultat = ({props}) => {
+const Resultat = (props) => {
   const [isIconFilled, setIconFilled] = useState(false);
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const Resultat = ({props}) => {
   const handleDetailsClick = () => {
     // Ensure that props.Data is defined and has expected properties before navigating
     navigate(
-     '/det',
+     '/details',
       {state: { data: {
         "auteurs": props.Data.auteurs,
         "institutions": props.Data.institutions,
