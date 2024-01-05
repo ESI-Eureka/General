@@ -10,8 +10,18 @@ const user_role = localStorage.getItem("user_role");
 
 const allNavItems = [
   { text: "Home", path: "/home", className: "Home" },
-  { text: "Moderators", path: "/moderators", className: "Moderators", visibleFor: "admin" },
-  { text: "Favorite", path: "/favorite", className: "Favoris", visibleFor: "user" },
+  {
+    text: "Moderators",
+    path: "/moderators",
+    className: "Moderators",
+    visibleFor: "admin",
+  },
+  {
+    text: "Favorite",
+    path: "/favorite",
+    className: "Favoris",
+    visibleFor: "user",
+  },
   { text: "Profil", path: "/profil", className: "Profile" },
 ];
 
@@ -30,12 +40,14 @@ const NavBar = () => {
 
   const handleLogout = () => {
     // Clear the stored access token (and refresh token if stored)
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user_role');
-    localStorage.removeItem('user_id');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_role");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
     // Redirect to the login page or perform other post-logout actions
-    window.location.href = '/login';
+    window.location.href = "/login";
   };
   return (
     <header>
@@ -45,7 +57,9 @@ const NavBar = () => {
           <a
             key={item.path}
             href={item.path}
-            className={`${item.className} ${currentPath === item.path ? "active" : ""}`}
+            className={`${item.className} ${
+              currentPath === item.path ? "active" : ""
+            }`}
           >
             {item.text}
           </a>

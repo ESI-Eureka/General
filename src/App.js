@@ -61,12 +61,10 @@ function App() {
         <Route path="/filtre" element={<PrivateRoute element={Filtre} authenticated={authenticated} role="user" />} />
         <Route path="/moderators" element={<PrivateRoute element={Moderators} authenticated={authenticated} role="admin" />} />
         <Route path="/profil" element={<PrivateRoute element={Profil} authenticated={authenticated} />} />
-        <Route path="/details" element={<PrivateRoute element={Details} authenticated={authenticated} role="user" />} />
+        <Route path="/details" element={<PrivateRoute element={ userRole === "user" ? Details : userRole === "moderator" ? ModerateurDetails : NotAuthorized} authenticated={authenticated} role={userRole} />} />
         <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
-        <Route path="/mod" element={<ModArticles />} />
-        <Route path="/det" element={<ModerateurDetails />} />
       </Routes>
     </BrowserRouter>
   );

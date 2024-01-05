@@ -46,6 +46,8 @@ const Login = ({ setAuthenticated }) => {
 
         setAuthenticated(true);
         navigate("/home");
+        // Reload the page after navigating
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Error during login:", error);
