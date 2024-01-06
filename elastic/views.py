@@ -9,6 +9,7 @@ import os
 # Initialisation de Elasticsearch
 
 es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
+
 nom_index = 'articles_scientifiques'
 nom_index_fav = 'favoris'
 dernier_id = 0
@@ -70,8 +71,7 @@ def index_article_fav(article):
 
 
 #------------------------------------------------------------------------------------------------------------#
-
-        
+             
 @require_POST
 @csrf_exempt 
 # Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
@@ -154,6 +154,7 @@ def delete_favoris_document(request):
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
 
+#------------------------------------------------------------------------------------------------------------#
 @require_GET
 def retrieve_and_save_favorite_articles(request):
     try:
@@ -196,8 +197,11 @@ def retrieve_and_save_favorite_articles(request):
         print(f"Error during retrieval and saving: {e}")
         return JsonResponse({'status': 'error', 'message': f'Error during retrieval and saving: {e}'})
 
-#-------------------------------------------------------------------------------------------------
-    #Partie de l'index des articles scientifiques
+#------------------------------------------------------------------------------------------------------------#
+#Partie de l'index des articles scientifiques 
+#------------------------------------------------------------------------------------------------------------#
+# Fonction pour indexer un article dans l'index artcles_scientifiques
+    
 def index_article(article):
 
     # Vérifiez si l'index existe avant de le créer
@@ -264,7 +268,7 @@ def index_article_view(request):
         
         # 2. Vérifier que les champs nécessaires sont présents dans les données
         required_fields = ['titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
-                            'texte_integral', 'pdf_url', 'references', 'publication_date']
+                            'texte_integral', 'pdf_url', 'references', 'publication_date', 'corrected']
         for field in required_fields:
             if field not in data:
                 return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
@@ -457,43 +461,40 @@ def mettre_jour_article(doc_id, nouveau_article):
 #------------------------------------------------------------------------------------------------------------#
 # Requete POST pour mettre à jour un article dans elasticsearch
         
-@require_POST
 @csrf_exempt
-def mettre_a_jour_article(request):
+def mettre_jour_article(request):
+    # Extracting values from the POST request
+    # Parse JSON data from the request body
+    data = json.loads(request.body.decode('utf-8'))
+
+        # Extract values from the parsed JSON data
+    doc_id = data.get('doc_id')
+    nouveau_article = data.get('nouveau_article')
+    # Construction de corps de la requete de mise à jour
     try:
-        # Obtenir les données du corps de la requête
-        try:
-            data = json.loads(request.body)
-            nouveau_article = data.get('nouveau_article')
-
-        except json.JSONDecodeError:
-            return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
-               
-        doc_id = request.GET.get('doc_id')
-
-        # Construction du corps de la requête de mise à jour
         body = {
             "doc": nouveau_article
         }
 
-        # Exécution de la requête de mise à jour
+        # Exécution de la requete de mise à jour
+
         es.update(index=nom_index, id=doc_id, body=body)
-        message = "Mise à jour réussie."
-
-        return JsonResponse({'message': message})
-
+        print("Mise à jour réussie.")
+        return JsonResponse({'message': 'Update successful'}, status=200)
     except NotFoundError:
-        message = f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}."
-        return JsonResponse({'message': message}, status=404)
+        print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
 
     except RequestError as e:
-        message = f"Erreur de requête: {e}"
-        return JsonResponse({'message': message}, status=400)
-
-    except Exception as e:
-        message = f"Erreur inattendue: {e}"
-        return JsonResponse({'message': message}, status=500)
+        print(f"Erreur de requête: {e}")
     
+    # except Exception as e:
+    #     print(f"Erreur inattendue: {e}")  
+    
+    except Exception as e:
+        # Handle unexpected errors
+        print(f"Unexpected error: {e}")
+        # Return an error response
+        return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
 
 #------------------------------------------------------------------------------------------------------------#
 
