@@ -12,10 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ModerateurDetails = () => {
-  const navItems = [
-    { text: "Articles", path: "/article", className: "ModerateurDetails" },
-    { text: "Profile", path: "/profil", className: "Profile" },
-  ];
+  
 
   const location = useLocation();
   const [initialData, setInitialData] = useState(location.state?.data);
@@ -100,7 +97,7 @@ const ModerateurDetails = () => {
 
   return (
     <div>
-      <NavBar navItems={navItems} />
+      <NavBar />
       <div className="DetailsContainer">
         <div className="NavCorriger">
         <Link to={'/mod'}>

@@ -8,16 +8,10 @@ import './Details.css';
 
 const Details = (Data) => {
 
-    const navItems = [
-        { text: 'Accueil', path: '/home1', className: 'Home' },
-        { text: 'Favoris', path: '/favorite', className: 'Favoris' },
-        { text: 'Profil', path: '/profil', className: 'Profile' },
-    ];
-
 
     return (
         <div>
-            <NavBar navItems={navItems} />
+            <NavBar  />
             <div className="DetailsContainer">
                 <RightFleche/>
                 <div className="ResultatDetailsContainer">

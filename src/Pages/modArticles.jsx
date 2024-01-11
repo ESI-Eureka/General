@@ -6,10 +6,7 @@ import { useState,useEffect } from 'react';
 import axios from 'axios';
 
 const ModArticles = () => {
-    const navItems = [
-        { text: "Articles", path: "/mod", className: "Articles" },
-        { text: "Profil", path: "/profil", className: "Profile" },
-      ];
+    
     const [data,setData]=useState([]);
 
     useEffect(() => {
@@ -30,7 +27,7 @@ const ModArticles = () => {
     return (
         <div>
 
-        <NavBar navItems={navItems} />
+        <NavBar />
         {data.map((item) => 
             (
             <Resultat

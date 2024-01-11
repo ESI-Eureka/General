@@ -47,18 +47,12 @@ const Filtre = () => {
     setFilteredResults(filteredData);
 };
 
-  // Navigation items pour la barre de navigation
-  const navItems = [
-    { text: 'Accueil', path: '/home1', className: 'Home' },
-    { text: 'Favoris', path: '/favorite', className: 'Favoris' },
-    { text: 'Profil', path: '/profil', className: 'Profile' },
-  ];
 
   // Rendu de la page Filtre
   return (
     <div>
 
-      <NavBar navItems={navItems} />
+      <NavBar />
       <SearchBar
         label={"Rechercher un article"}
         icon={<SearchIcon />}
@@ -73,7 +67,8 @@ const Filtre = () => {
           {searchResults && searchResults.map((result, index) => (
             <Resultat
               key={index}
-              props={result._source}
+              Data={result._source}
+              id={result._id}
             />
           ))}
         </div>

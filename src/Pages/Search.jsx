@@ -25,7 +25,7 @@ const SearchPage = () => {
       console.log(data);
 
       // Rediriger vers la page Filtre avec les résultats en tant que paramètre
-      navigate('/filtrage', { state: { searchResults: data } });
+      navigate('/filtre', { state: { searchResults: data } });
 
     } catch (error) {
       // Gérer les erreurs liées à la requête
@@ -33,16 +33,10 @@ const SearchPage = () => {
     }
   };
 
-  // Navigation items pour la barre de navigation
-  const navItems = [
-    { text: 'Accueil', path: '/home1', className: 'Home' },
-    { text: 'Favoris', path: '/favorite', className: 'Favoris' },
-    { text: 'Profil', path: '/profil', className: 'Profile' },
-  ];
 
   return (
     <div>
-      <NavBar navItems={navItems} />
+      <NavBar />
 
       <div className="SearchContainer">
         <Logo2 className="Logo2" />

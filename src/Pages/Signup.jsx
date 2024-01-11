@@ -33,49 +33,28 @@ const Signup = ( { setAuthenticated } ) => {
         signupRes = response.status;
         console.log(response);
         if (response.ok) {
-          console.log("Signup successfull:", response.body);
-          setError(null);
-          // Call the parent function with the added moderator details
           return response.json();
         } else  {
           throw new Error("Failed to signup.");
         }
       })
       .then((data) => {
-        // Assuming the server responds with an access token
-        const { access_token } = data;
+        setError(null);
+        // Destructure the response data
+        const { access_token, user_id,email,password, user_role } = data;
 
-        // Store the access token in localStorage
-        localStorage.setItem('access_token', access_token);
-       // Fetch user's role after login
-       fetch('http://localhost:8000/users/role/', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-        }),
+        // Store the access token, user ID, and user role in local storage
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("user_id", user_id);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("user_role", user_role);
+    
+        setAuthenticated(true);
+        navigate("/home");
+        // Reload the page after navigating
+        window.location.reload();
       })
-        .then((response) => response.json())
-        .then((data) => {
-          const { role } = data;
-          console.log(data)
-
-          // Store the user's role in local storage
-          localStorage.setItem('user_role', role);
-
-          setAuthenticated(true);
-          navigate('/home');
-        })
-        .catch((error) => {
-          console.error("Error fetching user role:", error);
-          setError("Failed to fetch user role. Please try again.");
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    })
     .catch((error) => {
       console.error("Error during Signup:", error);
       if (signupRes === 401) {
