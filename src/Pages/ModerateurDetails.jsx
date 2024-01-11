@@ -73,6 +73,30 @@ const ModerateurDetails = () => {
 
   const navigate = useNavigate();
   
+  const handleDeleteClick = async() => {
+    try {
+      console.log(id);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/elastic/delete/",
+        {
+          doc_id: id,  // Pass the doc_id as a parameter
+        }
+
+      );  
+      if (response.status === 200) {
+        // Perform additional logic if the save was successful
+        console.log('Delete successful');
+        navigate('/mod');
+      } else {  
+        // Handle errors if the save fails
+        console.error('Delete failed');
+      }
+    } 
+    catch (error) {
+      // Handle network or other errors
+      console.error('Error:', error);
+    }
+  } 
 
   return (
     <div>
@@ -107,6 +131,7 @@ const ModerateurDetails = () => {
           </div>
         </div>
       </div>
+      <span className='Delete' onClick={handleDeleteClick}>Delete</span>
     </div>
   );
 };
