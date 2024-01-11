@@ -146,10 +146,10 @@ def extractData(pdf_file):
             
             # Get the text from the first page
             first_page = pdf_reader[-1]
-            text = first_page.get_text()
+            text1 = first_page.get_text()
             # Close the PDF file
             pattern = re.compile(r'\b(?:[\d])\b.*?(?:\.\n.*?){3}\.\n', re.DOTALL)
-            match = pattern.search(text)
+            match = pattern.search(text1)
             if match:
                 matched_paragraph = match.group()
                 Data['references']=(matched_paragraph.strip()).split('\n')
