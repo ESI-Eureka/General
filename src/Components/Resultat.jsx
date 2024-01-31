@@ -14,6 +14,12 @@ const Resultat = (props) => {
       idUser: UserId,
     };
 
+    useEffect(() => {
+      // Mettre à jour l'état initial des favoris en fonction des données stockées dans localStorage
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+      setIsFavorite(favorites[props.id] || false);
+    }, [props.id]);
+
   const handleRemoveClick = async () => {
     try {
       const response = await fetch("http://localhost:8000/elastic/delete_favoris_document/", {
@@ -25,6 +31,9 @@ const Resultat = (props) => {
       });
 
       if (response.ok) {
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        delete favorites[props.id];
+        localStorage.setItem('favorites', JSON.stringify(favorites));
         // Toggle the favorite status
         setIsFavorite(false);
         console.log("Seccussefully deleted from favorites.")
@@ -50,6 +59,10 @@ const Resultat = (props) => {
       });
 
       if (response.ok) {
+         // Ajouter l'article aux favoris localement
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+      favorites[props.id] = true;
+      localStorage.setItem('favorites', JSON.stringify(favorites));
         // Toggle the favorite status
         setIsFavorite(true);
         console.log("Seccussefully added to favorites.")
