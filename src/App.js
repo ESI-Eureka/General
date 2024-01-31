@@ -65,7 +65,6 @@ function App() {
         <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
         <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
-        <Route path="/recherche" element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   );
