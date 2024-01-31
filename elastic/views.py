@@ -52,26 +52,7 @@ def index_article_fav(article):
     # Indexation du contenu dans l'index Elasticsearch (favoris)
     es.index(index=nom_index_fav, body=article, ignore=400)
 
-    # Récupération des élements dans le fichier JSON
-    try:
-        if os.path.getsize(fichier2_json_path_fav) > 0:
-            with open(fichier2_json_path_fav, 'r') as fichier_json:
-                articles_existants = json.load(fichier_json)
-        else:
-            articles_existants = []
-    except FileNotFoundError:
-        articles_existants = []
-
-    # Ajout du nouvel élement à la liste des articles déjà existants
-    articles_existants.append(article)
-
-    # Sauvegarde de la liste dans le fichier JSON
-    with open(fichier2_json_path_fav, 'w') as fichier_json:
-        json.dump(articles_existants, fichier_json, indent=2)
-
-
-#------------------------------------------------------------------------------------------------------------#
-             
+#------------------------------------------------------------------------------------------------------------#             
 @require_POST
 @csrf_exempt 
 # Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
@@ -182,10 +163,6 @@ def retrieve_and_save_favorite_articles(request):
             for idArticle in idArticles:
                 result_article = es.get(index=nom_index, id=idArticle)
                 articles_search_results.append({'_id': result_article['_id'], '_source': result_article['_source']})
-
-            #  Sauvegarder les résultats de la recherche dans le fichier JSON
-            with open(fichier_json_path_fav, 'w') as json_file:
-                json.dump(articles_search_results, json_file, indent=2)
 
             return JsonResponse(articles_search_results, safe=False)
 
@@ -414,7 +391,7 @@ def recuperer_article(request):
         # le terme "hits" fait référence aux documents correspondants à une requête de recherche
         hits = articles['hits']['hits']
 
-        # 4. Avoir la liste des artilces
+        # Avoir la liste des artilces
         articles_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
         return JsonResponse(articles_results, safe=False)
@@ -430,32 +407,6 @@ def recuperer_article(request):
     except Exception as e:
         print(f"Erreur inattendue: {e}")
         return JsonResponse({'error': f"Erreur inattendue: {e}"}, status=500)
-
-
-#------------------------------------------------------------------------------------------------------------#
-# Fonction pour mettre à jour les informations d'un article scientifique
-
-def mettre_jour_article(doc_id, nouveau_article):
-
-    # Construction de corps de la requete de mise à jour
-    try:
-        body = {
-            "doc": nouveau_article
-        }
-
-        # Exécution de la requete de mise à jour
-
-        es.update(index=nom_index, id=doc_id, body=body)
-        print("Mise à jour réussie.")
-
-    except NotFoundError:
-        print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
-
-    except RequestError as e:
-        print(f"Erreur de requête: {e}")
-
-    except Exception as e:
-        print(f"Erreur inattendue: {e}")  
 
 
 #------------------------------------------------------------------------------------------------------------#
@@ -480,15 +431,28 @@ def mettre_jour_article(request):
 
         es.update(index=nom_index, id=doc_id, body=body)
         print("Mise à jour réussie.")
+        
+        try:
+            with open(fichier2_json_path, 'r') as fichier_json:
+                articles_existants = json.load(fichier_json)
+        except FileNotFoundError:
+            articles_existants = []
+
+        # Rechercher l'article dans la liste et le mettre à jour
+        for article in articles_existants:
+            if article.get('_id') == doc_id:
+                article['_source'].update(nouveau_article)
+
+        # Sauvegarder la liste mise à jour dans le fichier JSON
+        with open(fichier2_json_path, 'w') as fichier_json:
+            json.dump(articles_existants, fichier_json, indent=2)
         return JsonResponse({'message': 'Update successful'}, status=200)
+    
     except NotFoundError:
         print(f"Erreur: Document avec l'ID {doc_id} non trouvé dans l'index {nom_index}.")
 
     except RequestError as e:
         print(f"Erreur de requête: {e}")
-    
-    # except Exception as e:
-    #     print(f"Erreur inattendue: {e}")  
     
     except Exception as e:
         # Handle unexpected errors
