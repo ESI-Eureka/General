@@ -98,13 +98,16 @@ const Resultat = (props) => {
     );
   };
 
+  const setAuteurs = [...new Set(props.Data.auteurs)];
+  const setInstitutions = [...new Set(props.Data.institutions)];
+
   return (
     <div className="resultats">
       <div className="Information">
         <div className='info1'> {props.Data.titre}</div>
-        <div className='info'>{props.Data.auteurs}</div>
-        <div className='info'>{props.Data.institutions}</div>
-        <div className='info'>{props.Data.publication_date}</div>
+        <div className='info'>{setAuteurs.join(', ')}</div>
+        <div className='info'>{setInstitutions.join(', ')}</div>
+        <div className='info'>{props.Data.publication_date.substring(0, 10)}</div>
 
         {isFavorite ? (
           <FavorisIconFilled className="favoris-icon" onClick={handleRemoveClick} />

@@ -26,30 +26,29 @@ const ModArticles = () => {
 
     return (
         <div>
-
         <NavBar />
+        <div className="containerMod">
         {data.map((item) => 
             (
             <Resultat
-            key={item._id}
-            id={item._id}
-            Data={
-                {"titre": item._source.titre,
-                "resume": item._source.resume,
-                "auteurs": item._source.auteurs,
-                "institutions": item._source.institutions,
-                "mots_cles": item._source.mots_cles,
-                "texte_integral": item._source.texte_integral,
-                "pdf_url": item._source.pdf_url,
-                "references": item._source.references,  
-                "publication_date": item._source.publication_date,
-                "corrected": item._source.etat,  } 
-            }
+                key={item._id}
+                id={item._id}
+                Data={
+                    {"titre": item._source.titre,
+                    "resume": item._source.resume,
+                    "auteurs": item._source.auteurs,
+                    "institutions": item._source.institutions,
+                    "mots_cles": item._source.mots_cles,
+                    "texte_integral": item._source.texte_integral,
+                    "pdf_url": item._source.pdf_url,
+                    "references": item._source.references,  
+                    "publication_date": item._source.publication_date,
+                    "corrected": item._source.etat,  } 
+                }
             />
-            
-        ))}
-            
-        </div>
+            ))}
+        </div>       
+    </div>
     );
 };
 
