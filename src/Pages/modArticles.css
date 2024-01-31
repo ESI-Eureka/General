@@ -5,3 +5,10 @@ body {
     box-sizing: border-box;
     overflow-x: hidden;
 }
+
+.containerMod {
+    width: auto;
+    margin: 40px;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
