@@ -56,3 +56,4 @@ Eureka/migrations/__pycache__/
 elastic/__pycache__/views.cpython-312.pyc
 
 media/
+elastic/document.json

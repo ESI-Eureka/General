@@ -5,7 +5,7 @@ from Eureka.settings import MEDIA_ROOT
 
 from Upload.DataExtract import extractData
 from elastic.views import index_article
-
+import uuid
 from elastic.views import es, nom_index
 from django.http import JsonResponse
 from .models import UploadedFile
@@ -21,11 +21,25 @@ def upload_files(request):
         for file in files:
             Data=extractData(file)
             fs = FileSystemStorage(location=MEDIA_ROOT)
-            saved_file_name = fs.save(file.name, file)
-            
+             # Get the original filename without modifications
+            original_filename = file.name
+
+            # Check if the file already exists
+            if fs.exists(original_filename):
+                # Append a unique identifier to the filename
+                base, ext = os.path.splitext(original_filename)
+                unique_filename = f"{base}_{uuid.uuid4().hex}{ext}"
+                saved_file_name = fs.save(unique_filename, file)
+            else:
+                # Use the original filename if no conflict
+                #saved_file_name = fs.save(original_filename, file)
+                saved_file_name = fs.save(file.name, file)
+                
             # Return the URL to the frontend
             file_url = fs.url(saved_file_name)
             Data['pdf_url']=file_url
+            print("hello")
+            print(Data['pdf_url'])
             index_article(Data)
             current_mapping = es.indices.get_mapping(index=nom_index)
             extracted_data_keys = set(Data.keys())
