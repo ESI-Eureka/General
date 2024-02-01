@@ -1,14 +1,20 @@
 version: '3.8'
 
 services:
+  react:
+    build:
+      context: ./Frontend
+    ports:
+      - "3000:3000"  
+
   django:
     build:
-      context: .
+      context: ./Backend
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./Backend:/app
     environment:
       - SECRET_KEY=django-insecure-t-fw3m9a0z6fg$44n76ox%7=w2ul)9rf1fe(@pz@re0#kn2hpp
       - DEBUG=True
