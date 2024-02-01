@@ -83,7 +83,7 @@ const ModerateurDetails = () => {
       if (response.status === 200) {
         // Perform additional logic if the save was successful
         console.log('Delete successful');
-        navigate('/mod');
+        navigate('/home');
       } else {  
         // Handle errors if the save fails
         console.error('Delete failed');
@@ -100,7 +100,7 @@ const ModerateurDetails = () => {
       <NavBar />
       <div className="DetailsContainer">
         <div className="NavCorriger">
-        <Link to={'/mod'}>
+        <Link to={'/home'}>
           <RightFleche   />
         </Link>
           {!editMode ? (
