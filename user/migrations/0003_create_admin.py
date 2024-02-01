@@ -8,7 +8,7 @@ def create_admin(apps, schema_editor):
     role = Role.objects.get(name='admin')  # Make sure the role 'admin' exists
 
     # Create an admin user with a hashed password
-    Account.objects.create(email='admin@gmail.com', password=make_password('admin'), role=role)
+    Account.objects.create(email='admin@esi.dz', password=make_password('admin'), role=role)
 
 
 class Migration(migrations.Migration):
