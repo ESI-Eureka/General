@@ -8,7 +8,7 @@ import os
 
 # Initialisation de Elasticsearch
 
-es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
+es = Elasticsearch([{'scheme': 'http', 'host': 'elasticsearch', 'port': 9200}])
 nom_index = 'articles_scientifiques'
 nom_index_fav = 'favoris'
 dernier_id = 0
