@@ -211,12 +211,13 @@ def search_articles(request):
 @require_POST
 @csrf_exempt
 def delete_article_view(request):
-
+    print("DELETE ARTICLE VIEW")
     if request.method == 'POST':
         # 1. Get the article ID from the request
         try:
-            data = json.loads(request.body)
-            article_id = data.get('_id')
+            data = json.loads(request.body.decode('utf-8'))
+        # Extract values from the parsed JSON data
+            article_id = data.get('doc_id')
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
 
