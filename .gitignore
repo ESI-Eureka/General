@@ -1,0 +1,59 @@
+# Django
+*.pyc
+*.pyo
+__pycache__/
+db.sqlite3
+*.sqlite3
+
+# Virtual Environment
+venv/
+env/
+
+# Logs
+*.log
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini
+elastic/__pycache__/apps.cpython-312.pyc
+elastic/__pycache__/models.cpython-312.pyc
+Eureka/__pycache__/settings.cpython-312.pyc
+
+Eureka/__pycache__/urls.cpython-312.pyc
+elastic/__pycache__/__init__.cpython-312.pyc
+user/migrations/__pycache__/0002_create_roles.cpython-312.pyc
+user/migrations/__pycache__/0001_initial.cpython-312.pyc
+user/migrations/__pycache__/__init__.cpython-312.pyc
+user/__pycache__/admin.cpython-312.pyc
+elastic/__pycache__/admin.cpython-312.pyc
+user/migrations/__pycache__/0002_create_roles.cpython-312.pyc
+elastic/__pycache__/
+user/__pycache__/
+Upload/__pycache__/
+Eureka/__pycache__/
+elastic/migrations/__pycache__/
+user/migrations/__pycache__/
+Upload/migrations/__pycache__/
+Eureka/migrations/__pycache__/
+elastic/__pycache__/views.cpython-312.pyc
+
+media/
+elastic/document.json

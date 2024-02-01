@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - SECRET_KEY=django-insecure-t-fw3m9a0z6fg$44n76ox%7=w2ul)9rf1fe(@pz@re0#kn2hpp
+      - DEBUG=True
+      - ALLOWED_HOSTS=*
+      - DATABASE_URL=postgresql://postgres.bsplqaqbkkczbkgvktwo:UxRseq8CNK2prGfN@aws-0-eu-central-1.pooler.supabase.com:6543/postgres
+      - ELASTICSEARCH_DSL_DEFAULT__HOST=elasticsearch:9200
+    depends_on:
+      - postgres
+      - elasticsearch
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres.bsplqaqbkkczbkgvktwo
+      - POSTGRES_PASSWORD=UxRseq8CNK2prGfN
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  elasticsearch:
+    image: elasticsearch:7.16.2
+    container_name: elasticsearch
+    restart: always
+    volumes:
+    - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      discovery.type: single-node    
+    ports:
+    - '9200:9200'
+    - '9300:9300'
+
+volumes:
+  postgres_data:
+  elastic_data:
