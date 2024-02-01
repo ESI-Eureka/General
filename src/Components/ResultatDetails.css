@@ -1,0 +1,124 @@
+.ResultatDetails {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.InformationContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: white;
+    height: auto;
+    width: 90%;
+    padding-left: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.Format {
+    height: 195px;
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.Pdf {
+    background-color:#2546F3 ;
+    height: 50%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-top-right-radius: 10px;
+    padding-right: 10px;
+}
+
+.Txt {
+    background-color: #0923A9;
+    height: 50%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-bottom-right-radius: 10px;
+    padding-right: 10px;
+}
+
+@media screen and (max-width: 500px) {
+    .ResultatDetails {
+        flex-direction: column;
+    }
+
+    .Format {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 55px;
+        padding: 0px;
+    }
+
+    .InformationContainer {
+        width: 90%;
+        border-radius: 0px;
+        padding: 20px;
+    }
+
+    .Pdf, .Txt {
+        border-radius: 0px;
+        width: 50%;
+        height: 100%;
+    }
+
+  }
+  .textarea-as-h3 {
+    font-size: 1.3em; /* Adjust the font size as needed */
+    font-weight: bold;
+    color: #333; /* Set the desired text color */
+    padding: 0px; /* Add padding for spacing */
+    border: none; /* Remove border */
+    resize: none; /* Disable textarea resizing */
+    background-color: transparent; /* Set background color to transparent */
+    width: 100%; /* Make the textarea take up the full width */
+    outline: none; /* Remove outline on focus */
+    font-family: 'Montserrat', sans-serif;
+  }
+  .textarea-as-h5 {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    padding: 5px;
+    border: none;
+    resize: none;
+    background-color: transparent;
+    width: 100%;
+    outline: none;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .textarea-as-span {
+    font-size: 0.9em;
+    font-style: italic;
+    color: #555;
+    padding: 5px;
+    border: none;
+    resize: none;
+    background-color: transparent;
+    width: 100%;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+  }
+  

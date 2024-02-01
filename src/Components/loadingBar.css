@@ -1,0 +1,19 @@
+.loadingBar {
+    position: relative;
+  }
+  
+  .bar {
+    animation-name: progressBarAnimation;
+    animation-duration: 3s; /* Adjust the duration as needed */
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+  
+  @keyframes progressBarAnimation {
+    0% {
+      width: 2.25rem; /* Initial width */
+    }
+    100% {
+      width: 23.5vw; /* Final width */
+    }
+  }

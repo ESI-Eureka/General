@@ -1,0 +1,14 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.containerMod {
+    width: auto;
+    margin: 40px;
+    background-color: #f4f4f4;
+    padding: 20px;
+}

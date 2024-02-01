@@ -1,0 +1,85 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    box-sizing: border-box;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+/* WebKit */
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
+/* Internet Explorer */
+body {
+    scrollbar-width: thin;
+}
+
+body::-ms-scrollbar-thumb {
+    background-color: #2546F3;
+    border-radius: 6px;
+}
+
+body::-ms-scrollbar-track {
+    background-color: #f3f3f3;
+}
+
+.FiltreContainer, .FavorisContainer {
+    width: auto;
+    margin: 40px;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+.SpanFiltre, .SpanFavoris{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.ResultatContainer {
+    overflow-y: auto;
+}
+
+.searchBarMobile {
+    display: none;
+}
+
+@media (max-width: 800px) {
+    .FiltreContainer {
+        margin: 20px;
+    }
+   
+
+}
+
+@media (max-width: 500px) {
+    .FiltreContainer {
+        margin: 20px;
+    }
+
+    .searchBarDisktop {
+        display: none;
+    }
+
+    .searchBarMobile {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+   
+
+}

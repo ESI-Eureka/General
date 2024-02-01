@@ -1,0 +1,43 @@
+
+
+.Corriger {
+  display: flex;
+  width: 12vw;
+  height: 7vh;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 0.125rem;
+  justify-content: center;
+  background-color: blue;
+  color: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  border: none; 
+  font-family: SF Pro Display;
+font-size: 1.2rem;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+padding-left: 1rem;
+padding-right: 1rem;
+}
+.Corriger svg{
+  width: 3vw;
+  height: 3vh;
+  flex-shrink: 0;
+  margin-right: 0.09vw;
+}
+/* Media query for smaller screens */
+
+@media screen and (max-width: 800px) {
+  .Corriger {
+    font-size: 1rem;
+    width: 13vw;
+    padding-left: 1rem;
+padding-right: 1rem;
+  }
+  .Corriger svg{
+    
+    margin-right: 1vw;
+  }
+}

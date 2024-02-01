@@ -1,0 +1,73 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 3vh 5vw;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 30vw;
+  text-align: center;
+}
+
+.modal-content h2 {
+  margin-bottom: 0;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 4vh;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 0.8rem;
+  box-sizing: border-box;
+}
+
+.modal-content button {
+  color: #fff;
+  background-color: #2546f3;
+  border-radius: 4px;
+  font-size: calc(10px + 1.2vmin);
+  width: 70%;
+  height: 2.7rem;
+  border: #2546f3;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 6vh 0;
+}
+
+.buttons .cancel {
+  background-color: #fff;
+  color: #2546f3;
+  border: 1px solid #2546f3;
+}
+
+@media screen and (max-width: 1024px) {
+  .modal-content {
+    width: 40vw;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 50vw;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .modal-content {
+    width: 70vw;
+  }
+}
