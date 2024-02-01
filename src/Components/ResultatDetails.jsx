@@ -4,6 +4,7 @@ import { ReactComponent as Txt } from '../Icons/Txt.svg';
 import './ResultatDetails.css';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import config from "../config";
 
 const ResultatDetails = ({data,setData,editMode}) => {
     
@@ -61,7 +62,7 @@ const ResultatDetails = ({data,setData,editMode}) => {
 
             <div className="Format"> 
                 <div className="Pdf">
-                <Link to={data.pdf_url} target="_blank">
+                <Link to={`${config.PORT}${data.pdf_url}`} target="_blank">
             <Pdf />
           </Link>
                     
