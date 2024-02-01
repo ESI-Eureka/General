@@ -10,11 +10,7 @@ from elasticsearch.helpers import scan
 #------------------------------------------------------------------------------------------------------------#
 # Elasticsearch Initialization
 
-es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
-
-# Nom pour les index
-
-# Index pour les articles scientifiques
+es = Elasticsearch([{'scheme': 'http', 'host': 'elasticsearch', 'port': 9200}])
 nom_index = 'articles_scientifiques'
 
 # Index pour les articles favoris
