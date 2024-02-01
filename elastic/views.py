@@ -8,7 +8,7 @@ import os
 from elasticsearch.helpers import scan
 
 #------------------------------------------------------------------------------------------------------------#
-# Initialisation de Elasticsearch
+# Elasticsearch Initialization
 
 es = Elasticsearch([{'scheme': 'http', 'host': 'localhost', 'port': 9200}])
 
@@ -31,17 +31,17 @@ fichier_json_path_fav = './elastic/resultat_recherche_fav.json'
 fichier2_json_path_fav = './elastic/document_fav.json'
 
 #------------------------------------------------------------------------------------------------------------#
-# Partie de l'index des articles scientifiques 
+# Scientific Articles Indexing Part 
 #------------------------------------------------------------------------------------------------------------#
-# Fonction pour indexer un article dans l'index artcles_scientifiques
+# Function to index an article in the articles_scientifiques index
     
 def index_article(article):
 
-    # Vérifiez si l'index existe avant de le créer
+    # Check if the index exists before creating it
     if not es.indices.exists(index=nom_index):
 
-        # Mapping pour les articles (à définir avant la création de l'index)
-        # Identification du type de chaque field
+        # Mapping for articles (defined before creating the index)
+        # Identify the type of each field
         mapping = {
             "mappings": {
                 "properties": {
@@ -59,27 +59,27 @@ def index_article(article):
             }
         }
 
-        # Création de l'index avec le mapping
+        # Create the index with the mapping
         es.indices.create(index=nom_index, body=mapping, ignore=400) # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
         es.index(index=nom_index, body=article, ignore=400)
     
     else:
         index_stats = es.indices.stats(index=nom_index)
 
-        # Vérifier si l'index contient au moins un article
+        # Check if the index contains at least one article
         total_documents = index_stats['_all']['primaries']['docs']['count']
 
-        # Vérifier si l'artcile existe déja
+        # Check if the article already exists
         exist = False
         if total_documents>0:
             exist = article_existant(article)
             print(exist)
 
         if exist == False:
-            # Indexation de l'article dans l'index elasticsearch
+            # Index the article in the Elasticsearch index
             es.index(index=nom_index, body=article, ignore=400)
 
-            # Récupération des articles sauvegardés dans le fichier JSON
+            # Retrieve saved articles from the JSON file
             try:
                 if os.path.getsize(fichier2_json_path) > 0:
                     with open(fichier2_json_path, 'r') as fichier_json:
@@ -89,10 +89,10 @@ def index_article(article):
             except FileNotFoundError:
                 articles_existants = []
 
-            # Ajout de nouvel article à la liste des articles déja existants
+            # Add the new article to the list of existing articles
             articles_existants.append(article)
 
-            # Sauvegarde de la liste dans le fichier JSON
+            # Save the list to the JSON file
             with open(fichier2_json_path, 'w') as fichier_json:
                 json.dump(articles_existants, fichier_json, indent=2)
         else:
@@ -100,10 +100,10 @@ def index_article(article):
         
 
 #------------------------------------------------------------------------------------------------------------#
-# Fonction pour vérifier si un article existe dans l'index
+# Function to check if an article exists in the index
             
 def article_existant(article):
-    # Recherche d'un article par titre dans l'index
+    # Search for an article by title in the index
     query = {
         "query": {
             "match": {
@@ -112,14 +112,14 @@ def article_existant(article):
         }
     }
 
-    # Exécution de la recherche
+    # Execute the search
     results = es.search(index=nom_index, body=query)
 
-    # Vérification si des résultats ont été trouvés
+    # Check if any results were found
     return results["hits"]["total"]["value"] > 0
 
 #------------------------------------------------------------------------------------------------------------#
-# Requete POST pour indexer un nouvel article dans elasticsearch
+# POST request to index a new article in Elasticsearch
         
 @require_POST
 @csrf_exempt 
@@ -128,20 +128,20 @@ def article_existant(article):
 def index_article_view(request):
     
     if request.method == 'POST':
-        # 1. Récupérer les données JSON de la requête
+        # 1. Get JSON data from the request
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
         
-        # 2. Vérifier que les champs nécessaires sont présents dans les données
+        # 2. Check if the required fields are present in the data
         required_fields = ['titre', 'resume', 'auteurs', 'institutions', 'mots_cles',
                             'texte_integral', 'pdf_url', 'references', 'publication_date', 'corrected']
         for field in required_fields:
             if field not in data:
                 return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
 
-        # 3. Appeler la fonction pour indexer l'article dans Elasticsearch
+        # 3. Call the function to index the article in Elasticsearch
         try:
             index_article(data)
             return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
@@ -157,10 +157,10 @@ def index_article_view(request):
 @require_GET 
 def search_articles(request):
 
-    # 1. Récupérer la requete
+    # 1. Get the query
     query = request.GET.get('query', '')
 
-    # 2. Construction du corps de la requête Elasticsearch
+    # 2. Construct the Elasticsearch request body
     body = {
             "query": {
                 "multi_match": {
@@ -178,31 +178,31 @@ def search_articles(request):
         }
 
     try:
-        # 3. Exécution de la recherche Elasticsearch avec le corps de la requête construite
+        # 3. Execute the Elasticsearch search with the constructed request body
         resultats = es.search(index=nom_index, body=body)
 
-        # le terme "hits" fait référence aux documents correspondants à une requête de recherche
+        # The term "hits" refers to documents matching a search query
         hits = resultats['hits']['hits']
 
-        # 4. Avoir la liste des artilces
+        # 4. Get the list of articles
         search_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
-        # 5. Sauvegarder la liste dans le fichier JSON
+        # 5. Save the list to the JSON file
         with open(fichier_json_path, 'w') as json_file:
             json.dump(search_results, json_file, indent=2)
             
-            # Pour confirmer
+            # For confirmation
             print(f"Sauvegarder les résultats dans {fichier_json_path}")
 
-        # 6. Retourner les resultats sous format JSON
+        # 6. Return the results in JSON format
         return JsonResponse(search_results, safe=False)
     
     except Exception as e:
 
-        # Cas d'erreur, renvoyer un message d'erreur
+        # Error case, return an error message
         print(f"Erreur durant la recherche: {e}")
 
-        # retourner une liste vide
+        # Return an empty list
         return JsonResponse([], safe=False)
 
 #------------------------------------------------------------------------------------------------------------#
@@ -247,12 +247,13 @@ def delete_article_view(request):
         try:
             with open(fichier2_json_path, 'r') as fichier_json:
                 articles_existants = json.load(fichier_json)
-           
         except FileNotFoundError:
             articles_existants = []
 
+        # Remove the article from the list in memory
         articles_existants = [article for article in articles_existants if article.get('_id') != article_id]
 
+        # Write the modified list back to the JSON file
         with open(fichier2_json_path, 'w') as fichier_json:
             json.dump(articles_existants, fichier_json, indent=2)
 
@@ -267,20 +268,20 @@ def delete_article_view(request):
 def recuperer_article(request):
 
     try:
-        # Construction du corps de la requete pour récupérer tous les articles scientifiques depuis l'index
+        # Construct the request body to retrieve all scientific articles from the index
         body = {
             "query": {
                 "match_all":{}
             }
         }
 
-        # Exécution de la recherche 
+        # Execute the search 
         articles = es.search(index=nom_index, body=body)
 
-        # le terme "hits" fait référence aux documents correspondants à une requête de recherche
+        # The term "hits" refers to documents matching a search query
         hits = articles['hits']['hits']
 
-        # Avoir la liste des artilces
+        # Get the list of articles
         articles_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
         return JsonResponse(articles_results, safe=False)
@@ -299,7 +300,7 @@ def recuperer_article(request):
 
 
 #------------------------------------------------------------------------------------------------------------#
-# Requete POST pour mettre à jour un article dans elasticsearch
+# POST request to update an article in Elasticsearch
         
 @csrf_exempt
 def mettre_jour_article(request):
@@ -307,32 +308,33 @@ def mettre_jour_article(request):
     # Parse JSON data from the request body
     data = json.loads(request.body.decode('utf-8'))
 
-        # Extract values from the parsed JSON data
+    # Extract values from the parsed JSON data
     doc_id = data.get('doc_id')
     nouveau_article = data.get('nouveau_article')
-    # Construction de corps de la requete de mise à jour
+
+    # Constructing the update request body
     try:
         body = {
             "doc": nouveau_article
         }
 
-        # Exécution de la requete de mise à jour
+        # Execute the update request
         es.update(index=nom_index, id=doc_id, body=body)
         print("Mise à jour réussie.")
         
-        # Mise à jour dans le fichier JSON
+        # Update in the JSON file
         try:
             with open(fichier2_json_path, 'r') as fichier_json:
                 articles_existants = json.load(fichier_json)
         except FileNotFoundError:
             articles_existants = []
 
-        # Rechercher l'article dans la liste et le mettre à jour
+        # Search for the article in the list and update it
         for article in articles_existants:
             if article.get('_id') == doc_id:
                 article.update(nouveau_article)
 
-        # Sauvegarder la liste mise à jour dans le fichier JSON
+        # Save the updated list to the JSON file
         with open(fichier2_json_path, 'w') as fichier_json:
             json.dump(articles_existants, fichier_json, indent=2)
         return JsonResponse({'message': 'Update successful'}, status=200)
@@ -344,22 +346,22 @@ def mettre_jour_article(request):
         print(f"Erreur de requête: {e}")
     
     except Exception as e:
-        # Cas d'erreur inattendue
+        # Unexpected error case
         print(f"Erreur inattendue: {e}")
         return JsonResponse({'error': 'An unexpected error occurred'}, status=500)
 
 #------------------------------------------------------------------------------------------------------------#
-#Partie des articles favoris
+# Favorite Articles Section
 #------------------------------------------------------------------------------------------------------------#
-# Fonction pour indexer les articles favoris dans Elasticsearch
+# Function to index favorite articles in Elasticsearch
 
 def index_article_fav(article):
 
-    # Vérifiez si l'index existe avant de le créer
+    # Check if the index exists before creating it
     if not es.indices.exists(index=nom_index_fav):
 
-        # Mapping pour les articles (à définir avant la création de l'index)
-        # Identification du type de chaque field
+        # Mapping for articles (defined before creating the index)
+        # Identify the type of each field
         mapping = {
             "mappings": {
                 "properties": {
@@ -369,34 +371,34 @@ def index_article_fav(article):
             }
         }
 
-        # Création de l'index avec le mapping
+        # Create the index with the mapping
         es.indices.create(index=nom_index_fav, body=mapping, ignore=400) 
-        # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
+        # ignore=400 to ignore the error if the index already exists
 
-    # Indexation du contenu dans l'index Elasticsearch (favoris)
+    # Index the content in the Elasticsearch index (favorites)
     es.index(index=nom_index_fav, body=article, ignore=400)
 
 #------------------------------------------------------------------------------------------------------------#             
 @require_POST
 @csrf_exempt 
-# Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
+# Note: @csrf_exempt is used here to disable CSRF protection for this view.
 
 def index_article_view_fav(request):
     
     if request.method == 'POST':
-        # 1. Récupérer les données JSON de la requête
+        # 1. Get JSON data from the request
         try:
             data = json.loads(request.body)
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
         
-        # 2. Vérifier que les champs nécessaires sont présents dans les données
+        # 2. Check if the required fields are present in the data
         required_fields = ['idArticle', 'idUser']
         for field in required_fields:
             if field not in data:
                 return JsonResponse({'status': 'error', 'message': f'Champ manquant : {field}'})
         
-        # 3. Appeler la fonction pour indexer l'élement dans Elasticsearch
+        # 3. Call the function to index the element in Elasticsearch
         try:
             index_article_fav(data)
             return JsonResponse({'status': 'success', 'message': 'Article indexé avec succès'})
@@ -406,14 +408,14 @@ def index_article_view_fav(request):
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
 
 #------------------------------------------------------------------------------------------------------------#
-#Suppression de favoris selon le idArticle et idUser
+# Deletion of favorites based on idArticle and idUser
 
 @require_POST
 @csrf_exempt
 def delete_favoris_document(request):
 
     if request.method == 'POST':
-        # Récupérer idArticle et idUser de la requete
+        # Get idArticle and idUser from the request
         try:
             data = json.loads(request.body)
             idArticle = data.get('idArticle')
@@ -421,7 +423,7 @@ def delete_favoris_document(request):
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
 
-        # Vérifier si l'élément existe déja
+        # Check if the element already exists
         try:
             result = es.search(index=nom_index_fav, body={
                 "query": {
@@ -445,7 +447,7 @@ def delete_favoris_document(request):
             print(f"Erreur lors de la recherche : {e}")
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de la recherche : {e}'})
 
-        # Supression de l'element du cluster
+        # Delete the element from Elasticsearch
         try:
             es.delete(index=nom_index_fav, id=document_id)
             print(f"Document supprimé avec succès : {document_id}")
@@ -463,10 +465,10 @@ def delete_favoris_document(request):
 @require_GET
 def retrieve_and_save_favorite_articles(request):
     try:
-        #  Récupérer UserId à partir de la requete
+        # Retrieve UserId from the request's query parameters
         UserId = request.GET.get('UserId', '')
 
-        # 2. faire la recherche
+        # Perform a search in the favorite articles index based on UserId
         result = es.search(index=nom_index_fav, body={
             "query": {
                 "match": {
@@ -475,14 +477,15 @@ def retrieve_and_save_favorite_articles(request):
             }
         })
 
-        #  vérifier si on a des correspondances avec UserId
+        # Check if there are matches for the given UserId
         if result['hits']['total']['value'] > 0:
+            # Retrieve the favorite articles
             favorite_articles = result['hits']['hits']
 
-           
+            # Extract the idArticle from each favorite article
             idArticles = [article['_source']['idArticle'] for article in favorite_articles]
 
-            #  Chercher les correspondances
+            # Search for corresponding articles
             articles_search_results = []
             for idArticle in idArticles:
                 result_article = es.get(index=nom_index, id=idArticle)
@@ -494,7 +497,7 @@ def retrieve_and_save_favorite_articles(request):
             return JsonResponse([], safe=False)
 
     except Exception as e:
-        # En cas de probleme dans la sauvegarde
+        # Handle any errors that occur during the retrieval and saving process
         print(f"Error during retrieval and saving: {e}")
         return JsonResponse({'status': 'error', 'message': f'Error during retrieval and saving: {e}'})
     
