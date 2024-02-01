@@ -8,17 +8,19 @@ import { useNavigate } from 'react-router-dom';
 const Resultat = (props) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
-  const UserId = localStorage.getItem("user_id");
+  const userId = localStorage.getItem("user_id");
+  const userRole = localStorage.getItem("user_role");
+  console.log(userRole);
     const articleData = {
       idArticle: props.id,
-      idUser: UserId,
+      idUser: userId,
     };
 
     useEffect(() => {
-      // Mettre à jour l'état initial des favoris en fonction des données stockées dans localStorage
       const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-      setIsFavorite(favorites[props.id] || false);
-    }, [props.id]);
+      setIsFavorite(Array.isArray(favorites[props.id]) && favorites[props.id].includes(userId));
+    }, [props.id, userId]);
+    
 
   const handleRemoveClick = async () => {
     try {
@@ -32,14 +34,12 @@ const Resultat = (props) => {
 
       if (response.ok) {
         const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        delete favorites[props.id];
+        favorites[props.id] = favorites[props.id]?.filter(id => id !== userId);
         localStorage.setItem('favorites', JSON.stringify(favorites));
-        // Toggle the favorite status
         setIsFavorite(false);
-        console.log("Seccussefully deleted from favorites.")
-        console.log(articleData)
+        console.log("Successfully removed from favorites.")
       } else {
-        throw new Error("Failed to add to favorites.");
+        throw new Error("Failed to remove from favorites.");
       }
     } catch (error) {
       console.error("Error during fav:", error);
@@ -47,8 +47,6 @@ const Resultat = (props) => {
   }
 
   const handleAddClick = async () => {
-    
-
     try {
       const response = await fetch("http://localhost:8000/elastic/index_fav/", {
         method: "POST",
@@ -57,16 +55,15 @@ const Resultat = (props) => {
         },
         body: JSON.stringify(articleData),
       });
-
+  
       if (response.ok) {
-         // Ajouter l'article aux favoris localement
-      const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-      favorites[props.id] = true;
-      localStorage.setItem('favorites', JSON.stringify(favorites));
-        // Toggle the favorite status
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const existingFavorites = Array.isArray(favorites[props.id]) ? favorites[props.id] : [];
+        const updatedFavorites = [...existingFavorites, userId];
+        favorites[props.id] = updatedFavorites;
+        localStorage.setItem('favorites', JSON.stringify(favorites));
         setIsFavorite(true);
-        console.log("Seccussefully added to favorites.")
-        console.log(articleData)
+        console.log("Successfully added to favorites.")
       } else {
         throw new Error("Failed to add to favorites.");
       }
@@ -74,7 +71,7 @@ const Resultat = (props) => {
       console.error("Error during fav:", error);
     }
   };
-
+  
   const handleDetailsClick = () => {
     navigate(
       '/details',
@@ -109,11 +106,13 @@ const Resultat = (props) => {
         <div className='info'>{setInstitutions.join(', ')}</div>
         <div className='info'>{props.Data.publication_date.substring(0, 10)}</div>
 
-        {isFavorite ? (
+        {userRole === "user" && ( // Condition pour vérifier si l'utilisateur a le rôle "user"
+        isFavorite ? (
           <FavorisIconFilled className="favoris-icon" onClick={handleRemoveClick} />
         ) : (
           <FavorisIcon className="favoris-icon" onClick={handleAddClick} />
-        )}
+        )
+      )}
       </div>
 
       <div className="Details">
