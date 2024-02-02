@@ -13,15 +13,13 @@ from elasticsearch.helpers import scan
 es = Elasticsearch([{'scheme': 'http', 'host': 'elasticsearch', 'port': 9200}])
 nom_index = 'articles_scientifiques'
 
-# Index pour les articles favoris
+# Index for the favorites
 nom_index_fav = 'favoris'
 
-# Chemin vers le fichier JSON
-fichier_json_path = './elastic/resultat_recherche.json'
-
+# Path to the JSON Document
 fichier2_json_path = './elastic/document.json'
 
-# Chemin vers les fichiers JSON des favoris
+# Path to JSON documents (favorites artciles)
 
 fichier_json_path_fav = './elastic/resultat_recherche_fav.json'
 fichier2_json_path_fav = './elastic/document_fav.json'
@@ -57,7 +55,27 @@ def index_article(article):
 
         # Create the index with the mapping
         es.indices.create(index=nom_index, body=mapping, ignore=400) # ignore=400 permet d'ignorer l'erreur si l'index existe déjà
-        es.index(index=nom_index, body=article, ignore=400)
+        result = es.index(index=nom_index, body=article, ignore=400)
+        
+        generated_id = result.get('_id')
+        article['_id'] = generated_id
+
+        # Retrieve saved articles from the JSON file
+        try:
+            if os.path.getsize(fichier2_json_path) > 0:
+                with open(fichier2_json_path, 'r') as fichier_json:
+                    articles_existants = json.load(fichier_json)
+            else:
+                articles_existants = []
+        except FileNotFoundError:
+            articles_existants = []
+
+        # Add the new article to the list of existing articles
+        articles_existants.append(article)
+
+        # Save the list to the JSON file
+        with open(fichier2_json_path, 'w') as fichier_json:
+            json.dump(articles_existants, fichier_json, indent=2)
     
     else:
         index_stats = es.indices.stats(index=nom_index)
@@ -73,8 +91,10 @@ def index_article(article):
 
         if exist == False:
             # Index the article in the Elasticsearch index
-            es.index(index=nom_index, body=article, ignore=400)
-
+            result = es.index(index=nom_index, body=article, ignore=400)
+            generated_id = result.get('_id')
+            article['_id'] = generated_id
+            
             # Retrieve saved articles from the JSON file
             try:
                 if os.path.getsize(fichier2_json_path) > 0:
@@ -183,14 +203,7 @@ def search_articles(request):
         # 4. Get the list of articles
         search_results = [{'_id': hit['_id'], '_source': hit['_source']} for hit in hits]
 
-        # 5. Save the list to the JSON file
-        with open(fichier_json_path, 'w') as json_file:
-            json.dump(search_results, json_file, indent=2)
-            
-            # For confirmation
-            print(f"Sauvegarder les résultats dans {fichier_json_path}")
-
-        # 6. Return the results in JSON format
+        # 5. Return the results in JSON format
         return JsonResponse(search_results, safe=False)
     
     except Exception as e:
