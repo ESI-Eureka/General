@@ -7,6 +7,12 @@ import re
 import fitz
 import PyPDF2
 from collections import Counter
+import xmltodict
+import sys
+import requests
+import xml.etree.ElementTree as ET
+sys.stdout.reconfigure(encoding='utf-8')
+grobid_url = "http://localhost:8070/api/processFulltextDocument"
 ##############################################
 def convert_readable_date(date_str):
     try:
@@ -27,6 +33,10 @@ def convert_readable_date(date_str):
         print(f"Error converting date: {e}")
         return "Unknown Date"
 def extractData(pdf_file):
+    response = requests.post(grobid_url, files=pdf_file)
+    index_of_closing_angle_bracket = response.text.find('?>') + 2
+    # Extract the XML content without the declaration
+    xml_content_without_declaration = response.text[index_of_closing_angle_bracket:]
     sys.stdout.reconfigure(encoding='utf-8')
     pdf_content = pdf_file.read()
     pdf_reader =fitz.open("pdf",pdf_content)
@@ -88,11 +98,11 @@ def extractData(pdf_file):
         matched=match.group()
         Data['resume']=re.sub(fr'{matched}','',Data['resume'])
     university_names = ['Université', 'Laboratoire','University','Universit','Ecole','Department','Technology','Laboratory','Research','Center','Institute','Institut','Centre','Polytechnique']
-    Result = [name for name in filter1 if  any(univ_name in name for univ_name in university_names)]
-    k=0
-    for k in range(len(Result)):
-        Result[k]=remove_email_links(Result[k])
-    Data['institutions']=(list(set(Result)))
+    # Result = [name for name in filter1 if  any(univ_name in name for univ_name in university_names)]
+    # k=0
+    # for k in range(len(Result)):
+    #     Result[k]=remove_email_links(Result[k])
+    # Data['institutions']=(list(set(Result)))
     text = ''
     for page_num in range(0,num_pages):
         page = pdf_reader[page_num]
@@ -100,10 +110,10 @@ def extractData(pdf_file):
             text1=page.get_text()
         text += page.get_text()
         
-    auteurs=process_text_with_spacy(text1)
-    for Author in auteurs:
-        if not has_link_email(Author) and not any(univ_name in Author for univ_name in university_names):
-            Data['auteurs'].append(Author)
+    # auteurs=process_text_with_spacy(text1)
+    # for Author in auteurs:
+    #     if not has_link_email(Author) and not any(univ_name in Author for univ_name in university_names):
+    #         Data['auteurs'].append(Author)
     
     pattern = re.compile(r'\b(Keywords|KEYWORDS|Index Terms)\b.*?(\n.*?\n|$)', re.DOTALL)
     match = pattern.search(text)
@@ -168,7 +178,54 @@ def extractData(pdf_file):
 
     # La conversion au format ISO 8601 n'inclura que l'année, le mois et le jour
     Data['publication_date'] = date_object.isoformat()
-
+    parsed_dict = xmltodict.parse(xml_content_without_declaration)
+    Authors=[]
+    Institution=[]
+    list=parsed_dict['TEI']['teiHeader']['fileDesc']['sourceDesc']['biblStruct']['analytic']['author']
+    if type(list) is not list:
+        list=[list]
+    for i in range(len(list)):
+        element=list[i]
+        if type(element) is not dict:
+            print(element)
+            for j in range(len(element)):
+                element1=element[j]
+                try:
+                    Authors.append(element1['persName']['forename']['#text']+' '+element1['persName']['surname'])
+                    if 'affiliation' in element1:
+                        Institution=affliation(element1['affiliation'],Institution)
+                        
+                except:
+                    try:
+                        element2=element1['persName']
+                        forname=element2['forename']
+                        Authors.append(forname[0]['#text']+' '+forname[1]['#text']+' '+element2['surname'])
+                        if 'affiliation' in element2:
+                            Institution.append(affliation(element2['affiliation']))
+                    except:
+                        print(element1)
+                        Institution=affliation(element1['affiliation'],Institution)
+        else:
+            try:
+                element1=element['persName']
+                
+                Authors.append(element1['forename']['#text']+' '+element1['surname'])
+                if 'affiliation' in element1:
+                            Institution=affliation(element1['affiliation'],Institution)
+            except:
+                try:
+                    element2=element['persName']
+                    forname=element2['forename']
+                    Authors.append(forname[0]['#text']+' '+forname[1]['#text']+' '+element2['surname'])
+                    if 'affiliation' in element2:
+                        Institution=affliation(element2['affiliation'],Institution)
+                except:
+                    Institution=affliation(element1['affiliation'],Institution)
+    
+    Institutions=set(Institution)
+# Display the parsed dictionary
+    Data['auteurs']=Authors
+    Data['institutions']=list(Institutions)
     #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
     # Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
