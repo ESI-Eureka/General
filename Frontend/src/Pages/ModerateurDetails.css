@@ -31,14 +31,6 @@ body {
   overflow-x: hidden;   
 }
 
-@media screen and (max-width: 500px) {
-
-  .DetailsContainer {
-      margin: 20px;
-      padding: 0px;
-  }
-  
-}
 .NavCorriger {
   display: flex;
   align-items: center;
@@ -51,20 +43,19 @@ body {
   width: 12vw;
   height: 7vh;
   padding-left: 1rem;
-padding-right: 1rem;
+  padding-right: 1rem;
   justify-content: center;
   align-items: center;
   
   flex-shrink: 0;
   border-radius: 0.125rem;
   background: var(--Neutral04, #FFF);
-  color: var(--Blue-secondary, #2546F3);
-font-family: SF Pro Display;
-font-size: 1.2rem;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-cursor: pointer;
+  color: var(--Blue-secondary, hsl(230, 90%, 55%));
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
 }
 .correction{
   display: flex;
@@ -76,7 +67,7 @@ cursor: pointer;
   width: 12vw;
   height: 7vh;
   padding-left: 1rem;
-padding-right: 1rem;
+  padding-right: 1rem;
   justify-content: center;
   align-items: center;
   border: #ff0000 2px solid;
@@ -84,12 +75,20 @@ padding-right: 1rem;
   border-radius: 0.125rem;
   background: var(--Neutral04, #FFF);
   color: var(--redError, #ff0000);
-font-family: SF Pro Display;
-font-size: 1.2rem;
-font-style: normal;
-font-weight: 500;
-line-height: normal;
-cursor: pointer;
-margin-left: 50px;
-margin-bottom: 80px;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  margin-left: 50px;
+  margin-bottom: 80px;
+}
+
+@media screen and (max-width: 500px) {
+
+  .DetailsContainer {
+      margin: 20px;
+      padding: 0px;
+  }
+  
 }

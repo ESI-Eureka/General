@@ -80,7 +80,7 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
         <div className="NavFiltre">
             <div className="Listes">
                 <div id="Auteur" onClick={toggleFiltreAuteur}>
-                    <span> Auteur </span>
+                    <span> Author </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleAuteur}deg)` }} />
                 </div>
                 {filtreAuteurVisible && <FiltreAuteur options={auteurs} onSelect={setSelectedAuteurs}/>}
@@ -88,7 +88,7 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
 
             <div className="Listes">
                 <div id="MotCle" onClick={toggleFiltreMotCle}>
-                    <span> Mot clé </span>
+                    <span> Keyword </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleMotCle}deg)` }} />
                 </div>
                 {filtreMotCleVisible && <FiltreMotCle options={motsCles} onSelect={setSelectedMotsCles}/>}
@@ -104,14 +104,10 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
 
             <div className="Listes">
                 <div id="Periode" onClick={toggleFiltreDate}>
-                    <span> Période </span>
+                    <span> Period </span>
                     <Fleche style={{ transform: `rotate(${rotateAngleDate}deg)` }} />
                 </div>
-                {FiltreDateVisible && 
-                                 <FiltreDate
-                                 onDateDebutSelect={setSelectedDateDebut}
-                                 onDateFinSelect={setSelectedDateFin}
-                                 />}
+                {FiltreDateVisible && <FiltreDate onDateDebutSelect={setSelectedDateDebut} onDateFinSelect={setSelectedDateFin}/>}
             </div>
 
             <div className="Button">
@@ -122,7 +118,7 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
                         console.log('Données filtrées :', filteredData);
                         onFilterResultUpdate(filteredData); // pour passer les résultats de filtre au parent Filtre
                     }}
-                > Filtrer par </button>
+                > Filter by </button>
             </div>
             
         </div>

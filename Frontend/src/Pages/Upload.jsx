@@ -145,8 +145,8 @@ const Upload = () => {
         </>
       
       )}
-      <p className="phrase">Glisser-déposer ou <a className="link" onClick={handleFileInputClick}>
-        cliquer
+      <p className="phrase"> Drag and drop or <a className="link" onClick={handleFileInputClick}>
+        click
       </a>
     
       <input
@@ -154,7 +154,7 @@ const Upload = () => {
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileInputChange}
-      /> pour parcourir les fichiers</p>
+      />  to iterate over files </p>
       </div>
       
       {droppedFiles.length > 0 && (
