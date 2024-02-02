@@ -101,7 +101,7 @@ const ModerateurDetails = () => {
       <div className="DetailsContainer">
         <div className="NavCorriger">
         <Link to={'/home'}>
-          <RightFleche   />
+          <RightFleche />
         </Link>
           {!editMode ? (
             <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />
