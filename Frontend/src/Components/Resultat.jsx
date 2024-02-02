@@ -116,7 +116,7 @@ const Resultat = (props) => {
       </div>
 
       <div className="Details">
-        <a onClick={handleDetailsClick}>Afficher Details</a>
+        <a onClick={handleDetailsClick}>More details</a>
         <Fleche2 />
       </div>
     </div>

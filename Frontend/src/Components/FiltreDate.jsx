@@ -24,11 +24,11 @@ const FiltreDate = ({ onDateDebutSelect, onDateFinSelect }) => {
     return (
         <div className="BodyFiltre">
             <div>
-                <span> De </span>
+                <span> From </span>
                 <Calendrier onDateSelect={handleDateDebutSelection} />
             </div>
             <div>
-                <span> A </span>
+                <span> To </span>
                 <Calendrier onDateSelect={handleDateFinSelection} />
             </div>
         </div>
