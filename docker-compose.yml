@@ -5,7 +5,7 @@ services:
     build:
       context: ./Frontend
     ports:
-      - "3000:3000"  
+      - "3000:3000"
 
   django:
     build:
@@ -47,6 +47,12 @@ services:
     ports:
     - '9200:9200'
     - '9300:9300'
+
+  grobid:
+    image: lfoppiano/grobid:0.8.0
+    container_name: grobid
+    ports:
+      - "8070:8070"
 
 volumes:
   postgres_data:
