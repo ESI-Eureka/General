@@ -1,7 +1,6 @@
 .ResultatDetails {
     display: flex;
-    align-items: stretch; /* Changed this from center */
-    justify-content: center;
+    align-items: stretch; 
     font-size: 18px;
     overflow: hidden;
 }
@@ -20,16 +19,16 @@
 }
 
 .Format {
-    width: 10%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    cursor: pointer;
+    justify-content: space-between;
+    width: 10%;
 }
 
 .Pdf {
     background-color:#2546F3 ;
     width: 95%;
+    height: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -43,6 +42,7 @@
     background-color: #0923A9;
     width: 95%;
     display: flex;
+    height: 50%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
