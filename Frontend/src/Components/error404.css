@@ -1,0 +1,129 @@
+body{
+
+    font-family: "SF Pro Display";
+    
+    overflow: hidden;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 20vh;
+    height: 120vh;
+    width: 100vw;
+    position: relative;
+    top:-20vh
+}
+.err404{
+    margin-bottom: 14vh;
+    background: linear-gradient(180deg, rgba(9, 35, 169, 0.00) -7.53%, #000 37.63%);
+background-clip: text;
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+    font-size: 6vw;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    font-family: "SF Pro Display";
+}
+.hero{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: -4vh;
+}
+.TopImg{
+    position: absolute;
+    top: 0.1vh;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.00) 100%);
+    backdrop-filter: blur(27px);
+    width: 40vw;
+    height:25vh;
+    flex-shrink: 0;
+}
+.BottomImg{
+    position: absolute;
+
+    z-index: 0;
+}
+.first{
+    z-index: 3;
+}
+.second{
+    z-index: 3;
+}
+.hero{
+    margin-top: -30vh;
+    
+}
+.text{
+    z-index: 3;
+    font-family: "SF Pro Display";
+   
+    align-items: center;
+    justify-content: center;
+    width: 80vw;
+    position: relative;
+    top: -10vh;
+}
+.first{
+    color: #000;
+text-align: center;
+font-family: "SF Pro Display";
+font-size: 18px;
+font-style: normal;
+font-family: "SF Pro Display";
+line-height: normal;
+}
+.btn{
+    display: flex;
+    font-family: "SF Pro Display";
+    justify-content: center;
+    align-items: center;
+    width: 15vw;
+    height: 8vh;
+    border-radius: 0.2rem;
+background: var(--Blue-secondary, #2546F3);
+    color: #fff;
+    font-size: 18px;
+    font-style: normal;
+    line-height: normal;
+    text-align: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-top: 8px;
+    cursor: pointer;
+    position: absolute;
+    left: 40%;
+}
+.btn:hover{
+    background: var(--Blue-primary, #0A1F44);
+}
+
+@media screen and (max-width: 700px) {
+    .BottomImg svg{
+        width: 88px;
+        height: 88px;
+    }
+}
+
+@media screen and (max-width: 460px) {
+    .BottomImg svg{
+        width: 64px;
+        height: 64px;
+    }
+    .TopImg{
+        width: 70vw;
+        height: 20vh;
+    }
+    .btn{
+        font-size: 14px;
+        padding-left: 16px;
+        padding-right: 16px;
+        height: 6vh;
+    }
+}
