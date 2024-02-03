@@ -78,7 +78,11 @@ def extractData(pdf_file):
             
     else:
         Data['titre']=filter1[0]
-    
+    try:
+        titre=parsed_dict['TEI']['teiHeader']['fileDesc']['titleStmt']['title']['#text']
+        Data['titre']=titre
+    except:
+        print("hello")
     i=0
     index_of_abstract=0
     
@@ -101,6 +105,18 @@ def extractData(pdf_file):
         matched=match.group()
         Data['resume']=re.sub(fr'{matched}','',Data['resume'])
     university_names = ['Université', 'Laboratoire','University','Universit','Ecole','Department','Technology','Laboratory','Research','Center','Institute','Institut','Centre','Polytechnique']
+    
+    try:
+        list1=parsed_dict['TEI']['teiHeader']['profileDesc']['abstract']['div']
+        Abstract=list1[0]['p']
+        Data['resume']=Abstract
+    except:
+        try:
+            Abstract=parsed_dict['TEI']['text']['body']['div'][0]['p']['#text']
+            Data['resume']=Abstract
+        except:
+            print("hello")
+        
     # Result = [name for name in filter1 if  any(univ_name in name for univ_name in university_names)]
     # k=0
     # for k in range(len(Result)):
@@ -137,7 +153,11 @@ def extractData(pdf_file):
         keywords= [f'{word}' for word, count in keywords]
     
     Data['mots_cles']=keywords
-    
+    try:
+        keywords = parsed_dict['TEI']['teiHeader']['profileDesc']['textClass']['keywords']['term']
+        Data['mots_cles']=keywords
+    except:
+        print("hello")
     pattern = re.compile(r'\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){3}', re.DOTALL)
 
 
@@ -232,4 +252,5 @@ def extractData(pdf_file):
     # Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
     Data['corrected']=0
+    print(Data)
     return Data 
