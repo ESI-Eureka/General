@@ -29,9 +29,6 @@ class TestIndexation(TestCase):
         # Call the view function directly
         response = index_article_view(request)
 
-        # Print response content for debugging
-        print(response.content)
-
         # Assert the status code
         self.assertEqual(response.status_code, 200)
 
