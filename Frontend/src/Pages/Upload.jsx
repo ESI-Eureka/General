@@ -184,7 +184,7 @@ const Upload = () => {
       {success && (
         <>
           {/* Add your success overlay content here */}
-          <div className="overlay success">
+          <div className="overlay-success">
           <img src={done} className="done"/>
           <p>Success!</p></div>
           <MyIcon onClick={handleContinuer} className="contin"/>

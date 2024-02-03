@@ -134,22 +134,8 @@ body {
     padding: 24px;
     border: 2px solid green;
 }
-.overlay.success p{
-    font-family: Montserrat;
-    font-size: 1.125rem; /* Initial font size using vw unit */
-    font-style: normal;
-    font-weight: 800;
-    line-height: normal;
-    word-wrap: break-word;
-    text-align: center;
-    margin-top: 4vh;
-}
-.contin{
-    width: 15vw;
-    height: 10vh;
-    left: 8.5vw;
-    cursor: pointer;
-}
+
+
 .cross{
     position: absolute;
     top: 8px;
@@ -175,20 +161,31 @@ body {
     width: 100%;
     
 }
-
-
-@media (max-width: 768px) {
-    .contin {
-        width: 20vw;
-        height: 20vh;
-        left: 20vw;
-    }
+.overlay-success{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2vh;
 }
 
-@media (max-width: 480px) {
+.contin {
+    margin-top: 3vh;
+    height: 5vh;
+    cursor: pointer;
+}
+@media (max-width: 1024px) {
     .contin {
-        width: 30vw;
-        height: 30vh;
-        left: 40vw;
+        height: 2.5rem;
     }
+}
+@media (max-width: 768px) {
+    
+    .overlayContainer {
+        position: absolute;
+    top: 30vh ;
+    left: 10vw;
+        width: 70vw;
+        height: 40vh;
+    }
+    
 }
