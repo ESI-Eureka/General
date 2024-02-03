@@ -177,7 +177,7 @@ def extractData(pdf_file):
 
         # print("keywords : ", Data['mots_cles'])
     except:
-
+        Data['mots_cles']=keywords
         print("hello3")
     pattern = re.compile(r'\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){3}', re.DOTALL)
 
