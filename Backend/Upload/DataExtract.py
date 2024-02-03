@@ -11,6 +11,7 @@ import xmltodict
 import sys
 import requests
 import xml.etree.ElementTree as ET
+from io import BytesIO
 sys.stdout.reconfigure(encoding='utf-8')
 grobid_url = "http://localhost:8070/api/processFulltextDocument"
 ##############################################
@@ -33,12 +34,14 @@ def convert_readable_date(date_str):
         print(f"Error converting date: {e}")
         return "Unknown Date"
 def extractData(pdf_file):
-    response = requests.post(grobid_url, files=pdf_file)
+    buff=pdf_file.read()
+    files = {'input': ('filename.pdf', BytesIO(buff), 'application/pdf')}
+    response = requests.post(grobid_url, files=files)
     index_of_closing_angle_bracket = response.text.find('?>') + 2
     # Extract the XML content without the declaration
     xml_content_without_declaration = response.text[index_of_closing_angle_bracket:]
     sys.stdout.reconfigure(encoding='utf-8')
-    pdf_content = pdf_file.read()
+    pdf_content = buff
     pdf_reader =fitz.open("pdf",pdf_content)
     num_pages = pdf_reader.page_count
     Data= {
@@ -181,11 +184,11 @@ def extractData(pdf_file):
     parsed_dict = xmltodict.parse(xml_content_without_declaration)
     Authors=[]
     Institution=[]
-    list=parsed_dict['TEI']['teiHeader']['fileDesc']['sourceDesc']['biblStruct']['analytic']['author']
-    if type(list) is not list:
-        list=[list]
-    for i in range(len(list)):
-        element=list[i]
+    listt=parsed_dict['TEI']['teiHeader']['fileDesc']['sourceDesc']['biblStruct']['analytic']['author']
+    if type(listt) is not list:
+        listt=[listt]
+    for i in range(len(listt)):
+        element=listt[i]
         if type(element) is not dict:
             print(element)
             for j in range(len(element)):
@@ -203,7 +206,6 @@ def extractData(pdf_file):
                         if 'affiliation' in element2:
                             Institution.append(affliation(element2['affiliation']))
                     except:
-                        print(element1)
                         Institution=affliation(element1['affiliation'],Institution)
         else:
             try:
