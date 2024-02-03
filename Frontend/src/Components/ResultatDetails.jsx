@@ -10,26 +10,28 @@ const ResultatDetails = ({ data, setData, editMode }) => {
   const handleDownloadTxt = () => {
     const textContent = data.texte_integral;
 
-    // Create a Blob with the text content
-    const blob = new Blob([textContent], { type: "text/plain" });
+    const blob = new Blob([textContent], { type: 'text/plain' });
 
-    // Create a link element and trigger a click event to initiate the download
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = "text_file.txt";
+    link.download = 'text_file.txt';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+
   const handleArticleTitre = (e) => {
     setData((prevData) => ({ ...prevData, titre: e.target.value }));
   };
+
   const handleNomAuteur = (e) => {
     setData((prevData) => ({ ...prevData, auteurs: e.target.value }));
   };
+
   const handleDate = (e) => {
     setData((prevData) => ({ ...prevData, publication_date: e.target.value }));
   };
+
   return (
     <div className="ResultatDetails">
       <div className="InformationContainer">
@@ -42,6 +44,7 @@ const ResultatDetails = ({ data, setData, editMode }) => {
         ) : (
           <h3> {data.titre} </h3>
         )}
+
         {editMode ? (
           <textarea
             className="textarea-as-h5"
@@ -49,8 +52,12 @@ const ResultatDetails = ({ data, setData, editMode }) => {
             onChange={handleNomAuteur}
           />
         ) : (
-          <h5> {data.auteurs} </h5>
+          <>
+            <div className='info'>Authors: </div>
+            <div className='info2'>{data.auteurs.join(', ')}</div>
+          </>
         )}
+
         {editMode ? (
           <textarea
             className="textarea-as-span"
@@ -58,7 +65,7 @@ const ResultatDetails = ({ data, setData, editMode }) => {
             onChange={handleDate}
           />
         ) : (
-          <span> {data.publication_date} </span>
+          <div>{data.publication_date}</div>
         )}
       </div>
 
@@ -68,6 +75,7 @@ const ResultatDetails = ({ data, setData, editMode }) => {
             <Pdf />
           </Link>
         </div>
+
         <div className="Txt" onClick={handleDownloadTxt}>
           <Txt />
         </div>
@@ -77,3 +85,4 @@ const ResultatDetails = ({ data, setData, editMode }) => {
 };
 
 export default ResultatDetails;
+

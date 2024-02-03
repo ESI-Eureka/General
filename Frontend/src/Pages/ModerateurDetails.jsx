@@ -133,13 +133,23 @@ const ModerateurDetails = () => {
 
       {/* Afficher la boîte de dialogue de confirmation si showDeleteConfirmation est vrai */}
       {showDeleteConfirmation && (
-        <div className="delete-confirmation">
-          <p>Are you sure you want to delete?</p>
-          <div className="buttons">
-            <button onClick={handleConfirmDelete}>Yes</button>
-            <button onClick={handleCancelDelete}>No</button>
-          </div>  
-        </div>
+        <>
+          <div className="modal-overlay"></div>
+          <div className="delete-confirmation">
+            <p>Are you sure you want to delete this item?</p>
+            <div className="delete-buttons">
+              <button className="delete-btn" onClick={handleConfirmDelete}>
+                Yes
+              </button>
+              <button
+                className="cancel-btn"
+                onClick={handleCancelDelete}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

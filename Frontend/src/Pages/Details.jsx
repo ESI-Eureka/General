@@ -30,21 +30,17 @@ const Details = () => {
                 <RightFleche   />
                 </Link>
                 <div className="ResultatDetailsContainer">
-
-
                     <ResultatDetails
-                    data={data}
-                    setData={setData}
-                    editMode={editMode}
+                        data={data}
+                        setData={setData}
+                        editMode={editMode}
                     />
-
                     <div className="moreDetails"> 
-
-                    <MoreDetails
-                    data={data}
-                    editMode={editMode}
-                    setData={setData}
-                    />
+                        <MoreDetails
+                        data={data}
+                        editMode={editMode}
+                        setData={setData}
+                        />
                     </div>
                 </div>
             </div>
