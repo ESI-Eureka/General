@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useState,useRef } from "react";
 import React from "react";
+import { Route, Redirect } from 'react-router-dom';
 import "./Upload.css";
 import NavBar from "../Components/NavBar";
 import SearchBar from '../Components/SearchBar';
@@ -20,7 +21,7 @@ const Upload = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
     const [droppedFiles, setDroppedFiles] = useState([]);
-    
+    const [redirectTo404, setRedirectTo404] = useState(false);
     const handleWhitePlusClick = async (search) => {
       setLoading(true);
       
@@ -41,9 +42,14 @@ const Upload = () => {
           "http://127.0.0.1:8000/Upload/pdff/",
           formData
         );
-        console.log(response.data);
-        setSuccess(true);
-        setDroppedFiles([]); // Handle the response as needed
+        if (response.status === 404) {
+          // Redirect to the 404 error page
+          setRedirectTo404(true);
+        } else {
+          console.log(response.data);
+          setSuccess(true);
+          setDroppedFiles([]);
+        } // Handle the response as needed
       } catch (error) {
         console.error("Error uploading files:", error);
         setError("Error during upload"); // Handle the error response as needed
@@ -122,6 +128,7 @@ const Upload = () => {
 
   return (
     <div>
+     {redirectTo404 && <Redirect to="/404" />}
       <NavBar />
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
@@ -146,8 +153,8 @@ const Upload = () => {
         </>
       
       )}
-      <p className="phrase">Glisser-déposer ou <a className="link" onClick={handleFileInputClick}>
-        cliquer
+      <p className="phrase">Drag and Drop or <a className="link" onClick={handleFileInputClick}>
+        click
       </a>
     
       <input
@@ -155,7 +162,7 @@ const Upload = () => {
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileInputChange}
-      /> pour parcourir les fichiers</p>
+      /> to browse files</p>
       </div>
       
       {droppedFiles.length > 0 && (
