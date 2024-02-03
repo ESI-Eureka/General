@@ -23,18 +23,16 @@ const PrivateRoute = ({ element: Element, role, ...rest }) => {
   const accessToken = localStorage.getItem("access_token");
   const userRole = localStorage.getItem("user_role");
 
-  let isAuthenticated = false;
+  const isAuthenticated = accessToken !== null;
 
-  if (accessToken) {
-    isAuthenticated = true;
+  const isAuthorized = role ? roles[role].includes(userRole) : true;
+
+  if (isAuthenticated) {
+    return isAuthorized ? <Element {...rest} /> : <Navigate to="/not-authorized" replace />;
   } else {
-    isAuthenticated = false;
+    return <Navigate to="/login" replace />;
   }
-  const isAuthorized = role ? roles[role].some((r) => userRole === r) : true;
-
-  return (isAuthorized && isAuthenticated) ? (<Element {...rest} />) : (<Navigate to="/login" replace />);
 };
-
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -43,27 +41,42 @@ function App() {
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
     const storedUserRole = localStorage.getItem("user_role");
-
     if (accessToken) {
       setAuthenticated(true);
+      setUserRole(storedUserRole);
     } else {
       setAuthenticated(false);
+      setUserRole(null);
     }
-    setUserRole(storedUserRole);
   }, []);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={authenticated ? <Navigate to="/home" /> : <Navigate to="/login" />} />
-        <Route path="/home" element={<PrivateRoute element={userRole === "admin" ? Upload : userRole === "user" ? SearchPage :userRole === "moderator" ? ModArticles : NotAuthorized} authenticated={authenticated} role={userRole} />} />
-        <Route path="/favorite" element={<PrivateRoute element={Favoris} authenticated={authenticated} role="user" />} />
-        <Route path="/filtre" element={<PrivateRoute element={Filtre} authenticated={authenticated} role="user" />} />
-        <Route path="/moderators" element={<PrivateRoute element={Moderators} authenticated={authenticated} role="admin" />} />
-        <Route path="/profil" element={<PrivateRoute element={Profil} authenticated={authenticated} />} />
-        <Route path="/details" element={<PrivateRoute element={userRole === "moderator" ? ModerateurDetails : userRole === "user" ? Details : NotAuthorized} authenticated={authenticated} role={userRole} />} />
-        <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
-        <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <NotAuthorized authenticated={authenticated} />} />
+        <Route
+          path="/home"
+          element={
+            userRole === "admin" ? (
+              <PrivateRoute element={Upload} />
+            ) : userRole === "moderator" ? (
+              <PrivateRoute element={ModArticles} />
+            ) : userRole === "user" ? (
+              <PrivateRoute element={SearchPage} />
+            ) : authenticated ? (
+              <Navigate to="/home" />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/favorite" element={<PrivateRoute element={Favoris} role="user" />} />
+        <Route path="/filtre" element={<PrivateRoute element={Filtre} role="user" />} />
+        <Route path="/moderators" element={<PrivateRoute element={Moderators} role="admin" />} />
+        <Route path="/profil" element={<PrivateRoute element={Profil} />} />
+        <Route path="/details" element={<PrivateRoute element={userRole === "moderator" ? ModerateurDetails : userRole === "user" ? Details : NotAuthorized} role={userRole} />} />
+        <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <Navigate to="/home" />} />
+        <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <Navigate to="/home" />} />
         <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
       </Routes>
     </BrowserRouter>

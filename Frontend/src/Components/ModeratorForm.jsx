@@ -28,9 +28,8 @@ const ModeratorForm = ({ onAdd, onClose }) => {
     .then((response) => {
       if (response.ok) {
          console.log("Moderator added successfully:", response.body);
-         // Call the parent function with the added moderator details
-         onAdd(userData.email); // Assuming the server returns the moderator details, including email
-         setEmail(""); // Reset the form
+         onAdd(userData.email); 
+         setEmail(""); 
          return response.json();
       } else if (response.status === 400) {
          setError("Email already exists.");
@@ -57,19 +56,19 @@ const ModeratorForm = ({ onAdd, onClose }) => {
         <h2>Add Moderator</h2>
         <form onSubmit={handleSubmit}>
           <div className="email-password">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Email :</label>
             <input
               type="text"
               id="email"
               value={email}
               placeholder="Enter email"
               onChange={(e) => setEmail(e.target.value)}
-              pattern="[^\s@]+@[^\s@]+\.[^\s@]+" // Specify the pattern for a valid email
-              title="utilisateur@example.com" // Specify the validation message
+              pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+              title="utilisateur@example.com" 
               required
             />
 
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Password :</label>
             <input
               type="password"
               id="password"

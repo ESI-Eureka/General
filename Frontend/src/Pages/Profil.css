@@ -6,10 +6,12 @@
   align-items: center;
   padding: 5vh 4vw;
 }
+
 .buttons {
   display: flex;
   gap: 4vw;
 }
+
 .form-header button {
   border: none;
   display: flex;
@@ -24,20 +26,24 @@
   cursor: pointer;
   margin-top: 0;
 }
+
 .cancel-button {
   background-color: #fff;
   color: #2546f3;
 }
+
 .edit-button {
   background-color: #2546f3;
   color: #fff;
 }
+
 .profile-form {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Center the form vertically */
+  align-items: center;
   justify-content: center;
 }
+
 .profile-form .email-password {
   display: flex;
   flex-direction: column;
@@ -53,6 +59,7 @@
   background: #f3f3f3;
   width: 60%;
 }
+
 .profile-form form input {
   font-family: "Montserrat", sans-serif;
   font-size: calc(10px + 1vmin);
@@ -62,6 +69,7 @@
   border-radius: 8px;
   border: 1px solid #a6a6a6;
 }
+
 
 @media screen and (max-width: 1024px) {
   .picAuth-container {
@@ -80,6 +88,7 @@
     margin-top: 0;
   }
 }
+
 
 @media screen and (max-width: 768px) {
   .form-header {
