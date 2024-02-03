@@ -28,6 +28,11 @@ header {
 nav a.active {
 	color: #2546F3;
 }
+nav a:hover {
+	text-decoration:underline;
+	color: #2546F3;
+}
+
 
 .logout {
 	display: flex;

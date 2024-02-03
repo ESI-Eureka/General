@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
+
 import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
@@ -29,9 +29,6 @@ const Details = () => {
                 <Link to={'/filtre'}>
                 <RightFleche   />
                 </Link>
-                <Link to={'/filtre'}>
-                <RightFleche   />
-                </Link>
                 <div className="ResultatDetailsContainer">
 
 
@@ -39,18 +36,9 @@ const Details = () => {
                     data={data}
                     setData={setData}
                     editMode={editMode}
-                    data={data}
-                    setData={setData}
-                    editMode={editMode}
                     />
 
                     <div className="moreDetails"> 
-
-                    <MoreDetails
-                    data={data}
-                    editMode={editMode}
-                    setData={setData}
-                    />
 
                     <MoreDetails
                     data={data}
