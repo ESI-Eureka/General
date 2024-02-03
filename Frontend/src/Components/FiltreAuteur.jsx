@@ -33,7 +33,7 @@ const FiltreAuteur = ({ options , onSelect }) => {
   
       return (
           <div className="BodyFiltre">
-              <SearchBar2 label={"Rechercher Auteur"} icon={<SearchIcon2 />} />
+              <SearchBar2 label={"Search an author"} icon={<SearchIcon2 />} />
               <div className="Container">
                   {options.map((option, index) => (
                       <div className="Ligne" key={index}>

@@ -33,7 +33,6 @@ const SearchPage = () => {
     }
   };
 
-
   return (
     <div>
       <NavBar />
@@ -41,7 +40,7 @@ const SearchPage = () => {
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
         <SearchBar
-          label={"Rechercher un article"}
+          label={"Search an article"}
           icon={<SearchIcon />}
           onSearch={handleSearch}  // Passer la fonction de recherche comme gestionnaire
         />

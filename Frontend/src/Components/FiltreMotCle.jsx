@@ -32,7 +32,7 @@ const FiltreMotCle = ({ options, onSelect }) => {
 
     return (
         <div className="BodyFiltre">
-            <SearchBar2 label={"Ajouter mot clé"} icon={<SearchIcon2 />} />
+            <SearchBar2 label={"Add a keyword"} icon={<SearchIcon2 />} />
             <div className="Container">
                 {options.map((option, index) => (
                     <div className="Ligne" key={index}>

@@ -34,7 +34,7 @@ const MoreDetails = ({ editMode,data,setData}) => {
         )}
       </div>
       <div>
-        <h4>Mots clés</h4>
+        <h4>Keywords</h4>
         {editMode ? (
           <textarea className="textarea-as-p" defaultValue={data.mots_cles} onChange={handleKeywordsChange} />
         ) : (
@@ -42,7 +42,7 @@ const MoreDetails = ({ editMode,data,setData}) => {
         )}
       </div>
       <div>
-        <h4>Résumé</h4>
+        <h4>Abstract</h4>
         {editMode ? (
           <textarea className="textarea-as-p" defaultValue={data.resume} onChange={handleSummaryChange} />
         ) : (
@@ -50,7 +50,7 @@ const MoreDetails = ({ editMode,data,setData}) => {
         )}
       </div>
       <div>
-        <h4>Références bibliographiques</h4>
+        <h4>Bibliographic references</h4>
         {editMode ? (
           <textarea className="textarea-as-p" defaultValue={data.references} onChange={handleFourthVariableChange} />
         ) : (

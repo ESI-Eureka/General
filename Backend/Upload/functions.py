@@ -12,6 +12,22 @@ from email_validator import validate_email, EmailNotValidError
 #************************************************
 #Functions 
 
+def orgname(orgname):
+    if type(orgname) is dict:
+        return orgname['#text']
+    else:
+        institute=''
+        for k in range(len(orgname)):
+            institute=institute+' '+orgname[k]['#text']
+        return institute
+def affliation(affiliation,Institution):
+    if type(affiliation) is dict:
+        Institution.append(orgname(affiliation['orgName']))
+    else:
+        institute=[]
+        for k in range(len(affiliation)):
+            Institution.append(orgname(affiliation[k]['orgName']))
+    return Institution
 
 def remove_links_emails(text):
     """
