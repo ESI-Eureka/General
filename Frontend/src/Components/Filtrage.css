@@ -45,8 +45,12 @@
 
 .Ligne {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
+}
+
+.Ligne input {
+    width: 25px;
 }
 
 .Ligne span {

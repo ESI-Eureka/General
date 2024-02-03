@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import NavBar from '../Components/NavBar';
 import ResultatDetails from '../Components/ResultatDetails';
 import MoreDetails from '../Components/MoreDetails';
 import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
 import { Link, useLocation } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-
 
 const Details = () => {
     
@@ -16,6 +14,7 @@ const Details = () => {
     const [data, setData] = useState(location.state?.data);
     const [editMode, setEditMode] = useState(false);
     const [id, setId] = useState(location.state?.id);
+    
     useEffect(() => {
       setInitialData(location.state?.data);
       setData(location.state?.data);
@@ -30,15 +29,28 @@ const Details = () => {
                 <Link to={'/filtre'}>
                 <RightFleche   />
                 </Link>
+                <Link to={'/filtre'}>
+                <RightFleche   />
+                </Link>
                 <div className="ResultatDetailsContainer">
 
+
                     <ResultatDetails
+                    data={data}
+                    setData={setData}
+                    editMode={editMode}
                     data={data}
                     setData={setData}
                     editMode={editMode}
                     />
 
                     <div className="moreDetails"> 
+
+                    <MoreDetails
+                    data={data}
+                    editMode={editMode}
+                    setData={setData}
+                    />
 
                     <MoreDetails
                     data={data}

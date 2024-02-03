@@ -1,6 +1,6 @@
 // MoreDetails.js
 
-import React, { useState,useEffect } from "react";
+import React from "react";
 import './MoreDetails.css';
 
 const MoreDetails = ({ editMode,data,setData}) => {

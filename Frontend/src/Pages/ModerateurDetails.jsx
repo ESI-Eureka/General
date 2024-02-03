@@ -12,13 +12,13 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ModerateurDetails = () => {
-  
-
   const location = useLocation();
   const [initialData, setInitialData] = useState(location.state?.data);
   const [data, setData] = useState(location.state?.data);
   const [editMode, setEditMode] = useState(false);
   const [id, setId] = useState(location.state?.id);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
   useEffect(() => {
     setInitialData(location.state?.data);
     setData(location.state?.data);
@@ -29,80 +29,81 @@ const ModerateurDetails = () => {
     setEditMode(!editMode);
   };
 
-  const handleSaveClick = async() => {
-    const editedData={
+  const handleSaveClick = async () => {
+    const editedData = {
       ...data,
       "corrected": 1,
-    }
-    // Perform save logic here
-    setEditMode(0);
+    };
+
+    setEditMode(false);
     setData(editedData);
     setInitialData(data);
-    console.log(id);
+
     try {
-      console.log(id,data);
       const response = await axios.post(
         "http://127.0.0.1:8000/elastic/maj/",
         {
-          doc_id: id,  // Pass the doc_id as a parameter
-          nouveau_article: data,  // Pass the updated data as a parameter
+          doc_id: id,
+          nouveau_article: data,
         }
-        
       );
       if (response.status === 200) {
-        // Perform additional logic if the save was successful
         console.log('Save successful');
       } else {
-        // Handle errors if the save fails
         console.error('Save failed');
       }
     } catch (error) {
-      // Handle network or other errors
       console.error('Error:', error);
     }
   };
 
   const handleCancelClick = () => {
-    // Revert back to the initial data on cancel
     setData(initialData);
     setEditMode(false);
   };
 
   const navigate = useNavigate();
-  
-  const handleDeleteClick = async() => {
+
+  const handleDeleteClick = () => {
+    // Afficher la boîte de dialogue de confirmation
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      console.log(id);
       const response = await axios.post(
         "http://127.0.0.1:8000/elastic/delete/",
         {
-          doc_id: id,  // Pass the doc_id as a parameter
+          doc_id: id,
         }
-
-      );  
+      );
       if (response.status === 200) {
-        // Perform additional logic if the save was successful
         console.log('Delete successful');
         navigate('/home');
-      } else {  
-        // Handle errors if the save fails
+      } else {
         console.error('Delete failed');
       }
-    } 
-    catch (error) {
-      // Handle network or other errors
+    } catch (error) {
       console.error('Error:', error);
+    } finally {
+      // Masquer la boîte de dialogue de confirmation et réinitialiser le flou
+      setShowDeleteConfirmation(false);
     }
-  } 
+  };
+
+  const handleCancelDelete = () => {
+    // Masquer la boîte de dialogue de confirmation et réinitialiser le flou
+    setShowDeleteConfirmation(false);
+  };
 
   return (
     <div>
       <NavBar />
-      <div className="DetailsContainer">
+      <div className={`DetailsContainer ${showDeleteConfirmation ? 'blurred-background' : ''}`}>
         <div className="NavCorriger">
-        <Link to={'/home'}>
-          <RightFleche />
-        </Link>
+          <Link to={'/home'}>
+            <RightFleche />
+          </Link>
           {!editMode ? (
             <IconedButton icon={Ecrire} text="Correct" onClick={handleEditClick} />
           ) : (
@@ -129,6 +130,17 @@ const ModerateurDetails = () => {
         </div>
       </div>
       <span className='Delete' onClick={handleDeleteClick}>Delete</span>
+
+      {/* Afficher la boîte de dialogue de confirmation si showDeleteConfirmation est vrai */}
+      {showDeleteConfirmation && (
+        <div className="delete-confirmation">
+          <p>Are you sure you want to delete?</p>
+          <div className="buttons">
+            <button onClick={handleConfirmDelete}>Yes</button>
+            <button onClick={handleCancelDelete}>No</button>
+          </div>  
+        </div>
+      )}
     </div>
   );
 };

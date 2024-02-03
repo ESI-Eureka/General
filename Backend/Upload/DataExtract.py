@@ -13,7 +13,7 @@ import requests
 import xml.etree.ElementTree as ET
 from io import BytesIO
 sys.stdout.reconfigure(encoding='utf-8')
-grobid_url = "http://localhost:8070/api/processFulltextDocument"
+grobid_url = "http://grobid:8070/api/processFulltextDocument"
 ##############################################
 def convert_readable_date(date_str):
     try:
@@ -40,6 +40,7 @@ def extractData(pdf_file):
     index_of_closing_angle_bracket = response.text.find('?>') + 2
     # Extract the XML content without the declaration
     xml_content_without_declaration = response.text[index_of_closing_angle_bracket:]
+    parsed_dict = xmltodict.parse(xml_content_without_declaration)
     sys.stdout.reconfigure(encoding='utf-8')
     pdf_content = buff
     pdf_reader =fitz.open("pdf",pdf_content)
@@ -77,12 +78,12 @@ def extractData(pdf_file):
             Data['titre']=Data['titre']+' '+filter1[2]
             
     else:
-        Data['titre']=filter1[0]
+        Data['titre']=filter1[0]    
     try:
         titre=parsed_dict['TEI']['teiHeader']['fileDesc']['titleStmt']['title']['#text']
         Data['titre']=titre
     except:
-        print("hello")
+        print("hello1")
     i=0
     index_of_abstract=0
     
@@ -115,7 +116,7 @@ def extractData(pdf_file):
             Abstract=parsed_dict['TEI']['text']['body']['div'][0]['p']['#text']
             Data['resume']=Abstract
         except:
-            print("hello")
+            print("hello2")
         
     # Result = [name for name in filter1 if  any(univ_name in name for univ_name in university_names)]
     # k=0
@@ -154,10 +155,30 @@ def extractData(pdf_file):
     
     Data['mots_cles']=keywords
     try:
-        keywords = parsed_dict['TEI']['teiHeader']['profileDesc']['textClass']['keywords']['term']
-        Data['mots_cles']=keywords
+        keywords = parsed_dict['TEI']['teiHeader']['profileDesc']['textClass']['keywords']
+        all_keywords=[]
+        all_keywords.extend(keywords['term'])
+        Data['mots_cles']=all_keywords
+        print("keywords : ",all_keywords)
+            
+        # if keywords:
+        #     if isinstance(keywords, list):
+        #         # Flatten the list of lists
+        #         flat_keywords = [keyword for sublist in keywords for keyword in sublist]
+        #         Data['mots_cles'] = flat_keywords
+        #     elif isinstance(keywords, dict):
+        #         # If 'keywords' is a dictionary, then extract 'term' directly
+        #         Data['mots_cles'] = [keywords.get('term')]
+        #     else:
+        #         # Handle other cases where 'keywords' might be of unexpected type
+        #         mots_cles = []
+        # else:
+        #     mots_cles = []
+
+        # print("keywords : ", Data['mots_cles'])
     except:
-        print("hello")
+        Data['mots_cles']=keywords
+        print("hello3")
     pattern = re.compile(r'\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){3}', re.DOTALL)
 
 
@@ -201,56 +222,101 @@ def extractData(pdf_file):
 
     # La conversion au format ISO 8601 n'inclura que l'année, le mois et le jour
     Data['publication_date'] = date_object.isoformat()
-    parsed_dict = xmltodict.parse(xml_content_without_declaration)
-    Authors=[]
-    Institution=[]
-    listt=parsed_dict['TEI']['teiHeader']['fileDesc']['sourceDesc']['biblStruct']['analytic']['author']
-    if type(listt) is not list:
-        listt=[listt]
-    for i in range(len(listt)):
-        element=listt[i]
-        if type(element) is not dict:
-            print(element)
-            for j in range(len(element)):
-                element1=element[j]
-                try:
-                    Authors.append(element1['persName']['forename']['#text']+' '+element1['persName']['surname'])
-                    if 'affiliation' in element1:
-                        Institution=affliation(element1['affiliation'],Institution)
-                        
-                except:
-                    try:
-                        element2=element1['persName']
-                        forname=element2['forename']
-                        Authors.append(forname[0]['#text']+' '+forname[1]['#text']+' '+element2['surname'])
-                        if 'affiliation' in element2:
-                            Institution.append(affliation(element2['affiliation']))
-                    except:
-                        Institution=affliation(element1['affiliation'],Institution)
+    authors = parsed_dict['TEI']['teiHeader']['fileDesc']['sourceDesc']['biblStruct']['analytic']['author']
+
+    # Extracting author names
+    author_institutions = []
+    author_names = []
+
+    institutions_set = set()  # To keep track of unique institutions
+
+    if isinstance(authors, dict):  # If only one author
+        pers_name = authors.get('persName', {})
+        forename = pers_name.get('forename', {})
+        surname = pers_name.get('surname', '')
+        if isinstance(forename, list):
+            forename = ' '.join([fn.get('#text', '') for fn in forename])
         else:
-            try:
-                element1=element['persName']
-                
-                Authors.append(element1['forename']['#text']+' '+element1['surname'])
-                if 'affiliation' in element1:
-                            Institution=affliation(element1['affiliation'],Institution)
-            except:
-                try:
-                    element2=element['persName']
-                    forname=element2['forename']
-                    Authors.append(forname[0]['#text']+' '+forname[1]['#text']+' '+element2['surname'])
-                    if 'affiliation' in element2:
-                        Institution=affliation(element2['affiliation'],Institution)
-                except:
-                    Institution=affliation(element1['affiliation'],Institution)
-    
-    Institutions=set(Institution)
+            forename = forename.get('#text', '')
+        full_name = f"{forename} {surname}"
+        author_names.append(full_name)
+
+
+
+        if 'affiliation' in authors:
+            affiliation = authors['affiliation']
+            if isinstance(affiliation, list):
+                for aff in affiliation:
+                    org_name = aff.get('orgName', '')
+                    if isinstance(org_name, list):
+                        org_name = org_name[0]['#text'] if org_name else ''
+                    elif isinstance(org_name, dict):
+                        org_name = org_name['#text']  # Extract the text from the dictionary
+                    if org_name and org_name not in institutions_set:  # Check if not already encountered
+                        author_institutions.append(org_name)
+                        institutions_set.add(org_name)
+            else:
+                org_name = affiliation.get('orgName', '')
+                if isinstance(org_name, list):
+                    org_name = org_name[0]['#text'] if org_name else ''
+                elif isinstance(org_name, dict):
+                    org_name = org_name['#text']  # Extract the text from the dictionary
+                if org_name and org_name not in institutions_set:  # Check if not already encountered
+                    author_institutions.append(org_name)
+                    institutions_set.add(org_name)
+
+    elif isinstance(authors, list):  # If multiple authors
+        for author in authors:
+            if isinstance(author, dict) and 'persName' in author:
+                pers_name = author.get('persName', '')
+                forename = pers_name.get('forename', '')
+                surname = pers_name.get('surname', '')
+                if isinstance(forename, list):
+                    forename = ' '.join([fn.get('#text', '') for fn in forename])
+                elif isinstance(forename, dict):
+                    forename = forename.get('#text', '')
+                else:
+                    forename = forename
+                full_name = f"{forename} {surname}"
+                author_names.append(full_name)
+
+
+            if 'affiliation' in author:
+                affiliation = author['affiliation']
+                if isinstance(affiliation, list):
+                    for aff in affiliation:
+                        org_name = aff.get('orgName', '')
+                        if isinstance(org_name, list):
+
+                            org_name = org_name[0]['#text'] if org_name else ''
+                        elif isinstance(org_name, dict):
+                            org_name = org_name['#text']  # Extract the text from the dictionary
+                        if org_name and org_name not in institutions_set:  # Check if not already encountered
+                            author_institutions.append(org_name)
+                            institutions_set.add(org_name)
+                else:
+                    org_name = affiliation.get('orgName', '')
+                    if isinstance(org_name, list):
+                        org_name = org_name[0]['#text'] if org_name else ''
+                    elif isinstance(org_name, dict):
+                        org_name = org_name['#text']  # Extract the text from the dictionary
+                    if org_name and org_name not in institutions_set:  # Check if not already encountered
+                        author_institutions.append(org_name)
+                        institutions_set.add(org_name)
+
+
+
 # Display the parsed dictionary
-    Data['auteurs']=Authors
-    Data['institutions']=list(Institutions)
+    Data['auteurs']=author_names
+    Data['institutions']=author_institutions
     #readable_date = convert_readable_date(metadata.get("modDate", "N/A"))
     # Data['publication_date']=metadata.get("modDate", "N/A")
     Data['texte_integral']=text
     Data['corrected']=0
-    print(Data)
+    print("Authors : ", author_names)
+    print("Institutions",author_institutions)
     return Data 
+
+
+
+

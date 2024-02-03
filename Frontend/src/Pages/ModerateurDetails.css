@@ -20,6 +20,7 @@ body {
   background-color: #f4f4f4;
   padding: 20px;
   border-radius: 10px;
+  position: relative;
 }
 
 .ResultatDetailsContainer {
@@ -28,7 +29,8 @@ body {
 
 .moreDetails {
   overflow-y: auto;
-  overflow-x: hidden;   
+  overflow-x: hidden; 
+  width: 100%;  
 }
 
 .NavCorriger {
@@ -86,6 +88,30 @@ body {
   margin-bottom: 80px;
 }
 
+.delete-confirmation .buttons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-confirmation .buttons button {
+  background-color: #2546F3;
+  color: #FFF;
+  padding: 10px;
+  border: none;
+}
+
+.blurred-background::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  filter: blur(0.5px); /* Ajustez la valeur pour le niveau de flou souhaité */
+  z-index: 1;
+}
 
 @media screen and (max-width: 500px) {
   .DetailsContainer {
