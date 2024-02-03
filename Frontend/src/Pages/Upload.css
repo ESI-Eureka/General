@@ -157,7 +157,7 @@ body {
     left: 8.5vw;
     cursor: pointer;
 }
-.cross{
+.erorUpload .cross{
     position: absolute;
     top: 8px;
     right: 8px;

@@ -115,7 +115,7 @@ const Profile = () => {
               disabled={!isEditing}
               required
             />
-            <label htmlFor="password">Mot de passe :</label>
+            <label htmlFor="password">Password :</label>
             <input
               type="password"
               id="password"

@@ -8,6 +8,7 @@ body {
   display: flex;
   flex-direction: column;
 }
+
 .header {
   display: flex;
   align-items: center;
@@ -20,7 +21,6 @@ body {
   padding: 20px;
   border-radius: 10px;
 }
-
 
 .ResultatDetailsContainer {
   overflow-y: auto;
@@ -38,7 +38,8 @@ body {
   padding: 30px;
   border: 2px ; 
 }
-.cancel{
+
+.correction .cancel{
   display: flex;
   width: 12vw;
   height: 7vh;
@@ -46,7 +47,6 @@ body {
   padding-right: 1rem;
   justify-content: center;
   align-items: center;
-  
   flex-shrink: 0;
   border-radius: 0.125rem;
   background: var(--Neutral04, #FFF);
@@ -57,11 +57,13 @@ body {
   line-height: normal;
   cursor: pointer;
 }
+
 .correction{
   display: flex;
   justify-content: space-between;
   gap: 20px;
 }
+
 .Delete{
   display: flex;
   width: 12vw;
@@ -84,11 +86,10 @@ body {
   margin-bottom: 80px;
 }
 
-@media screen and (max-width: 500px) {
 
+@media screen and (max-width: 500px) {
   .DetailsContainer {
       margin: 20px;
       padding: 0px;
   }
-  
 }

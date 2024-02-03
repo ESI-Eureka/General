@@ -52,7 +52,6 @@ const Signup = ( { setAuthenticated } ) => {
     
         setAuthenticated(true);
         navigate("/home");
-        // Reload the page after navigating
         window.location.reload();
       })
     .catch((error) => {
@@ -80,7 +79,7 @@ const Signup = ( { setAuthenticated } ) => {
         <h2>Sign-Up</h2>
 
         <div className="email-password">
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email :</label>
           <input
             type="text"
             id="email"
@@ -92,7 +91,7 @@ const Signup = ( { setAuthenticated } ) => {
             required
           />
 
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Password :</label>
           <input
             type="password"
             id="password"
