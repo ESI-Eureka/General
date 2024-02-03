@@ -86,6 +86,7 @@ def get_pdf_file_object_from_url(pdf_url):
         # Create a file-like object using io.BytesIO
         pdf_file_object = io.BytesIO(pdf_content)
 
+
         return pdf_file_object
     else:
         # Handle the case when the request was not successful
