@@ -20,6 +20,7 @@ const Upload = () => {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState(null);
     const [droppedFiles, setDroppedFiles] = useState([]);
+    
     const handleWhitePlusClick = async (search) => {
       setLoading(true);
       
@@ -145,8 +146,8 @@ const Upload = () => {
         </>
       
       )}
-      <p className="phrase"> Drag and drop or <a className="link" onClick={handleFileInputClick}>
-        click
+      <p className="phrase">Glisser-déposer ou <a className="link" onClick={handleFileInputClick}>
+        cliquer
       </a>
     
       <input
@@ -154,7 +155,7 @@ const Upload = () => {
         ref={fileInputRef}
         style={{ display: "none" }}
         onChange={handleFileInputChange}
-      />  to iterate over files </p>
+      /> pour parcourir les fichiers</p>
       </div>
       
       {droppedFiles.length > 0 && (
@@ -172,7 +173,8 @@ const Upload = () => {
       <div className={`overlayContainer ${success ? "success" : error ? "error" : ""}`}>
       {loading && !success && !error &&
       <>
-        <LoadingBar/>
+        <div className="loadingbaroverlay">
+        <LoadingBar/></div>
         <div className="overlay">Loading...</div>
       </>
       }
@@ -184,8 +186,8 @@ const Upload = () => {
           {/* Add your success overlay content here */}
           <div className="overlay success">
           <img src={done} className="done"/>
-          <MyIcon onClick={handleContinuer} className="contin"/>
           <p>Success!</p></div>
+          <MyIcon onClick={handleContinuer} className="contin"/>
         </>
       )}
       </div>
