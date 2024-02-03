@@ -44,7 +44,7 @@ const NavFiltre = ({ data, onFilterResultUpdate }) => {
     useEffect(() => {
         // Call handleFilterList when the component mounts or when data changes
         handleFilterList();
-    }, [data]);
+    }, [data, selectedAuteurs, selectedMotsCles, selectedInstitutions, selectedDateDebut, selectedDateFin]);
 
     const toggleFiltreAuteur = () => {
         setFiltreAuteurVisible(!filtreAuteurVisible);
