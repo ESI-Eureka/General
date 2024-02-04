@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  # react:
-  #   build:
-  #     context: ./Frontend
-  #   ports:
-  #     - "3000:3000"
+  react:
+    build:
+      context: ./Frontend
+    ports:
+      - "3000:3000"
 
   django:
     build:

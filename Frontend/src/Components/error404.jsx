@@ -6,7 +6,7 @@ import svg from '../Icons/Ellipse 3.svg';
 const Error404 = () => {
     return (
         <>
-        <div className='container'>
+        <div className='container-error'>
         <div className="err404">
                 <h1>404</h1>
         </div >

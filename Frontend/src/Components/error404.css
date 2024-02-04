@@ -1,129 +1,132 @@
-body{
+.container-error {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 20vh;
+  width: 100vw;
+}
+.err404 {
+    margin-top: 4vh;
+    margin-bottom: 10vh;
+  background: linear-gradient(180deg, rgba(9, 35, 169, 0) -7.53%, #000 37.63%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 4vw;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: -6vh;
+}
+.TopImg {
+  position: absolute;
+  top: 0.1vh;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  backdrop-filter: blur(27px);
+  width: 40vw;
+  height: 25vh;
+  flex-shrink: 0;
+}
+.BottomImg {
+  position: absolute;
 
-    font-family: "SF Pro Display";
+  z-index: 0;
+}
+.first {
+  z-index: 3;
+}
+.second {
+  z-index: 3;
+}
+.hero {
+  margin-top: -30vh;
+}
+.text {
+  z-index: 3;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.first {
+  color: #000;
+  text-align: center;
+  font-size: 18px;
+  font-style: normal;
+  line-height: normal;
+}
+.btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5vh;
+  width: 13vw;
+  height: 7vh;
+  border-radius: 0.2rem;
+  background: var(--Blue-secondary, #2546f3);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: normal;
+  cursor: pointer;
+}
+.btn:hover {
+  background: var(--Blue-primary, #0a1f44);
+}
+
+@media (max-width: 1024px) {
     
-    overflow: hidden;
+      .first {
+        font-size: 15px;
+      }
+  .BottomImg svg {
+    width: 88px;
+    height: 88px;
+  }
 }
 
-.container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    row-gap: 20vh;
-    height: 120vh;
-    width: 100vw;
-    position: relative;
-    top:-20vh
-}
-.err404{
-    margin-bottom: 14vh;
-    background: linear-gradient(180deg, rgba(9, 35, 169, 0.00) -7.53%, #000 37.63%);
-background-clip: text;
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-    font-size: 6vw;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    font-family: "SF Pro Display";
-}
-.hero{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    top: -4vh;
-}
-.TopImg{
-    position: absolute;
-    top: 0.1vh;
-    z-index: 1;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.48) 0%, rgba(255, 255, 255, 0.00) 100%);
-    backdrop-filter: blur(27px);
-    width: 40vw;
-    height:25vh;
-    flex-shrink: 0;
-}
-.BottomImg{
-    position: absolute;
-
-    z-index: 0;
-}
-.first{
-    z-index: 3;
-}
-.second{
-    z-index: 3;
-}
-.hero{
-    margin-top: -30vh;
-    
-}
-.text{
-    z-index: 3;
-    font-family: "SF Pro Display";
-   
-    align-items: center;
-    justify-content: center;
-    width: 80vw;
-    position: relative;
-    top: -10vh;
-}
-.first{
-    color: #000;
-text-align: center;
-font-family: "SF Pro Display";
-font-size: 18px;
-font-style: normal;
-font-family: "SF Pro Display";
-line-height: normal;
-}
-.btn{
-    display: flex;
-    font-family: "SF Pro Display";
-    justify-content: center;
-    align-items: center;
-    width: 15vw;
-    height: 8vh;
-    border-radius: 0.2rem;
-background: var(--Blue-secondary, #2546F3);
-    color: #fff;
-    font-size: 18px;
-    font-style: normal;
-    line-height: normal;
-    text-align: center;
-    padding-left: 8px;
-    padding-right: 8px;
-    margin-top: 8px;
-    cursor: pointer;
-    position: absolute;
-    left: 40%;
-}
-.btn:hover{
-    background: var(--Blue-primary, #0A1F44);
-}
-
-@media screen and (max-width: 700px) {
-    .BottomImg svg{
-        width: 88px;
-        height: 88px;
+@media (max-width: 767px) {
+    .err404 {
+        margin-top: 8vh;
+        margin-bottom: -5.6vh;
+      font-size: 10vw;
     }
-}
-
-@media screen and (max-width: 460px) {
-    .BottomImg svg{
-        width: 64px;
-        height: 64px;
-    }
-    .TopImg{
-        width: 70vw;
-        height: 20vh;
-    }
-    .btn{
-        font-size: 14px;
-        padding-left: 16px;
-        padding-right: 16px;
-        height: 6vh;
-    }
+    .hero {
+        position: relative;
+        top: 10vh;
+      }
+    .first {
+        font-size: 13px;
+      }
+      .text{
+        margin-top: 5vh;
+        width: 80%;
+      }
+  .BottomImg svg {
+    width: 64px;
+    height: 64px;
+  }
+  .TopImg {
+    width: 70vw;
+    height: 20vh;
+  }
+  .btn {
+    font-size: 14px;
+    padding: 0 25px;
+    height: 6vh;
+  }
 }

@@ -2,7 +2,7 @@
 import axios from "axios";
 import { useState,useRef } from "react";
 import React from "react";
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import "./Upload.css";
 import NavBar from "../Components/NavBar";
 import SearchBar from '../Components/SearchBar';
@@ -128,7 +128,7 @@ const Upload = () => {
 
   return (
     <div>
-     {redirectTo404 && <Redirect to="/404" />}
+     {redirectTo404 && <Navigate to="/error" replace />}
       <NavBar />
       <div className="SearchContainer">
         <Logo2 className="Logo2" />
