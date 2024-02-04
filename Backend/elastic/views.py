@@ -360,7 +360,6 @@ def mettre_jour_article(request):
         JsonResponse: The JSON response indicating the success or failure of the update operation.
     """
     # Existing code...
-def mettre_jour_article(request):
     # Extracting values from the POST request
     # Parse JSON data from the request body
     data = json.loads(request.body.decode('utf-8'))

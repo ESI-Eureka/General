@@ -2,12 +2,11 @@ import React from "react";
 
 import "./error404.css";
 import svg from "../Icons/Ellipse 3.svg";
-import { useHistory } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 const Error404 = () => {
-  const history = useHistory();
   const handleClick = () => {
-    history.push("/home"); // Changement de chemin vers la page d'accueil
+<Navigate to="/home" replace />
   };
   return (
     <>
