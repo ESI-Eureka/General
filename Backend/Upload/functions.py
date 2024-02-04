@@ -13,6 +13,15 @@ from email_validator import validate_email, EmailNotValidError
 #Functions 
 
 def orgname(orgname):
+    """
+    Extracts the organization name from the given input.
+
+    Args:
+        orgname (dict or list): The input containing the organization name.
+
+    Returns:
+        str: The extracted organization name.
+    """
     if type(orgname) is dict:
         return orgname['#text']
     else:
@@ -20,11 +29,22 @@ def orgname(orgname):
         for k in range(len(orgname)):
             institute=institute+' '+orgname[k]['#text']
         return institute
-def affliation(affiliation,Institution):
+def affliation(affiliation, Institution):
+    """
+    Add the affiliation's organization name to the Institution list.
+
+    Parameters:
+    - affiliation (dict or list): The affiliation information.
+        If it is a dictionary, the organization name is extracted from the 'orgName' key.
+        If it is a list, the organization name is extracted from the 'orgName' key of each element.
+    - Institution (list): The list to which the organization names will be appended.
+
+    Returns:
+    - list: The updated Institution list.
+    """
     if type(affiliation) is dict:
         Institution.append(orgname(affiliation['orgName']))
     else:
-        institute=[]
         for k in range(len(affiliation)):
             Institution.append(orgname(affiliation[k]['orgName']))
     return Institution
@@ -88,6 +108,15 @@ def has_link(text):
 
 #************start of is_sentence_link********************************
 def is_sentence_link(sentence):
+    """
+    Check if a given sentence is a link.
+
+    Args:
+        sentence (str): The sentence to be checked.
+
+    Returns:
+        bool: True if the sentence is a link, False otherwise.
+    """
     # Regular expression to match a sentence that is a link
     link_pattern = re.compile(r'^https?://\S+$|^www\.\S+$')
     # Check if the entire sentence is a link
@@ -110,6 +139,16 @@ def starts_with_number(input_string):
 
 #********************start of split_sentence function***********************
 def split_sentence(sentence):
+    """
+    Splits a sentence into two parts based on certain conditions.
+
+    Args:
+        sentence (str): The sentence to be split.
+
+    Returns:
+        tuple: A tuple containing two parts of the sentence.
+
+    """
     # Check if the sentence starts with a lowercase letter and remove it
     if sentence and sentence[0].islower():
         sentence = sentence[1:]
@@ -150,6 +189,15 @@ def extractTextFromPDFFirstP(path):
 
 # remove non printable characters from the pdf text
 def remove_non_printable_chars(text):
+    """
+    Remove non-printable characters from the given text.
+
+    Args:
+        text (str): The input text.
+
+    Returns:
+        str: The text with non-printable characters removed.
+    """
     # Use a regular expression to remove non-printable characters
     # Retain French characters and specify additional characters if needed
     return re.sub(r'[^\x20-\x7E\r—À-ÿ]', '', text)
@@ -169,6 +217,18 @@ def set_custom_boundaries(doc):
 #**********************************************************************
 
 #**************start of extract_most_used_function ***************************
+def extract_most_used_words(article_text, num_words=10):
+    """
+    Extracts the most used words from the given article text.
+
+    Args:
+        article_text (str): The text of the article.
+        num_words (int, optional): The number of most common words to extract. Defaults to 10.
+
+    Returns:
+        list: A list of tuples containing the most common words and their frequencies.
+    """
+    # Rest of the code...
 def extract_most_used_words(article_text, num_words=10):
     #it returns a list of tuples for words and their frequency
     # Load the spaCy English model
@@ -192,16 +252,21 @@ def extract_most_used_words(article_text, num_words=10):
 
 #********************start of filter_sentences function***********************
 def filter_sentences(sentences):
-    #for each setence we remove non prinitable characters and remove short useless sentences
+    """
+    Filters a list of sentences by removing non-printable characters and short useless sentences.
+
+    Args:
+        sentences (list): A list of sentences to be filtered.
+
+    Returns:
+        list: A list of filtered sentences.
+    """
     filtered_sentences = []
     for sentence in sentences:
         try:
             if not header_pattern(sentence.text) and sentence.text[0]!='.':
-                    #remove non_printable_ characters from the sentences
                     cleaned_text = remove_non_printable_chars(sentence.text)
-                    
-                    # Check if the sentence has more than two characters and aren't digits to avoid meaningless sentences
-                    if len(cleaned_text) > 2 and  not cleaned_text.isdigit() and not is_sentence_link(cleaned_text):
+                    if len(cleaned_text) > 2 and not cleaned_text.isdigit() and not is_sentence_link(cleaned_text):
                         index_of_double_space = cleaned_text.find("  ")
                         if index_of_double_space != -1:
                              filtered_sentences.append(cleaned_text[:index_of_double_space])
@@ -210,19 +275,24 @@ def filter_sentences(sentences):
                             filtered_sentences.append(cleaned_text)
         except(AttributeError):
             sentence=remove_non_printable_chars(sentence)
-            # print(sentence)
-            # print(f"before{header_pattern(sentence)}")
             if len(sentence)>2 and not header_pattern(sentence) and sentence[0]!='.':
-                    #remove non_printable_ characters from the sentences
                     cleaned_text = sentence
-                    # Check if the sentence has more than two characters and aren't digits to avoid meaningless sentences
-                    if (len(cleaned_text) > 2) and  not cleaned_text.isdigit() and not is_sentence_link(cleaned_text):
+                    if len(cleaned_text) > 2 and not cleaned_text.isdigit() and not is_sentence_link(cleaned_text):
                         filtered_sentences.append(cleaned_text)
     return filtered_sentences
 #********************end of filter_sentences function******************************
 
 #********************start of texttoSen function***********************
 def texttoSen(text):
+    """
+    Converts a given text into a list of filtered sentences.
+
+    Parameters:
+    text (str): The input text to be converted into sentences.
+
+    Returns:
+    list: A list of filtered sentences extracted from the input text.
+    """
     #loading the language model that supports english from spacy
     custom_nlp = spacy.load("en_core_web_sm")
     #for the changed set_custom_boudaries 
@@ -247,6 +317,19 @@ def convert_pdf_date(pdf_date):
     return pdf_datetime
 #**********************************************************
 def convert_pdf_to_text(pdf_path, output_text_path):
+    """
+    Converts a PDF file to plain text and saves it to a text file.
+
+    Args:
+        pdf_path (str): The path to the PDF file.
+        output_text_path (str): The path to save the extracted text.
+
+    Raises:
+        Exception: If there is an error during the conversion process.
+
+    Returns:
+        None
+    """
     try:
         # Try PyMuPDF first for better handling of multi-column layouts
         pdf_document = fitz.open(pdf_path)
@@ -282,20 +365,32 @@ def convert_pdf_to_text(pdf_path, output_text_path):
     
     
 def process_text_with_spacy(text):
-    # Load the English NLP model from SpaCy
-        nlp = spacy.load("en_core_web_sm")
+    """
+    Process the given text using SpaCy and extract authors.
 
-        # Process the text using SpaCy
-        doc = nlp(text)
+    Args:
+        text (str): The text to be processed.
 
-        # Extract authors (assuming that authors are represented as people entities)
-        authors = [entity.text for entity in doc.ents if entity.label_ == "PERSON"]
-
-        return authors
+    Returns:
+        list: A list of authors extracted from the text.
+    """
+    nlp = spacy.load("en_core_web_sm")
+    doc = nlp(text)
+    authors = [entity.text for entity in doc.ents if entity.label_ == "PERSON"]
+    return authors
     
     
     
 def remove_email_links(paragraph):
+    """
+    Removes email links from a given paragraph.
+
+    Args:
+        paragraph (str): The paragraph containing email links.
+
+    Returns:
+        str: The cleaned paragraph with email links removed.
+    """
     # Regular expression to match email addresses
     email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
 
@@ -326,8 +421,15 @@ def remove_repeated_paragraphs(text):
 
 
 def header_pattern(sentence):
-    """Checks if a sentence matches patterns common for headers."""
+    """
+    Checks if a sentence matches patterns common for headers.
 
+    Args:
+        sentence (str): The sentence to be checked.
+
+    Returns:
+        bool: True if the sentence matches any of the header patterns, False otherwise.
+    """
     # Regular expressions for header patterns:
     date_pattern = re.compile(r'\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}\b')
     consecutive_numbers_pattern = re.compile(r'\d{7,}')
@@ -361,5 +463,4 @@ def extract_institutions(text):
     for pattern in patterns:
         matches = re.findall(pattern, text, flags=re.IGNORECASE)
         institutions.extend(matches)
-
     return institutions

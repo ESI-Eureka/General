@@ -16,6 +16,18 @@ from django.core.files.storage import FileSystemStorage
 
 @api_view(['POST'])
 def upload_files(request):
+    """
+    Uploads files or extracts data from a URL and indexes the data.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        Response: The HTTP response object indicating the status of the file upload.
+
+    Raises:
+        None
+    """
     if 'files' in request.FILES:
         files = request.FILES.getlist('files')  # 'files' should match the name attribute of your file input
         for file in files:
@@ -70,11 +82,19 @@ def upload_files(request):
     else:
         return Response({'error': 'Invalid request. Please provide either files or a URL.'}, status=400)
     
-        
-    
     return Response({'message': 'Files uploaded successfully'})
 
 def get_pdf_file_object_from_url(pdf_url):
+    """
+    Retrieves a PDF file object from the given URL.
+
+    Args:
+        pdf_url (str): The URL of the PDF file.
+
+    Returns:
+        io.BytesIO or None: A file-like object containing the PDF content if the request was successful,
+        None otherwise.
+    """
     # Send a GET request to the PDF URL
     response = requests.get(pdf_url)
 
@@ -91,4 +111,5 @@ def get_pdf_file_object_from_url(pdf_url):
     else:
         # Handle the case when the request was not successful
         print(f"Failed to fetch PDF from URL. Status code: {response.status_code}")
-        return None
+    
+    return None

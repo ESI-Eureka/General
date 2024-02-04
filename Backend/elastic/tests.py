@@ -4,8 +4,17 @@ from django.test import TestCase
 from .views import index_article_view
 
 class TestIndexation(TestCase):
+    """
+    Test case for indexation functionality.
+    """
 
     def test_index_article(self):
+        """
+        Test the index_article_view function.
+
+        This test case simulates a POST request to the index_article_view function
+        with a mock article data. It asserts that the response status code is 200.
+        """
         # Mock data for testing
         article = {
             "titre": "Titre de l'article 3",

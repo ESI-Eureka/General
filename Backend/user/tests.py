@@ -4,6 +4,15 @@ from django.urls import reverse
 from rest_framework import status
 from .models import Account, Role
 
+class TestAuthentication(TestCase):
+    """
+    A test case class for testing authentication functionality.
+
+    Inherits from the TestCase class provided by the Django test framework.
+    """
+
+    def setUp(self):
+        ...
 class TestAuthentication(TestCase):  # Make sure to inherit from TestCase
     def setUp(self):
         self.role = Role.objects.get(name='user')

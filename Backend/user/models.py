@@ -8,21 +8,31 @@ class Role(models.Model):
         return self.name
 
 class Account(models.Model):
-    email = models.EmailField(max_length=255,unique=True)
+    """
+    Represents a user account.
+
+    Attributes:
+        email (str): The email address of the account.
+        password (str): The password of the account.
+        role (Role): The role associated with the account.
+    """
+
+    email = models.EmailField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
-        # Verify if the user already exists
+        """
+        Saves the account.
+
+        If the account already exists, it checks if the password has changed and hashes the new password.
+        If the account is being created, it hashes the password before saving.
+        """
         if self.id is not None:
-            # Verify if the password has changed
             original_password = Account.objects.get(id=self.id).password
             if original_password != self.password:
-                # Hash the new password
                 self.password = make_password(self.password)
         else:
-            # If it doesn't exist, hash the password before creating the user
             self.password = make_password(self.password)
 
-        # Call the save method of the parent class 
         super(Account, self).save(*args, **kwargs)

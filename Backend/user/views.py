@@ -11,7 +11,24 @@ from rest_framework import status
 
 
 class SignupView(APIView):
+    """
+    View class for handling HTTP POST request to create a new user account.
+    """
+
     def post(self, request):
+        """
+        Handle HTTP POST request to create a new user account.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object containing the created user account details.
+
+        Raises:
+            Account.DoesNotExist: If the email already exists.
+            Role.DoesNotExist: If the specified role does not exist.
+        """
         email = request.data.get('email', '')
         password = request.data.get('password', '')
         role_id = request.data.get('role', '')
@@ -42,7 +59,32 @@ class SignupView(APIView):
         return Response({'access_token': access_token,'user_id': user_id,'email': email, 'password': password, 'user_role': user_role}, status=status.HTTP_200_OK)
 
 class LoginView(APIView):
+    """
+    API view for user login.
+
+    This view handles the user login functionality by validating the provided email and password.
+    If the credentials are valid, it returns an access token along with the user ID, email, password, and role.
+    If the credentials are invalid, it returns an appropriate error response.
+
+    Methods:
+        - post: Handles the POST request for user login.
+
+    Attributes:
+        None
+    """
     def post(self, request):
+        """
+        Handle the HTTP POST request to authenticate a user.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object containing the access token, user ID, email, password, and user role.
+
+        Raises:
+            Account.DoesNotExist: If the user account does not exist.
+        """
         email = request.data.get('email')
         password = request.data.get('password')
 
@@ -70,10 +112,196 @@ class LoginView(APIView):
     
 
 class AccountViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for managing user accounts.
+
+    This viewset provides CRUD operations for user accounts, including creating, updating, deleting, and listing accounts.
+
+    Attributes:
+        queryset (QuerySet): The queryset of all accounts.
+        serializer_class (Serializer): The serializer class for serializing and deserializing accounts.
+
+    Methods:
+        create_account(request): Create a new user account.
+        update_account(request): Update an existing user account.
+        destroy(request): Delete a user account.
+        list_accounts(request): List all user accounts.
+        list_accounts_role(request, role_id): List user accounts by role ID.
+    """
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
 
     def create_account(self, request):
+        """
+        Create a new user account.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object.
+        """
+        # Code implementation...
+
+    def update_account(self, request):
+        """
+        Update an existing user account.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object.
+        """
+        # Code implementation...
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a user account.
+
+        Args:
+            request (Request): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The HTTP response object.
+        """
+        # Code implementation...
+
+    def list_accounts(request):
+        """
+        List all user accounts.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object.
+        """
+        # Code implementation...
+
+    def list_accounts_role(self, request, role_id=None):
+        """
+        List user accounts by role ID.
+
+        Args:
+            request (Request): The HTTP request object.
+            role_id (int, optional): The ID of the role to filter accounts by.
+
+        Returns:
+            Response: The HTTP response object.
+        """
+        # Code implementation...
+class AccountViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for handling CRUD operations on the Account model.
+    """
+
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+    def create_account(self, request):
+        """
+        Create a new account.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            A Response object with the serialized account data if successful,
+            or a Response object with an error message if unsuccessful.
+        """
+        # Function code here
+
+    def update_account(self, request):
+        """
+        Update an existing account.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            A Response object with a success message if the account is updated successfully,
+            or a Response object with an error message if unsuccessful.
+        """
+        # Function code here
+
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete an existing account.
+
+        Args:
+            request: The HTTP request object.
+            *args: Additional positional arguments.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            A Response object with a success message if the account is deleted successfully,
+            or a Response object with an error message if unsuccessful.
+        """
+        # Function code here
+
+    def list_accounts(request):
+        """
+        Get a list of all accounts.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            A Response object with the serialized account data if successful,
+            or a Response object with an error message if unsuccessful.
+        """
+        # Function code here
+
+    def list_accounts_role(self, request, role_id=None):
+        """
+        Get a list of accounts based on the specified role ID.
+
+        Args:
+            request: The HTTP request object.
+            role_id: The ID of the role to filter the accounts by.
+
+        Returns:
+            A Response object with the serialized account data if successful,
+            or a Response object with an error message if unsuccessful.
+        """
+        # Function code here
+class AccountViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for handling user account operations.
+
+    Attributes:
+        queryset (QuerySet): The queryset of all accounts.
+        serializer_class (Serializer): The serializer class for account serialization.
+
+    Methods:
+        create_account: Create a new user account.
+        update_account: Update the user account with the provided email and password.
+        destroy: Delete an account based on the provided email.
+        list_accounts: Retrieve a list of all accounts.
+        list_accounts_role: Retrieve a list of accounts based on the given role ID.
+    """
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+
+    def create_account(self, request):
+        """
+        Create a new user account.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object containing the created user account data.
+
+        Raises:
+            HTTP 400 Bad Request: If the required fields (email, password, role) are not provided.
+            HTTP 400 Bad Request: If the specified role does not exist.
+            HTTP 400 Bad Request: If the email already exists.
+            HTTP 201 Created: If the user account is successfully created.
+        """
         email = request.data.get('email', '')
         password = request.data.get('password', '')
         role_id = request.data.get('role', '')
@@ -99,6 +327,15 @@ class AccountViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update_account(self, request):
+        """
+        Update the user account with the provided email and password.
+
+        Args:
+            request (Request): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object indicating the status of the account update.
+        """
         email = request.data.get('email', '')
         password = request.data.get('password', '')
         current_email = request.data.get('current_email', '')
@@ -133,12 +370,26 @@ class AccountViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Account updated successfully.'}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        """
+        Delete an account based on the provided email.
+
+        Args:
+            request (Request): The HTTP request object.
+            *args: Variable length argument list.
+            **kwargs: Arbitrary keyword arguments.
+
+        Returns:
+            Response: The HTTP response object.
+
+        Raises:
+            None.
+        """
         email = request.data.get('email', '')
         # if password:
         #     password = request.data.get('password', '')
 
-        if not email :
-            return Response({'detail': 'Email are required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if not email:
+            return Response({'detail': 'Email is required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             user = Account.objects.get(email=email)
@@ -153,6 +404,15 @@ class AccountViewSet(viewsets.ModelViewSet):
         return Response({'detail': 'Account deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
     def list_accounts(request):
+        """
+        Retrieve a list of all accounts.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+
+        Returns:
+            Response: The HTTP response object containing the serialized account data.
+        """
         accounts_data = Account.objects.all()
         serializer = AccountSerializer(accounts_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -161,6 +421,19 @@ class AccountViewSet(viewsets.ModelViewSet):
 
         
     def list_accounts_role(self, request, role_id=None):
+        """
+        Retrieve a list of accounts based on the given role ID.
+
+        Args:
+            request (HttpRequest): The HTTP request object.
+            role_id (int, optional): The ID of the role. Defaults to None.
+
+        Returns:
+            Response: The HTTP response containing the serialized account data.
+
+        Raises:
+            Role.DoesNotExist: If the role with the given ID does not exist.
+        """
         if role_id:
             try:
                 accounts_data = Account.objects.filter(role__id=role_id)

@@ -34,6 +34,27 @@ def convert_readable_date(date_str):
         print(f"Error converting date: {e}")
         return "Unknown Date"
 def extractData(pdf_file):
+    """
+    Extracts data from a PDF file.
+
+    Parameters:
+    - pdf_file (file): The PDF file to extract data from.
+
+    Returns:
+    - dict: A dictionary containing the extracted data with the following keys:
+        - 'titre' (str): The title of the document.
+        - 'resume' (str): The abstract or summary of the document.
+        - 'auteurs' (list): The list of authors of the document.
+        - 'institutions' (list): The list of institutions mentioned in the document.
+        - 'mots_cles' (list): The list of keywords or index terms of the document.
+        - 'texte_integral' (str): The full text of the document.
+        - 'pdf_url' (str): The URL of the PDF file.
+        - 'references' (list): The list of references cited in the document.
+        - 'publication_date' (str): The publication date of the document.
+        - 'corrected' (int): A flag indicating whether the document has been corrected (1 for corrected, 0 for not corrected).
+    """
+    # Function code goes here
+def extractData(pdf_file):
     buff=pdf_file.read()
     files = {'input': ('filename.pdf', BytesIO(buff), 'application/pdf')}
     response = requests.post(grobid_url, files=files)
@@ -320,3 +341,5 @@ def extractData(pdf_file):
 
 
 
+    """_summary_
+    """

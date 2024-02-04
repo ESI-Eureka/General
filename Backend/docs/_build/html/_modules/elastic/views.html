@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+<html lang="english" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elastic.views &#8212; eureka-documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=df973ab0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for elastic.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.http</span> <span class="kn">import</span> <span class="n">require_GET</span><span class="p">,</span> <span class="n">require_POST</span>
+<span class="kn">from</span> <span class="nn">django.views.decorators.csrf</span> <span class="kn">import</span> <span class="n">csrf_exempt</span>
+<span class="kn">from</span> <span class="nn">elasticsearch</span> <span class="kn">import</span> <span class="n">Elasticsearch</span>
+<span class="kn">from</span> <span class="nn">elasticsearch.exceptions</span> <span class="kn">import</span> <span class="n">NotFoundError</span><span class="p">,</span> <span class="n">RequestError</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">elasticsearch.helpers</span> <span class="kn">import</span> <span class="n">scan</span>
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Elasticsearch Initialization</span>
+
+<span class="n">es</span> <span class="o">=</span> <span class="n">Elasticsearch</span><span class="p">([{</span><span class="s1">&#39;scheme&#39;</span><span class="p">:</span> <span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="s1">&#39;elasticsearch&#39;</span><span class="p">,</span> <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="mi">9200</span><span class="p">}])</span>
+<span class="n">nom_index</span> <span class="o">=</span> <span class="s1">&#39;articles_scientifiques&#39;</span>
+
+<span class="c1"># Index for the favorites</span>
+<span class="n">nom_index_fav</span> <span class="o">=</span> <span class="s1">&#39;favoris&#39;</span>
+
+<span class="c1"># Path to the JSON Document</span>
+<span class="n">fichier2_json_path</span> <span class="o">=</span> <span class="s1">&#39;./elastic/document.json&#39;</span>
+
+<span class="c1"># Path to JSON documents (favorites artciles)</span>
+
+<span class="n">fichier_json_path_fav</span> <span class="o">=</span> <span class="s1">&#39;./elastic/resultat_recherche_fav.json&#39;</span>
+<span class="n">fichier2_json_path_fav</span> <span class="o">=</span> <span class="s1">&#39;./elastic/document_fav.json&#39;</span>
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Scientific Articles Indexing Part </span>
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+
+<div class="viewcode-block" id="index_article">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.index_article">[docs]</a>
+<span class="k">def</span> <span class="nf">index_article</span><span class="p">(</span><span class="n">article</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indexes an article in the articles_scientifiques index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        article (dict): The article to be indexed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the index exists before creating it</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">):</span>
+
+        <span class="c1"># Mapping for articles (defined before creating the index)</span>
+        <span class="c1"># Identify the type of each field</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mappings&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;titre&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;keyword&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;resume&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;auteurs&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;institutions&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;mots_cles&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;texte_integral&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;pdf_url&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;date&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;corrected&quot;</span><span class="p">:{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;long&quot;</span><span class="p">}</span> <span class="c1"># Pour la correction</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Create the index with the mapping</span>
+        <span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span> <span class="c1"># ignore=400 permet d&#39;ignorer l&#39;erreur si l&#39;index existe déjà</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">article</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+        
+        <span class="n">generated_id</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span>
+        <span class="n">article</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">generated_id</span>
+
+        <span class="c1"># Retrieve saved articles from the JSON file</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+                    <span class="n">articles_existants</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fichier_json</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Add the new article to the list of existing articles</span>
+        <span class="n">articles_existants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+        <span class="c1"># Save the list to the JSON file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">articles_existants</span><span class="p">,</span> <span class="n">fichier_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">index_stats</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">)</span>
+
+        <span class="c1"># Check if the index contains at least one article</span>
+        <span class="n">total_documents</span> <span class="o">=</span> <span class="n">index_stats</span><span class="p">[</span><span class="s1">&#39;_all&#39;</span><span class="p">][</span><span class="s1">&#39;primaries&#39;</span><span class="p">][</span><span class="s1">&#39;docs&#39;</span><span class="p">][</span><span class="s1">&#39;count&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Check if the article already exists</span>
+        <span class="n">exist</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">total_documents</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">exist</span> <span class="o">=</span> <span class="n">article_existant</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">exist</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">exist</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="c1"># Index the article in the Elasticsearch index</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">article</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+            <span class="n">generated_id</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span>
+            <span class="n">article</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">generated_id</span>
+            
+            <span class="c1"># Retrieve saved articles from the JSON file</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+                        <span class="n">articles_existants</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fichier_json</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="c1"># Add the new article to the list of existing articles</span>
+            <span class="n">articles_existants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">article</span><span class="p">)</span>
+
+            <span class="c1"># Save the list to the JSON file</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+                <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">articles_existants</span><span class="p">,</span> <span class="n">fichier_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Article déja existant!&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="article_existant">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.article_existant">[docs]</a>
+<span class="k">def</span> <span class="nf">article_existant</span><span class="p">(</span><span class="n">article</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if an article exists in the index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        article (dict): The article to be checked.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the article exists, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Search for an article by title in the index</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;titre&quot;</span><span class="p">:</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;titre&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># Utiliser &quot;.keyword&quot; pour une correspondance exacte (insensible à la casse)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Execute the search</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="c1"># Check if any results were found</span>
+    <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;hits&quot;</span><span class="p">][</span><span class="s2">&quot;total&quot;</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="index_article_view">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.index_article_view">[docs]</a>
+<span class="nd">@require_POST</span>
+<span class="nd">@csrf_exempt</span> 
+<span class="k">def</span> <span class="nf">index_article_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    POST request to index a new article in Elasticsearch.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: The JSON response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># 1. Get JSON data from the request</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Format JSON invalide&#39;</span><span class="p">})</span>
+        
+        <span class="c1"># 2. Check if the required fields are present in the data</span>
+        <span class="n">required_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">,</span> <span class="s1">&#39;resume&#39;</span><span class="p">,</span> <span class="s1">&#39;auteurs&#39;</span><span class="p">,</span> <span class="s1">&#39;institutions&#39;</span><span class="p">,</span> <span class="s1">&#39;mots_cles&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;texte_integral&#39;</span><span class="p">,</span> <span class="s1">&#39;pdf_url&#39;</span><span class="p">,</span> <span class="s1">&#39;references&#39;</span><span class="p">,</span> <span class="s1">&#39;publication_date&#39;</span><span class="p">,</span> <span class="s1">&#39;corrected&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required_fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Champ manquant : </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+
+        <span class="c1"># 3. Call the function to index the article in Elasticsearch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index_article</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Article indexé avec succès&#39;</span><span class="p">})</span>
+        
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Erreur lors de l</span><span class="se">\&#39;</span><span class="s1">indexation : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Méthode non autorisée&#39;</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="search_articles">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.search_articles">[docs]</a>
+<span class="nd">@require_GET</span> 
+<span class="k">def</span> <span class="nf">search_articles</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    GET request to get the search results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: The JSON response containing the search results.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. Get the query</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 2. Construct the Elasticsearch request body</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;multi_match&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">,</span>
+                    <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;titre&quot;</span><span class="p">,</span> <span class="s2">&quot;auteurs&quot;</span><span class="p">,</span> <span class="s2">&quot;mots_cles&quot;</span><span class="p">,</span> <span class="s2">&quot;texte_integral&quot;</span><span class="p">]</span>
+                <span class="p">}</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;sort&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;order&quot;</span><span class="p">:</span> <span class="s2">&quot;desc&quot;</span>  <span class="c1"># Tri par publication_date en ordre décroissant (du plus récent au plus ancien)</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># 3. Execute the Elasticsearch search with the constructed request body</span>
+        <span class="n">resultats</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+        <span class="c1"># The term &quot;hits&quot; refers to documents matching a search query</span>
+        <span class="n">hits</span> <span class="o">=</span> <span class="n">resultats</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">]</span>
+
+        <span class="c1"># 4. Get the list of articles</span>
+        <span class="n">search_results</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">],</span> <span class="s1">&#39;_source&#39;</span><span class="p">:</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">]</span>
+
+        <span class="c1"># 5. Return the results in JSON format</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">search_results</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+        <span class="c1"># Error case, return an error message</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur durant la recherche: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Return an empty list</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">([],</span> <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_article_view">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.delete_article_view">[docs]</a>
+<span class="nd">@require_POST</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">delete_article_view</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    POST request to delete an article from the index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: The JSON response.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DELETE ARTICLE VIEW&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># 1. Get the article ID from the request</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+            <span class="c1"># Extract values from the parsed JSON data</span>
+            <span class="n">article_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;doc_id&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Format JSON invalide&#39;</span><span class="p">})</span>
+
+        <span class="c1"># 2. Check if the article exists in Elasticsearch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;found&#39;</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Article trouvé avec succès : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Article non trouvé pour l&#39;ID : </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Article non trouvé&#39;</span><span class="p">})</span>
+            
+        <span class="k">except</span> <span class="n">NotFoundError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Article non trouvé pour l&#39;ID : </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Article non trouvé&#39;</span><span class="p">})</span>
+
+        <span class="c1"># 3. Delete the article from Elasticsearch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">es</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">article_id</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Article supprimé avec succès : </span><span class="si">{</span><span class="n">article_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur lors de la suppression : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Erreur lors de la suppression : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+
+        <span class="c1"># 4. Remove the article from the list of existing articles in the JSON file</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+                <span class="n">articles_existants</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fichier_json</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Remove the article from the list in memory</span>
+        <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[</span><span class="n">article</span> <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles_existants</span> <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">article_id</span><span class="p">]</span>
+
+        <span class="c1"># Write the modified list back to the JSON file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">articles_existants</span><span class="p">,</span> <span class="n">fichier_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Article supprimé avec succès&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Méthode non autorisée&#39;</span><span class="p">})</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Fonction pour récupérer tous les articles scientifiques depuis l&#39;index </span>
+
+<div class="viewcode-block" id="recuperer_article">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.recuperer_article">[docs]</a>
+<span class="nd">@require_GET</span>
+<span class="k">def</span> <span class="nf">recuperer_article</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve all scientific articles from the index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request: The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A JSON response containing the list of articles retrieved from the index.</span>
+<span class="sd">        If the index is not found or there is an error in the request, an error message is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Construct the request body to retrieve all scientific articles from the index</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;match_all&quot;</span><span class="p">:{}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Execute the search </span>
+        <span class="n">articles</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+
+        <span class="c1"># The term &quot;hits&quot; refers to documents matching a search query</span>
+        <span class="n">hits</span> <span class="o">=</span> <span class="n">articles</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">]</span>
+
+        <span class="c1"># Get the list of articles</span>
+        <span class="n">articles_results</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">],</span> <span class="s1">&#39;_source&#39;</span><span class="p">:</span> <span class="n">hit</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">]}</span> <span class="k">for</span> <span class="n">hit</span> <span class="ow">in</span> <span class="n">hits</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">articles_results</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="n">NotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur: Index </span><span class="si">{</span><span class="n">nom_index</span><span class="si">}</span><span class="s2"> non trouvé.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Index </span><span class="si">{</span><span class="n">nom_index</span><span class="si">}</span><span class="s2"> non trouvé.&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">RequestError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur de requête: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Erreur de requête: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur inattendue: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Erreur inattendue: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># POST request to update an article in Elasticsearch</span>
+        
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">mettre_jour_article</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update an article in Elasticsearch and JSON file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: The JSON response indicating the success or failure of the update operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Existing code...</span>
+<div class="viewcode-block" id="mettre_jour_article">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.mettre_jour_article">[docs]</a>
+<span class="k">def</span> <span class="nf">mettre_jour_article</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+    <span class="c1"># Extracting values from the POST request</span>
+    <span class="c1"># Parse JSON data from the request body</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="c1"># Extract values from the parsed JSON data</span>
+    <span class="n">doc_id</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;doc_id&#39;</span><span class="p">)</span>
+    <span class="n">nouveau_article</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nouveau_article&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Constructing the update request body</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;doc&quot;</span><span class="p">:</span> <span class="n">nouveau_article</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Execute the update request</span>
+        <span class="n">es</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mise à jour réussie.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Update in the JSON file</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+                <span class="n">articles_existants</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fichier_json</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">articles_existants</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Search for the article in the list and update it</span>
+        <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">articles_existants</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">article</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">doc_id</span><span class="p">:</span>
+                <span class="n">article</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">nouveau_article</span><span class="p">)</span>
+
+        <span class="c1"># Save the updated list to the JSON file</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fichier2_json_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fichier_json</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">articles_existants</span><span class="p">,</span> <span class="n">fichier_json</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Update successful&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="n">NotFoundError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur: Document avec l&#39;ID </span><span class="si">{</span><span class="n">doc_id</span><span class="si">}</span><span class="s2"> non trouvé dans l&#39;index </span><span class="si">{</span><span class="n">nom_index</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">RequestError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur de requête: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Unexpected error case</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur inattendue: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="s1">&#39;An unexpected error occurred&#39;</span><span class="p">},</span> <span class="n">status</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Favorite Articles Section</span>
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Function to index favorite articles in Elasticsearch</span>
+
+<div class="viewcode-block" id="index_article_fav">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.index_article_fav">[docs]</a>
+<span class="k">def</span> <span class="nf">index_article_fav</span><span class="p">(</span><span class="n">article</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Indexes an article in the Elasticsearch index for favorites.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        article (dict): The article to be indexed. It should contain the following fields:</span>
+<span class="sd">            - idArticle (str): The ID of the article.</span>
+<span class="sd">            - idUser (str): The ID of the user.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the index exists before creating it</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">):</span>
+
+        <span class="c1"># Mapping for articles (defined before creating the index)</span>
+        <span class="c1"># Identify the type of each field</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;mappings&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;properties&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;idArticle&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                    <span class="s2">&quot;idUser&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Create the index with the mapping</span>
+        <span class="n">es</span><span class="o">.</span><span class="n">indices</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span> 
+        <span class="c1"># ignore=400 to ignore the error if the index already exists</span>
+
+    <span class="c1"># Index the content in the Elasticsearch index (favorites)</span>
+    <span class="n">es</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">article</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#             </span>
+<div class="viewcode-block" id="index_article_view_fav">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.index_article_view_fav">[docs]</a>
+<span class="nd">@require_POST</span>
+<span class="nd">@csrf_exempt</span> 
+<span class="c1"># Note: @csrf_exempt is used here to disable CSRF protection for this view.</span>
+
+<span class="k">def</span> <span class="nf">index_article_view_fav</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    View function to index an article as a favorite in Elasticsearch.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: A JSON response indicating the status of the indexing operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># 1. Get JSON data from the request</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Format JSON invalide&#39;</span><span class="p">})</span>
+        
+        <span class="c1"># 2. Check if the required fields are present in the data</span>
+        <span class="n">required_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;idArticle&#39;</span><span class="p">,</span> <span class="s1">&#39;idUser&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required_fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Champ manquant : </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+        
+        <span class="c1"># 3. Call the function to index the element in Elasticsearch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">index_article_fav</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Article indexé avec succès&#39;</span><span class="p">})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Erreur lors de l</span><span class="se">\&#39;</span><span class="s1">indexation : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+    
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Méthode non autorisée&#39;</span><span class="p">})</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<span class="c1"># Deletion of favorites based on idArticle and idUser</span>
+
+<div class="viewcode-block" id="delete_favoris_document">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.delete_favoris_document">[docs]</a>
+<span class="nd">@require_POST</span>
+<span class="nd">@csrf_exempt</span>
+<span class="k">def</span> <span class="nf">delete_favoris_document</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete a favoris document from Elasticsearch.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: A JSON response indicating the status of the deletion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;POST&#39;</span><span class="p">:</span>
+        <span class="c1"># Get idArticle and idUser from the request</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+            <span class="n">idArticle</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;idArticle&#39;</span><span class="p">)</span>
+            <span class="n">idUser</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;idUser&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Format JSON invalide&#39;</span><span class="p">})</span>
+
+        <span class="c1"># Check if the element already exists</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;must&quot;</span><span class="p">:</span> <span class="p">[</span>
+                            <span class="p">{</span><span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idArticle&quot;</span><span class="p">:</span> <span class="n">idArticle</span><span class="p">}},</span>
+                            <span class="p">{</span><span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;idUser&quot;</span><span class="p">:</span> <span class="n">idUser</span><span class="p">}}</span>
+                        <span class="p">]</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+
+            <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">document_id</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Document trouvé avec succès : </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_source&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Document non trouvé pour idArticle=</span><span class="si">{</span><span class="n">idArticle</span><span class="si">}</span><span class="s2">, idUser=</span><span class="si">{</span><span class="n">idUser</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Document non trouvé&#39;</span><span class="p">})</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur lors de la recherche : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Erreur lors de la recherche : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+
+        <span class="c1"># Delete the element from Elasticsearch</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">es</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">document_id</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Document supprimé avec succès : </span><span class="si">{</span><span class="n">document_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Erreur lors de la suppression : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Erreur lors de la suppression : </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span>
+
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;success&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Document supprimé avec succès&#39;</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="s1">&#39;Méthode non autorisée&#39;</span><span class="p">})</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+<div class="viewcode-block" id="retrieve_and_save_favorite_articles">
+<a class="viewcode-back" href="../../elastic.html#elastic.views.retrieve_and_save_favorite_articles">[docs]</a>
+<span class="nd">@require_GET</span>
+<span class="k">def</span> <span class="nf">retrieve_and_save_favorite_articles</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve and save favorite articles based on the provided UserId.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (HttpRequest): The HTTP request object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        JsonResponse: A JSON response containing the search results of favorite articles.</span>
+<span class="sd">            If there are matches for the given UserId, it returns a list of corresponding articles.</span>
+<span class="sd">            If there are no matches, it returns an empty list.</span>
+<span class="sd">            If an error occurs during the retrieval and saving process, it returns an error message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Retrieve UserId from the request&#39;s query parameters</span>
+        <span class="n">UserId</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;UserId&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Perform a search in the favorite articles index based on UserId</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index_fav</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;match&quot;</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s2">&quot;idUser&quot;</span><span class="p">:</span> <span class="n">UserId</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+
+        <span class="c1"># Check if there are matches for the given UserId</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;total&#39;</span><span class="p">][</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Retrieve the favorite articles</span>
+            <span class="n">favorite_articles</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;hits&#39;</span><span class="p">][</span><span class="s1">&#39;hits&#39;</span><span class="p">]</span>
+
+            <span class="c1"># Extract the idArticle from each favorite article</span>
+            <span class="n">idArticles</span> <span class="o">=</span> <span class="p">[</span><span class="n">article</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">][</span><span class="s1">&#39;idArticle&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">article</span> <span class="ow">in</span> <span class="n">favorite_articles</span><span class="p">]</span>
+
+            <span class="c1"># Search for corresponding articles</span>
+            <span class="n">articles_search_results</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">idArticle</span> <span class="ow">in</span> <span class="n">idArticles</span><span class="p">:</span>
+                <span class="n">result_article</span> <span class="o">=</span> <span class="n">es</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">nom_index</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">idArticle</span><span class="p">)</span>
+                <span class="n">articles_search_results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">result_article</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">],</span> <span class="s1">&#39;_source&#39;</span><span class="p">:</span> <span class="n">result_article</span><span class="p">[</span><span class="s1">&#39;_source&#39;</span><span class="p">]})</span>
+
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">(</span><span class="n">articles_search_results</span><span class="p">,</span> <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">([],</span> <span class="n">safe</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># Handle any errors that occur during the retrieval and saving process</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error during retrieval and saving: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;Error during retrieval and saving: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">})</span></div>
+
+    
+<span class="c1">#------------------------------------------------------------------------------------------------------------#</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">eureka-documentation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Backend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, TPIGL.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
