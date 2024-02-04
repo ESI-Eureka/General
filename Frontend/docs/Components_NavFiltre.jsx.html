@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Components/NavFiltre.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Components/NavFiltre.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import { ReactComponent as Fleche } from '../Icons/Fleche.svg';
+import './NavFiltre.css';
+import FiltreAuteur from './FiltreAuteur';
+import FiltreMotCle from './FiltreMotCle';
+import FiltreInstitution from './FiltreInstitution';
+import FiltreDate from './FiltreDate';
+
+/**
+ * Component for filtering data based on selected filters.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Array} props.data - The data to be filtered.
+ * @param {Function} props.onFilterResultUpdate - The callback function to update the filtered results.
+ * @returns {JSX.Element} The NavFiltre component.
+ */
+const NavFiltre = ({ data, onFilterResultUpdate }) => {
+
+    const [filtreAuteurVisible, setFiltreAuteurVisible] = useState(false);
+    const [filtreMotCleVisible, setFiltreMotCleVisible] = useState(false);
+    const [FiltreInstitutionVisible, setFiltreInstitutionVisible] = useState(false);
+    const [FiltreDateVisible, setFiltreDateVisible] = useState(false);
+
+    const [rotateAngleAuteur, setRotateAngleAuteur] = useState(0);
+    const [rotateAngleMotCle, setRotateAngleMotCle] = useState(0);
+    const [rotateAngleInstitution, setRotateAngleInstitution] = useState(0);
+    const [rotateAngleDate, setRotateAngleDate] = useState(0);
+
+    //pour stocker les valeurs extraites à partir du data 
+    const [auteurs, setAuteurs] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+    const [motsCles, setMotsCles] = useState([]);
+
+    //pour stocker les options sélectionnés dont FiltreAuteur, FiltreMotCle, FiltreInstitutions, FiltrDate
+    const [selectedAuteurs, setSelectedAuteurs] = useState([]);
+    const [selectedMotsCles, setSelectedMotsCles] = useState([]);
+    const [selectedInstitutions, setSelectedInstitutions] = useState([]);
+    const [selectedDateDebut, setSelectedDateDebut] = useState('');
+    const [selectedDateFin, setSelectedDateFin] = useState('');
+
+    // Fonction de filtrage
+    const applyFilters = (data, selectedAuteurs, selectedMotsCles, selectedInstitutions, selectedDateDebut, selectedDateFin) => {
+         return data.filter(article =>
+            (selectedAuteurs.length === 0 || selectedAuteurs.some(auteur => article._source.auteurs.includes(auteur))) &amp;&amp;
+            (selectedMotsCles.length === 0 || selectedMotsCles.some(motCle => article._source.mots_cles.includes(motCle))) &amp;&amp;
+            (selectedInstitutions.length === 0 || selectedInstitutions.some(institution => article._source.institutions.includes(institution))) &amp;&amp;
+            (!selectedDateDebut || new Date(article._source.publication_date) >= selectedDateDebut) &amp;&amp;
+            (!selectedDateFin || new Date(article._source.publication_date) &lt;= selectedDateFin)
+         );
+     };
+
+    useEffect(() => {
+        // Call handleFilterList when the component mounts or when data changes
+        handleFilterList();
+    }, [data, selectedAuteurs, selectedMotsCles, selectedInstitutions, selectedDateDebut, selectedDateFin]);
+
+    const toggleFiltreAuteur = () => {
+        setFiltreAuteurVisible(!filtreAuteurVisible);
+        setRotateAngleAuteur((prevAngle) => (prevAngle + 180) % 360);
+    };
+
+    const toggleFiltreMotCle = () => {
+        setFiltreMotCleVisible(!filtreMotCleVisible);
+        setRotateAngleMotCle((prevAngle) => (prevAngle + 180) % 360);
+    };
+
+    const toggleFiltreInstitution = () => {
+        setFiltreInstitutionVisible(!FiltreInstitutionVisible);
+        setRotateAngleInstitution((prevAngle) => (prevAngle + 180) % 360);
+    };
+
+    const toggleFiltreDate = () => {
+        setFiltreDateVisible(!FiltreDateVisible);
+        setRotateAngleDate((prevAngle) => (prevAngle + 180) % 360);
+    };
+
+    const handleFilterList = () => {
+    // pour extraire des valeurs uniques des auteurs, mots clés, institutions à partir de data = résultat de la recherche 
+        const auteur = Array.from(new Set(data.map(result => result._source.auteurs).flat()));
+        setAuteurs(auteur);
+        const institution = Array.from(new Set(data.map(result => result._source.institutions).flat()));
+        setInstitutions(institution);
+        const motCle = Array.from(new Set(data.map(result => result._source.mots_cles).flat()));
+        setMotsCles(motCle);
+    };
+
+    return (
+        &lt;div className="NavFiltre">
+            &lt;div className="Listes">
+                &lt;div id="Auteur" onClick={toggleFiltreAuteur}>
+                    &lt;span> Author &lt;/span>
+                    &lt;Fleche style={{ transform: `rotate(${rotateAngleAuteur}deg)` }} />
+                &lt;/div>
+                {filtreAuteurVisible &amp;&amp; &lt;FiltreAuteur options={auteurs} onSelect={setSelectedAuteurs}/>}
+            &lt;/div>
+
+            &lt;div className="Listes">
+                &lt;div id="MotCle" onClick={toggleFiltreMotCle}>
+                    &lt;span> Keyword &lt;/span>
+                    &lt;Fleche style={{ transform: `rotate(${rotateAngleMotCle}deg)` }} />
+                &lt;/div>
+                {filtreMotCleVisible &amp;&amp; &lt;FiltreMotCle options={motsCles} onSelect={setSelectedMotsCles}/>}
+            &lt;/div>
+
+            &lt;div className="Listes">
+                &lt;div id="Institution" onClick={toggleFiltreInstitution}>
+                    &lt;span> Institution &lt;/span>
+                    &lt;Fleche style={{ transform: `rotate(${rotateAngleInstitution}deg)` }} />
+                &lt;/div>
+                {FiltreInstitutionVisible &amp;&amp; &lt;FiltreInstitution options={institutions} onSelect={setSelectedInstitutions} />}
+            &lt;/div>
+
+            &lt;div className="Listes">
+                &lt;div id="Periode" onClick={toggleFiltreDate}>
+                    &lt;span> Period &lt;/span>
+                    &lt;Fleche style={{ transform: `rotate(${rotateAngleDate}deg)` }} />
+                &lt;/div>
+                {FiltreDateVisible &amp;&amp; &lt;FiltreDate onDateDebutSelect={setSelectedDateDebut} onDateFinSelect={setSelectedDateFin}/>}
+            &lt;/div>
+
+            &lt;div className="Button">
+                &lt;button
+                    onClick={() => {
+                        // Appeler la fonction de filtrage avec les états actuels
+                        const filteredData = applyFilters(data, selectedAuteurs, selectedMotsCles, selectedInstitutions, selectedDateDebut, selectedDateFin);
+                        console.log('Données filtrées :', filteredData);
+                        onFilterResultUpdate(filteredData); // pour passer les résultats de filtre au parent Filtre
+                    }}
+                > Filter by &lt;/button>
+            &lt;/div>
+            
+        &lt;/div>
+    );
+};
+
+export default NavFiltre;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

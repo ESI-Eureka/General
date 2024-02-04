@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Pages/Signup.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Pages/Signup.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import "./Login.css";
+import { ReactComponent as PicAuth } from "../Icons/Auth.svg";
+import { useNavigate } from "react-router-dom";
+
+/**
+ * Signup component for user registration.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Function} props.setAuthenticated - Function to set the authentication status.
+ * @returns {JSX.Element} The Signup component.
+ */
+const Signup = ( { setAuthenticated } ) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const handleSignup = () => {
+    console.log("Signing up with:", { email, password });
+
+    setLoading(true);
+    let signupRes;
+    // Create an object containing the user data
+    const userData = {
+      email: email,
+      password: password,
+      role: 3,
+    };
+
+    // Make a POST request to the Django backend endpoint
+    fetch("http://localhost:8000/users/signup/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((response) => {
+        signupRes = response.status;
+        console.log(response);
+        if (response.ok) {
+          return response.json();
+        } else  {
+          throw new Error("Failed to signup.");
+        }
+      })
+      .then((data) => {
+        setError(null);
+        // Destructure the response data
+        const { access_token, user_id,email,password, user_role } = data;
+
+        // Store the access token, user ID, and user role in local storage
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("user_id", user_id);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+        localStorage.setItem("user_role", user_role);
+    
+        setAuthenticated(true);
+        navigate("/home");
+        window.location.reload();
+      })
+    .catch((error) => {
+      console.error("Error during Signup:", error);
+      if (signupRes === 401) {
+        setError("Email already exists.");
+      } else {
+        setError("Failed to Signup. Please try again.");
+      }
+      setLoading(false);
+    });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    handleSignup();
+  };
+
+  return (
+    &lt;div className="login-container">
+      &lt;div className="picAuth-container">
+        &lt;PicAuth className="picAuth" />
+      &lt;/div>
+      &lt;form className="login-form" onSubmit={handleFormSubmit}>
+        &lt;h2>Sign-Up&lt;/h2>
+
+        &lt;div className="email-password">
+          &lt;label htmlFor="email">Email :&lt;/label>
+          &lt;input
+            type="text"
+            id="email"
+            value={email}
+            placeholder="Enter email"
+            onChange={(e) => setEmail(e.target.value)}
+            pattern="[^\s@]+@[^\s@]+\.[^\s@]+" // Specify the pattern for a valid email
+            title="utilisateur@example.com" // Specify the validation message
+            required
+          />
+
+          &lt;label htmlFor="password">Password :&lt;/label>
+          &lt;input
+            type="password"
+            id="password"
+            value={password}
+            placeholder="Enter password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        &lt;/div>
+        {error &amp;&amp; &lt;p className="error-message">{error}&lt;/p>}
+        &lt;button type="submit">
+          {loading ? "Signing Up..." : "Sign Up"}
+        &lt;/button>
+        &lt;p>
+          Already have an account? &lt;a href="/login">Log-in&lt;/a>
+        &lt;/p>
+      &lt;/form>
+    &lt;/div>
+  );
+};
+
+export default Signup;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

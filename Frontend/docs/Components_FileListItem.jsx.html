@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Components/FileListItem.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Components/FileListItem.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import './FileListItem.css'
+
+/**
+ * Represents a file item in a list.
+ * @param {Object} props - The properties for the FileListItem component.
+ * @param {string} props.filename - The name of the file.
+ * @param {Function} props.handleDelete - The function to handle file deletion.
+ * @returns {JSX.Element} The FileListItem component.
+ */
+const FileListItem=(props)=>{
+    return(
+        &lt;div className="container">
+        &lt;svg className="file" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    &lt;path d="M30.1249 2.59009L37.0799 9.84009V37.4101H11.0986V37.5001H37.1686V9.93134L30.1249 2.59009Z" fill="#909090"/>
+                    &lt;path d="M30.0388 2.5H11.01V37.41H37.08V9.84125L30.0388 2.5Z" fill="#F4F4F4"/>
+                    &lt;path d="M10.8188 4.375H2.8313V12.9087H27.9563V4.375H10.8188Z" fill="#7A7B7C"/>
+                    &lt;path d="M28.0899 12.7636H2.99365V4.22363H28.0899V12.7636Z" fill="#DD2025"/>
+                    &lt;path d="M11.3149 5.66761H9.68115V11.6676H10.9662V9.64386L11.2499 9.66011C11.5256 9.65536 11.7987 9.60597 12.0587 9.51386C12.2865 9.43548 12.4962 9.31174 12.6749 9.15011C12.8568 8.99613 13.0002 8.8018 13.0937 8.58261C13.219 8.21823 13.2638 7.83098 13.2249 7.44761C13.2171 7.17374 13.1691 6.90251 13.0824 6.64261C13.0035 6.45499 12.8864 6.28586 12.7385 6.14597C12.5907 6.00609 12.4153 5.89852 12.2237 5.83011C12.0579 5.77011 11.8867 5.72656 11.7124 5.70011C11.5804 5.67975 11.4472 5.66889 11.3137 5.66761M11.0774 8.53511H10.9662V6.68511H11.2074C11.3139 6.67743 11.4207 6.69378 11.52 6.73294C11.6193 6.7721 11.7086 6.83307 11.7812 6.91136C11.9316 7.11263 12.0119 7.35761 12.0099 7.60886C12.0099 7.91636 12.0099 8.19511 11.7324 8.39136C11.5325 8.50131 11.3049 8.55207 11.0774 8.53511ZM15.6662 5.65136C15.5274 5.65136 15.3924 5.66136 15.2974 5.66511L14.9999 5.67261H14.0249V11.6726H15.1724C15.6109 11.6846 16.0475 11.6103 16.4574 11.4539C16.7873 11.323 17.0794 11.1121 17.3074 10.8401C17.5291 10.5657 17.6882 10.2462 17.7737 9.90386C17.8719 9.51619 17.9198 9.1175 17.9162 8.71761C17.9404 8.24531 17.9039 7.77184 17.8074 7.30886C17.7159 6.96806 17.5445 6.65397 17.3074 6.39261C17.1214 6.18156 16.8937 6.01132 16.6387 5.89261C16.4196 5.79125 16.1892 5.71655 15.9524 5.67011C15.8582 5.65455 15.7628 5.64744 15.6674 5.64886M15.4399 10.5701H15.3149V6.74011H15.3312C15.5889 6.71046 15.8496 6.75696 16.0812 6.87386C16.2507 7.00927 16.3889 7.17986 16.4862 7.37386C16.5911 7.57803 16.6516 7.80212 16.6637 8.03136C16.6749 8.30636 16.6637 8.53136 16.6637 8.71761C16.6687 8.93216 16.6549 9.14673 16.6224 9.35886C16.5839 9.57665 16.5127 9.78736 16.4112 9.98386C16.2963 10.1666 16.141 10.3205 15.9574 10.4339C15.8032 10.5336 15.6206 10.5801 15.4374 10.5664M21.7874 5.67261H18.7499V11.6726H20.0349V9.29261H21.6599V8.17761H20.0349V6.78761H21.7849V5.67261" fill="#464648"/>
+                    &lt;path d="M27.2264 25.3186C27.2264 25.3186 31.2114 24.5961 31.2114 25.9574C31.2114 27.3186 28.7426 26.7649 27.2264 25.3186ZM24.2801 25.4224C23.647 25.5623 23.03 25.7671 22.4389 26.0336L22.9389 24.9086C23.4389 23.7836 23.9576 22.2499 23.9576 22.2499C24.5542 23.2541 25.2484 24.197 26.0301 25.0649C25.4406 25.1528 24.8564 25.273 24.2801 25.4249V25.4224ZM22.7026 17.2974C22.7026 16.1111 23.0864 15.7874 23.3851 15.7874C23.6839 15.7874 24.0201 15.9311 24.0314 16.9611C23.934 17.9968 23.7172 19.0178 23.3851 20.0036C22.9303 19.1759 22.6949 18.2456 22.7014 17.3011L22.7026 17.2974ZM16.8914 30.4424C15.6689 29.7111 19.4551 27.4599 20.1414 27.3874C20.1376 27.3886 18.1714 31.2074 16.8914 30.4424ZM32.3751 26.1186C32.3626 25.9936 32.2501 24.6099 29.7876 24.6686C28.7612 24.6521 27.7353 24.7245 26.7214 24.8849C25.7392 23.8954 24.8934 22.7793 24.2064 21.5661C24.6392 20.3154 24.9011 19.012 24.9851 17.6911C24.9489 16.1911 24.5901 15.3311 23.4401 15.3436C22.2901 15.3561 22.1226 16.3624 22.2739 17.8599C22.422 18.8662 22.7015 19.8487 23.1051 20.7824C23.1051 20.7824 22.5739 22.4361 21.8714 24.0811C21.1689 25.7261 20.6889 26.5886 20.6889 26.5886C19.4673 26.9863 18.3173 27.5771 17.2826 28.3386C16.2526 29.2974 15.8339 30.0336 16.3764 30.7699C16.8439 31.4049 18.4801 31.5486 19.9426 29.6324C20.7197 28.6427 21.4296 27.602 22.0676 26.5174C22.0676 26.5174 24.2976 25.9061 24.9914 25.7386C25.6851 25.5711 26.5239 25.4386 26.5239 25.4386C26.5239 25.4386 28.5601 27.4874 30.5239 27.4149C32.4876 27.3424 32.3926 26.2411 32.3801 26.1211" fill="#DD2025"/>
+                    &lt;path d="M29.9424 2.59619V9.93744H36.9836L29.9424 2.59619Z" fill="#909090"/>
+                    &lt;path d="M30.0388 2.5V9.84125H37.0801L30.0388 2.5Z" fill="#F4F4F4"/>
+                    &lt;path d="M11.2187 5.57117H9.58496V11.5712H10.875V9.54867L11.16 9.56492C11.4357 9.56018 11.7088 9.51079 11.9687 9.41867C12.1966 9.34026 12.4062 9.21653 12.585 9.05492C12.7655 8.90054 12.9076 8.70624 13 8.48742C13.1253 8.12305 13.1701 7.7358 13.1312 7.35242C13.1234 7.07856 13.0754 6.80733 12.9887 6.54742C12.9098 6.35981 12.7927 6.19067 12.6449 6.05079C12.497 5.91091 12.3217 5.80333 12.13 5.73492C11.9635 5.67434 11.7914 5.63037 11.6162 5.60367C11.4842 5.58331 11.351 5.57245 11.2175 5.57117M10.9812 8.43867H10.87V6.58867H11.1125C11.2189 6.58099 11.3258 6.59734 11.4251 6.6365C11.5244 6.67566 11.6136 6.73664 11.6862 6.81492C11.8366 7.01619 11.917 7.26118 11.915 7.51242C11.915 7.81992 11.915 8.09867 11.6375 8.29492C11.4375 8.40488 11.21 8.45439 10.9825 8.43742M15.57 5.55492C15.4312 5.55492 15.2962 5.56492 15.2012 5.56867L14.9075 5.57617H13.9325V11.5762H15.08C15.5185 11.5882 15.9551 11.5139 16.365 11.3574C16.6949 11.2266 16.987 11.0156 17.215 10.7437C17.4367 10.4692 17.5958 10.1497 17.6812 9.80742C17.7794 9.41976 17.8273 9.02107 17.8237 8.62117C17.848 8.14887 17.8114 7.67541 17.715 7.21242C17.6234 6.87163 17.452 6.55754 17.215 6.29617C17.029 6.08513 16.8013 5.91489 16.5462 5.79617C16.3272 5.69482 16.0968 5.62012 15.86 5.57367C15.7658 5.55812 15.6704 5.551 15.575 5.55242M15.3475 10.4737H15.2225V6.64367H15.2387C15.4964 6.61402 15.7571 6.66052 15.9887 6.77742C16.1583 6.91283 16.2965 7.08342 16.3937 7.27742C16.4987 7.48159 16.5592 7.70568 16.5712 7.93492C16.5825 8.20992 16.5712 8.43492 16.5712 8.62117C16.5763 8.83572 16.5625 9.0503 16.53 9.26242C16.4914 9.48021 16.4202 9.69092 16.3187 9.88742C16.2038 10.0701 16.0486 10.2241 15.865 10.3374C15.7107 10.4372 15.5281 10.4837 15.345 10.4699M21.6912 5.57617H18.6537V11.5762H19.9387V9.19617H21.5637V8.08117H19.9387V6.69117H21.6887V5.57617" fill="white"/>
+        &lt;/svg>
+        &lt;p className="name">{props.filename}&lt;/p>
+        
+        &lt;svg onClick={() => props.handleDelete(props.filename)} className="delete" width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            &lt;path d="M15 3.375C14.3787 3.375 13.875 3.87868 13.875 4.5V5.625H7.5C6.87868 5.625 6.375 6.12868 6.375 6.75C6.375 7.37132 6.87868 7.875 7.5 7.875H28.5C29.1213 7.875 29.625 7.37132 29.625 6.75C29.625 6.12868 29.1213 5.625 28.5 5.625H22.125V4.5C22.125 3.87868 21.6213 3.375 21 3.375H15Z" fill="#DD2025"/>
+            &lt;path d="M19.591 22.5L21.7955 24.7045C22.2348 25.1438 22.2348 25.8561 21.7955 26.2955C21.3562 26.7348 20.6438 26.7348 20.2045 26.2955L18 24.091L15.7955 26.2955C15.3562 26.7348 14.6439 26.7348 14.2045 26.2955C13.7652 25.8562 13.7652 25.1438 14.2045 24.7045L16.409 22.5L14.2045 20.2955C13.7652 19.8561 13.7652 19.1438 14.2045 18.7045C14.6438 18.2652 15.3562 18.2652 15.7955 18.7045L18 20.909L20.2045 18.7045C20.6439 18.2652 21.3562 18.2652 21.7955 18.7045C22.2348 19.1438 22.2348 19.8562 21.7955 20.2955L19.591 22.5Z" fill="#DD2025"/>
+            &lt;path fill-rule="evenodd" clip-rule="evenodd" d="M8.98714 11.8758C9.05044 11.306 9.53201 10.875 10.1053 10.875H25.8947C26.468 10.875 26.9495 11.306 27.0128 11.8758L27.3131 14.5778C27.8573 19.4758 27.8573 24.419 27.3131 29.317L27.2835 29.583C27.0675 31.5272 25.5607 33.0775 23.6234 33.3487C19.8926 33.871 16.1073 33.871 12.3766 33.3487C10.4393 33.0775 8.93249 31.5272 8.71647 29.583L8.68691 29.317C8.14269 24.419 8.14269 19.4758 8.68691 14.5778L8.98714 11.8758ZM11.1122 13.125L10.9232 14.8263C10.3973 19.5591 10.3973 24.3356 10.9232 29.0685L10.9527 29.3345C11.0552 30.2566 11.7698 30.9918 12.6886 31.1204C16.2123 31.6138 19.7876 31.6138 23.3114 31.1204C24.2302 30.9918 24.9448 30.2566 25.0473 29.3345L25.0768 29.0685C25.6027 24.3356 25.6027 19.5591 25.0768 14.8263L24.8878 13.125H11.1122Z" fill="#DD2025"/>
+        &lt;/svg>
+        &lt;/div>
+    )
+}
+
+export default FileListItem</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

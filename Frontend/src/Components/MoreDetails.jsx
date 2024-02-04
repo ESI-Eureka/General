@@ -3,6 +3,15 @@
 import React from "react";
 import './MoreDetails.css';
 
+/**
+ * Renders a component for displaying and editing additional details.
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.editMode - Flag indicating whether the component is in edit mode.
+ * @param {Object} props.data - The data object containing the details.
+ * @param {Function} props.setData - The function to update the data object.
+ * @returns {JSX.Element} The rendered MoreDetails component.
+ */
 const MoreDetails = ({ editMode,data,setData}) => {
   
   

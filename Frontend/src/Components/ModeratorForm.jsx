@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import "./ModeratorForm.css";
 
+/**
+ * Represents a form for adding a moderator.
+ * @param {Object} props - The component props.
+ * @param {Function} props.onAdd - The function to call when a moderator is added.
+ * @param {Function} props.onClose - The function to call when the form is closed.
+ * @returns {JSX.Element} The ModeratorForm component.
+ */
 const ModeratorForm = ({ onAdd, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

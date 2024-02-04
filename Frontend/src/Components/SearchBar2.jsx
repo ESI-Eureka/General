@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import './SearchBar2.css';
 
+/**
+ * SearchBar component.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.label - The label for the search input.
+ * @param {ReactNode} props.icon - The icon to display next to the search input.
+ * @returns {JSX.Element} The rendered SearchBar component.
+ */
 const SearchBar = ({ label, icon }) => {
 
     const [search, setSearch] = useState('');

@@ -5,6 +5,10 @@ import NavBar from '../Components/NavBar';
 import { useState,useEffect } from 'react';
 import axios from 'axios';
 
+/**
+ * Renders a component for modifying articles.
+ * @returns {JSX.Element} The ModArticles component.
+ */
 const ModArticles = () => {
     
     const [data,setData]=useState([]);

@@ -3,6 +3,12 @@ import "./Login.css";
 import { ReactComponent as PicAuth } from "../Icons/Auth.svg";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Represents the Login component.
+ * @param {Object} props - The component props.
+ * @param {Function} props.setAuthenticated - A function to set the authentication status.
+ * @returns {JSX.Element} The rendered Login component.
+ */
 const Login = ({ setAuthenticated }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import Calendrier from '../Components/Calendrier';
 import './Filtrage.css';
 
+/**
+ * Component for filtering dates.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Function} props.onDateDebutSelect - Callback function for handling the selection of start date.
+ * @param {Function} props.onDateFinSelect - Callback function for handling the selection of end date.
+ * @returns {JSX.Element} The rendered component.
+ */
 const FiltreDate = ({ onDateDebutSelect, onDateFinSelect }) => {
 
     //pour stocker les date sélectionnées

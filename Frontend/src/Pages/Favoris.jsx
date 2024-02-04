@@ -3,6 +3,11 @@ import Resultat from '../Components/Resultat';
 import React, { useState, useEffect } from 'react';
 import './Filtre.css';
 
+/**
+ * Renders the Favoris page component.
+ * 
+ * @returns {JSX.Element} The rendered Favoris page component.
+ */
 const Favoris = () => {
     const [data, setData] = useState([]);
 

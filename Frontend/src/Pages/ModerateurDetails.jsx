@@ -11,6 +11,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+/**
+ * Represents the ModerateurDetails component.
+ * This component displays the details of a moderator and allows editing, saving, and deleting the data.
+ *
+ * @returns {JSX.Element} The ModerateurDetails component.
+ */
 const ModerateurDetails = () => {
   const location = useLocation();
   const [initialData, setInitialData] = useState(location.state?.data);

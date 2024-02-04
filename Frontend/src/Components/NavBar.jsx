@@ -29,6 +29,10 @@ const navItems = allNavItems.filter((item) => {
   return item.visibleFor === user_role || !item.visibleFor;
 });
 
+/**
+ * Represents a navigation bar component.
+ * @returns {JSX.Element} The rendered navigation bar.
+ */
 const NavBar = () => {
   const location = useLocation();
   const currentPath = location.pathname;

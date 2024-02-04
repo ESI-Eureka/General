@@ -3,6 +3,15 @@ import './Filtrage.css';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
+/**
+ * Component for filtering institutions.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Array} props.options - The available options (authors).
+ * @param {Function} props.onSelect - The function to be called when options are selected.
+ * @returns {JSX.Element} The rendered component.
+ */
 const FiltreInstitution = ({ options, onSelect }) => {
 
      //pour stocker les options (auteurs) sélectionnés

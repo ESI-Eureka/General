@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Components/Resultat.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Components/Resultat.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from 'react';
+import { ReactComponent as Fleche2 } from '../Icons/Fleche2.svg';
+import { ReactComponent as FavorisIcon } from '../Icons/Favoris.svg';
+import { ReactComponent as FavorisIconFilled } from '../Icons/FavorisFilled.svg';
+import './Resultat.css';
+import { useNavigate } from 'react-router-dom';
+
+/**
+ * Represents a Resultat component.
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} The Resultat component.
+ */
+const Resultat = (props) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
+  const userId = localStorage.getItem("user_id");
+  const userRole = localStorage.getItem("user_role");
+  console.log(userRole);
+    const articleData = {
+      idArticle: props.id,
+      idUser: userId,
+    };
+
+    useEffect(() => {
+      const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+      setIsFavorite(Array.isArray(favorites[props.id]) &amp;&amp; favorites[props.id].includes(userId));
+    }, [props.id, userId]);
+    
+
+  const handleRemoveClick = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/elastic/delete_favoris_document/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articleData),
+      });
+
+      if (response.ok) {
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        favorites[props.id] = favorites[props.id]?.filter(id => id !== userId);
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        setIsFavorite(false);
+        console.log("Successfully removed from favorites.")
+      } else {
+        throw new Error("Failed to remove from favorites.");
+      }
+    } catch (error) {
+      console.error("Error during fav:", error);
+    }
+  }
+
+  const handleAddClick = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/elastic/index_fav/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articleData),
+      });
+  
+      if (response.ok) {
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const existingFavorites = Array.isArray(favorites[props.id]) ? favorites[props.id] : [];
+        const updatedFavorites = [...existingFavorites, userId];
+        favorites[props.id] = updatedFavorites;
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        setIsFavorite(true);
+        console.log("Successfully added to favorites.")
+      } else {
+        throw new Error("Failed to add to favorites.");
+      }
+    } catch (error) {
+      console.error("Error during fav:", error);
+    }
+  };
+  
+  const handleDetailsClick = () => {
+    navigate(
+      '/details',
+      {
+        state: {
+          id: props.id,
+          data: {
+            "titre": props.Data.titre,
+            "resume": props.Data.resume,
+            "auteurs": props.Data.auteurs,
+            "institutions": props.Data.institutions,
+            "mots_cles": props.Data.mots_cles,
+            "texte_integral": props.Data.texte_integral,
+            "pdf_url": props.Data.pdf_url,
+            "references": props.Data.references,
+            "publication_date": props.Data.publication_date,
+            "corrected": props.Data.etat,
+          },
+        },
+      }
+    );
+  };
+
+  return (
+    &lt;div className="resultats">
+      &lt;div className="Information">
+        &lt;h3 className='info1'> {props.Data.titre}&lt;/h3>
+        &lt;div className='info'> &lt;h4> Authors: &lt;/h4>{props.Data.auteurs.join(', ')}&lt;/div>
+        &lt;div className='info'> &lt;h4> Institutions: &lt;/h4>{props.Data.institutions}&lt;/div>
+        &lt;div className='info'> &lt;h4> Publication date: &lt;/h4>{props.Data.publication_date.substring(0, 10)}&lt;/div>
+
+        {userRole === "user" &amp;&amp; ( // Condition pour vérifier si l'utilisateur a le rôle "user"
+        isFavorite ? (
+          &lt;FavorisIconFilled className="favoris-icon" onClick={handleRemoveClick} />
+        ) : (
+          &lt;FavorisIcon className="favoris-icon" onClick={handleAddClick} />
+        )
+      )}
+      &lt;/div>
+
+      &lt;div className="Details">
+        &lt;a onClick={handleDetailsClick}>More details&lt;/a>
+        &lt;Fleche2 />
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default Resultat;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
