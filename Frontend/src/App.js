@@ -9,7 +9,7 @@ import Filtre from "./Pages/Filtre";
 import SearchPage from "./Pages/Search";
 import Favoris from "./Pages/Favoris";
 import Details from "./Pages/Details";
-import Error404 from "./Components/Error404";
+import Error404 from "./Components/error404";
 import ModArticles from "./Pages/modArticles";
 import ModerateurDetails from "./Pages/ModerateurDetails";
 
