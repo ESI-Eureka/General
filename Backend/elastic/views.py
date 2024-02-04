@@ -67,6 +67,8 @@ def index_article(article):
         generated_id = result.get('_id')
         article['_id'] = generated_id
 
+        
+
         # Retrieve saved articles from the JSON file
         try:
             if os.path.getsize(fichier2_json_path) > 0:
@@ -358,7 +360,6 @@ def mettre_jour_article(request):
         JsonResponse: The JSON response indicating the success or failure of the update operation.
     """
     # Existing code...
-def mettre_jour_article(request):
     # Extracting values from the POST request
     # Parse JSON data from the request body
     data = json.loads(request.body.decode('utf-8'))
@@ -595,3 +596,4 @@ def retrieve_and_save_favorite_articles(request):
         return JsonResponse({'status': 'error', 'message': f'Error during retrieval and saving: {e}'})
     
 #------------------------------------------------------------------------------------------------------------#
+    

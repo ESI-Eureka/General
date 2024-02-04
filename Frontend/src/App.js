@@ -9,7 +9,7 @@ import Filtre from "./Pages/Filtre";
 import SearchPage from "./Pages/Search";
 import Favoris from "./Pages/Favoris";
 import Details from "./Pages/Details";
-import NotAuthorized from "./Pages/NotAuthorized";
+import Error404 from "./Components/error404";
 import ModArticles from "./Pages/modArticles";
 import ModerateurDetails from "./Pages/ModerateurDetails";
 
@@ -28,7 +28,7 @@ const PrivateRoute = ({ element: Element, role, ...rest }) => {
   const isAuthorized = role ? roles[role].includes(userRole) : true;
 
   if (isAuthenticated) {
-    return isAuthorized ? <Element {...rest} /> : <Navigate to="/not-authorized" replace />;
+    return isAuthorized ? <Element {...rest} /> : <Navigate to="/error" replace />;
   } else {
     return <Navigate to="/login" replace />;
   }
@@ -74,10 +74,11 @@ function App() {
         <Route path="/filtre" element={<PrivateRoute element={Filtre} role="user" />} />
         <Route path="/moderators" element={<PrivateRoute element={Moderators} role="admin" />} />
         <Route path="/profil" element={<PrivateRoute element={Profil} />} />
-        <Route path="/details" element={<PrivateRoute element={userRole === "moderator" ? ModerateurDetails : userRole === "user" ? Details : NotAuthorized} role={userRole} />} />
+        <Route path="/details" element={<PrivateRoute element={userRole === "moderator" ? ModerateurDetails : userRole === "user" ? Details : Error404} role={userRole} />} />
         <Route path="/login" element={!authenticated ? <Login setAuthenticated={setAuthenticated} /> : <Navigate to="/home" />} />
         <Route path="/signup" element={!authenticated ? <Signup setAuthenticated={setAuthenticated} /> : <Navigate to="/home" />} />
-        <Route path="/not-authorized" element={<NotAuthorized authenticated={authenticated} />} />
+        <Route path="/error" element={<Error404 />} />
+        <Route path="*" element={<Error404 />} />
       </Routes>
     </BrowserRouter>
   );
