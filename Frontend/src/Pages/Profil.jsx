@@ -4,6 +4,10 @@ import NavBar from "../Components/NavBar";
 import { ReactComponent as EditIcon } from "../Icons/Edit.svg";
 import { ReactComponent as SaveIcon } from "../Icons/Save.svg";
 
+/**
+ * Represents a user profile.
+ * @returns {JSX.Element} The profile component.
+ */
 const Profile = () => {
   const [initialEmail, setInitialEmail] = useState("");
   const [initialPassword, setInitialPassword] = useState("");

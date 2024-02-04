@@ -5,6 +5,14 @@ import { ReactComponent as SaveIcon } from "../Icons/Save.svg";
 import { ReactComponent as DeleteIcon } from "../Icons/Delete.svg";
 import { ReactComponent as CrossIcon } from "../Icons/Cross.svg";
 
+/**
+ * Represents a moderator item component.
+ * @param {Object} props - The component props.
+ * @param {Object} props.moderateur - The moderator object.
+ * @param {Function} props.onDelete - The function to call when deleting the moderator.
+ * @param {Function} props.onEdit - The function to call when editing the moderator.
+ * @returns {JSX.Element} The moderator item component.
+ */
 const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
   const { id, email } = moderateur;
   const [isEditing, setIsEditing] = useState(false);

@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import './SearchBar.css';
 
+/**
+ * A search bar component.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.label - The label for the search bar.
+ * @param {string} props.icon - The icon for the search button.
+ * @param {Function} props.onSearch - The callback function to be called when the search button is clicked or Enter key is pressed.
+ * @returns {JSX.Element} The search bar component.
+ */
 const SearchBar = ({ label, icon, onSearch }) => {
   const [search, setSearch] = useState('');
 

@@ -82,3 +82,4 @@ elastic/__pycache__/views.cpython-312.pyc
 
 media/
 elastic/document.json
+Frontend/node_modules/

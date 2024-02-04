@@ -7,6 +7,10 @@ import Resultat from '../Components/Resultat';
 import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 import './Filtre.css';
 
+/**
+ * Represents a component for filtering and displaying search results.
+ * @returns {JSX.Element} The Filtre component.
+ */
 const Filtre = () => {
   const location = useLocation();
   const [searchResults, setSearchResults] = useState(location.state?.searchResults || []);

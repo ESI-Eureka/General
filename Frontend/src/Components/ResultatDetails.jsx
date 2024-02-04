@@ -6,6 +6,15 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import config from "../config";
 
+/**
+ * Renders the details of a result.
+ *
+ * @param {Object} props - The component props.
+ * @param {Object} props.data - The data object containing the result details.
+ * @param {Function} props.setData - The function to update the data object.
+ * @param {boolean} props.editMode - A flag indicating whether the component is in edit mode.
+ * @returns {JSX.Element} The ResultatDetails component.
+ */
 const ResultatDetails = ({ data, setData, editMode }) => {
   const handleDownloadTxt = () => {
     const textContent = data.texte_integral;

@@ -5,6 +5,12 @@ import SearchBar from '../Components/SearchBar';
 import { ReactComponent as Logo2 } from '../Icons/Logo2.svg';
 import { ReactComponent as SearchIcon } from '../Icons/Search.svg';
 
+/**
+ * Represents the SearchPage component.
+ * 
+ * @component
+ * @returns {JSX.Element} The SearchPage component
+ */
 const SearchPage = () => {
   // State pour stocker les résultats de la recherche
   const [searchResults, setSearchResults] = useState([]);

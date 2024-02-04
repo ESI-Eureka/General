@@ -1,6 +1,13 @@
 import React from "react";
 import './FileListItem.css'
 
+/**
+ * Represents a file item in a list.
+ * @param {Object} props - The properties for the FileListItem component.
+ * @param {string} props.filename - The name of the file.
+ * @param {Function} props.handleDelete - The function to handle file deletion.
+ * @returns {JSX.Element} The FileListItem component.
+ */
 const FileListItem=(props)=>{
     return(
         <div className="container">

@@ -16,6 +16,11 @@ import { ReactComponent as MyIcon }  from '../Icons/Vector.svg';
 import {ReactComponent as Cross} from '../Icons/Cross.svg'
 import done from '../Icons/done.png'
 
+/**
+ * Upload component for handling file uploads and displaying upload status.
+ *
+ * @returns {JSX.Element} The Upload component.
+ */
 const Upload = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);

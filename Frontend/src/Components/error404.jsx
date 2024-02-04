@@ -3,6 +3,11 @@ import React from 'react';
 import "./error404.css";
 import svg from '../Icons/Ellipse 3.svg';
 
+/**
+ * Renders the Error404 component.
+ * 
+ * @returns {JSX.Element} The rendered Error404 component.
+ */
 const Error404 = () => {
     return (
         <>

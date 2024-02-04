@@ -1,6 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+/**
+ * Renders a component for displaying an unauthorized access message.
+ *
+ * @param {Object} props - The component props.
+ * @param {boolean} props.authenticated - Indicates whether the user is authenticated.
+ * @returns {JSX.Element} The rendered component.
+ */
 const NotAuthorized = ({ authenticated }) => {
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>

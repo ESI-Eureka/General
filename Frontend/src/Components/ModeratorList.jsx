@@ -3,6 +3,10 @@ import "./ModeratorList.css";
 import ModeratorItem from "./ModeratorItem";
 import ModeratorForm from "./ModeratorForm";
 
+/**
+ * Represents a component that displays a list of moderators.
+ * @component
+ */
 const ModeratorList = () => {
   const [moderateurs, setModerateurs] = useState([]);
 

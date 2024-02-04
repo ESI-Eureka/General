@@ -7,6 +7,11 @@ import { ReactComponent as RightFleche } from '../Icons/RightFleche.svg';
 import './Details.css';
 import { Link, useLocation } from 'react-router-dom';
 
+/**
+ * Renders the Details page.
+ * 
+ * @returns {JSX.Element} The Details page component.
+ */
 const Details = () => {
     
     const location = useLocation();

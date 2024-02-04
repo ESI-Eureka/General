@@ -3,6 +3,13 @@ import "./Login.css";
 import { ReactComponent as PicAuth } from "../Icons/Auth.svg";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Signup component for user registration.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Function} props.setAuthenticated - Function to set the authentication status.
+ * @returns {JSX.Element} The Signup component.
+ */
 const Signup = ( { setAuthenticated } ) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

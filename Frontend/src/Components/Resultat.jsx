@@ -5,6 +5,11 @@ import { ReactComponent as FavorisIconFilled } from '../Icons/FavorisFilled.svg'
 import './Resultat.css';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Represents a Resultat component.
+ * @param {Object} props - The component props.
+ * @returns {JSX.Element} The Resultat component.
+ */
 const Resultat = (props) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();

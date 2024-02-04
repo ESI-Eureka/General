@@ -6,6 +6,14 @@ import FiltreMotCle from './FiltreMotCle';
 import FiltreInstitution from './FiltreInstitution';
 import FiltreDate from './FiltreDate';
 
+/**
+ * Component for filtering data based on selected filters.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Array} props.data - The data to be filtered.
+ * @param {Function} props.onFilterResultUpdate - The callback function to update the filtered results.
+ * @returns {JSX.Element} The NavFiltre component.
+ */
 const NavFiltre = ({ data, onFilterResultUpdate }) => {
 
     const [filtreAuteurVisible, setFiltreAuteurVisible] = useState(false);

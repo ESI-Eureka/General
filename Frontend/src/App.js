@@ -34,6 +34,10 @@ const PrivateRoute = ({ element: Element, role, ...rest }) => {
   }
 };
 
+/**
+ * Represents the main component of the application.
+ * @returns {JSX.Element} The rendered JSX element.
+ */
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState(null);

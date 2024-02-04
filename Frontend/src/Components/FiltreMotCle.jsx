@@ -3,6 +3,14 @@ import './Filtrage.css';
 import { ReactComponent as SearchIcon2 } from '../Icons/Search2.svg';
 import SearchBar2 from './SearchBar2';
 
+/**
+ * Component for filtering keywords.
+ * 
+ * @param {Object} props - The component props.
+ * @param {Array} props.options - The available options (authors).
+ * @param {Function} props.onSelect - The function to update the selected options in the parent component.
+ * @returns {JSX.Element} The rendered component.
+ */
 const FiltreMotCle = ({ options, onSelect }) => {
 
        //pour stocker les options (auteurs) sélectionnés

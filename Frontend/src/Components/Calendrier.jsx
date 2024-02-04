@@ -4,6 +4,14 @@ import 'react-datepicker/dist/react-datepicker.css'; // Import des styles CSS
 import calendar from '../Icons/Calendar.svg'; // Importez votre icône de calendrier
 import './SearchBar2.css';
 
+/**
+ * A component for selecting a date from a calendar.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Function} props.onDateSelect - The callback function to be called when a date is selected.
+ * @returns {JSX.Element} The Calendrier component.
+ */
 const Calendrier = ({ onDateSelect }) => {
   
   const [date, setDate] = useState(null);
