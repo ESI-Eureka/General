@@ -27,10 +27,17 @@ fichier2_json_path_fav = './elastic/document_fav.json'
 #------------------------------------------------------------------------------------------------------------#
 # Scientific Articles Indexing Part 
 #------------------------------------------------------------------------------------------------------------#
-# Function to index an article in the articles_scientifiques index
-    
-def index_article(article):
 
+def index_article(article):
+    """
+    Indexes an article in the articles_scientifiques index.
+
+    Args:
+        article (dict): The article to be indexed.
+
+    Returns:
+        None
+    """
     # Check if the index exists before creating it
     if not es.indices.exists(index=nom_index):
 
@@ -113,12 +120,17 @@ def index_article(article):
                 json.dump(articles_existants, fichier_json, indent=2)
         else:
             print('Article déja existant!')
-        
 
-#------------------------------------------------------------------------------------------------------------#
-# Function to check if an article exists in the index
-            
 def article_existant(article):
+    """
+    Checks if an article exists in the index.
+
+    Args:
+        article (dict): The article to be checked.
+
+    Returns:
+        bool: True if the article exists, False otherwise.
+    """
     # Search for an article by title in the index
     query = {
         "query": {
@@ -134,15 +146,18 @@ def article_existant(article):
     # Check if any results were found
     return results["hits"]["total"]["value"] > 0
 
-#------------------------------------------------------------------------------------------------------------#
-# POST request to index a new article in Elasticsearch
-        
 @require_POST
 @csrf_exempt 
-#Remarque : @csrf_exempt est utilisé ici pour désactiver la protection CSRF pour cette vue.
-
 def index_article_view(request):
-    
+    """
+    POST request to index a new article in Elasticsearch.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: The JSON response.
+    """
     if request.method == 'POST':
         # 1. Get JSON data from the request
         try:
@@ -167,12 +182,17 @@ def index_article_view(request):
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
 
-#------------------------------------------------------------------------------------------------------------#
-# Requete GET pour avoir les résultats de la recherche
-
 @require_GET 
 def search_articles(request):
+    """
+    GET request to get the search results.
 
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: The JSON response containing the search results.
+    """
     # 1. Get the query
     query = request.GET.get('query', '')
 
@@ -214,18 +234,24 @@ def search_articles(request):
         # Return an empty list
         return JsonResponse([], safe=False)
 
-#------------------------------------------------------------------------------------------------------------#
-# Requete POST pour supprimer un article de l'index
-
 @require_POST
 @csrf_exempt
 def delete_article_view(request):
+    """
+    POST request to delete an article from the index.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: The JSON response.
+    """
     print("DELETE ARTICLE VIEW")
     if request.method == 'POST':
         # 1. Get the article ID from the request
         try:
             data = json.loads(request.body.decode('utf-8'))
-        # Extract values from the parsed JSON data
+            # Extract values from the parsed JSON data
             article_id = data.get('doc_id')
         except json.JSONDecodeError:
             return JsonResponse({'status': 'error', 'message': 'Format JSON invalide'})
@@ -275,7 +301,16 @@ def delete_article_view(request):
 
 @require_GET
 def recuperer_article(request):
+    """
+    Retrieve all scientific articles from the index.
 
+    Args:
+        request: The HTTP request object.
+
+    Returns:
+        A JSON response containing the list of articles retrieved from the index.
+        If the index is not found or there is an error in the request, an error message is returned.
+    """
     try:
         # Construct the request body to retrieve all scientific articles from the index
         body = {
@@ -312,6 +347,17 @@ def recuperer_article(request):
 # POST request to update an article in Elasticsearch
         
 @csrf_exempt
+def mettre_jour_article(request):
+    """
+    Update an article in Elasticsearch and JSON file.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: The JSON response indicating the success or failure of the update operation.
+    """
+    # Existing code...
 def mettre_jour_article(request):
     # Extracting values from the POST request
     # Parse JSON data from the request body
@@ -365,7 +411,17 @@ def mettre_jour_article(request):
 # Function to index favorite articles in Elasticsearch
 
 def index_article_fav(article):
+    """
+    Indexes an article in the Elasticsearch index for favorites.
 
+    Args:
+        article (dict): The article to be indexed. It should contain the following fields:
+            - idArticle (str): The ID of the article.
+            - idUser (str): The ID of the user.
+
+    Returns:
+        None
+    """
     # Check if the index exists before creating it
     if not es.indices.exists(index=nom_index_fav):
 
@@ -393,6 +449,15 @@ def index_article_fav(article):
 # Note: @csrf_exempt is used here to disable CSRF protection for this view.
 
 def index_article_view_fav(request):
+    """
+    View function to index an article as a favorite in Elasticsearch.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the status of the indexing operation.
+    """
     
     if request.method == 'POST':
         # 1. Get JSON data from the request
@@ -422,7 +487,15 @@ def index_article_view_fav(request):
 @require_POST
 @csrf_exempt
 def delete_favoris_document(request):
+    """
+    Delete a favoris document from Elasticsearch.
 
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response indicating the status of the deletion.
+    """
     if request.method == 'POST':
         # Get idArticle and idUser from the request
         try:
@@ -465,7 +538,6 @@ def delete_favoris_document(request):
             print(f"Erreur lors de la suppression : {e}")
             return JsonResponse({'status': 'error', 'message': f'Erreur lors de la suppression : {e}'})
 
-
         return JsonResponse({'status': 'success', 'message': 'Document supprimé avec succès'})
 
     return JsonResponse({'status': 'error', 'message': 'Méthode non autorisée'})
@@ -473,6 +545,18 @@ def delete_favoris_document(request):
 #------------------------------------------------------------------------------------------------------------#
 @require_GET
 def retrieve_and_save_favorite_articles(request):
+    """
+    Retrieve and save favorite articles based on the provided UserId.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: A JSON response containing the search results of favorite articles.
+            If there are matches for the given UserId, it returns a list of corresponding articles.
+            If there are no matches, it returns an empty list.
+            If an error occurs during the retrieval and saving process, it returns an error message.
+    """
     try:
         # Retrieve UserId from the request's query parameters
         UserId = request.GET.get('UserId', '')

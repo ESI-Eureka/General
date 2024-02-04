@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html lang="english" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload.functions &#8212; eureka-documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=df973ab0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for Upload.functions</h1><div class="highlight"><pre>
+<span></span><span class="c1">#Imports *******************************</span>
+<span class="kn">import</span> <span class="nn">spacy</span> 
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">spacy.language</span> <span class="kn">import</span> <span class="n">Language</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">fitz</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">PyPDF2</span>
+<span class="kn">from</span> <span class="nn">email_validator</span> <span class="kn">import</span> <span class="n">validate_email</span><span class="p">,</span> <span class="n">EmailNotValidError</span>
+
+<span class="c1">#************************************************</span>
+<span class="c1">#Functions </span>
+
+<div class="viewcode-block" id="orgname">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.orgname">[docs]</a>
+<span class="k">def</span> <span class="nf">orgname</span><span class="p">(</span><span class="n">orgname</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the organization name from the given input.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        orgname (dict or list): The input containing the organization name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The extracted organization name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">orgname</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">orgname</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">institute</span><span class="o">=</span><span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">orgname</span><span class="p">)):</span>
+            <span class="n">institute</span><span class="o">=</span><span class="n">institute</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">orgname</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">institute</span></div>
+
+<div class="viewcode-block" id="affliation">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.affliation">[docs]</a>
+<span class="k">def</span> <span class="nf">affliation</span><span class="p">(</span><span class="n">affiliation</span><span class="p">,</span> <span class="n">Institution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add the affiliation&#39;s organization name to the Institution list.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - affiliation (dict or list): The affiliation information.</span>
+<span class="sd">        If it is a dictionary, the organization name is extracted from the &#39;orgName&#39; key.</span>
+<span class="sd">        If it is a list, the organization name is extracted from the &#39;orgName&#39; key of each element.</span>
+<span class="sd">    - Institution (list): The list to which the organization names will be appended.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - list: The updated Institution list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">affiliation</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="n">Institution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orgname</span><span class="p">(</span><span class="n">affiliation</span><span class="p">[</span><span class="s1">&#39;orgName&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">affiliation</span><span class="p">)):</span>
+            <span class="n">Institution</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">orgname</span><span class="p">(</span><span class="n">affiliation</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;orgName&#39;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">Institution</span></div>
+
+
+<div class="viewcode-block" id="remove_links_emails">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_links_emails">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_links_emails</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes any links (URLs or email addresses) from a given text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): The text to be processed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The text with links and email addresses removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Improved pattern to include &quot;www.&quot; as a possible URL prefix:</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(https?://|www\.)\S+|(?:[\w\.-]+@[\w\.-]+\.\w+)&quot;</span>
+
+    <span class="c1"># Replace the matched patterns with an empty string</span>
+    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cleaned_text</span></div>
+
+<div class="viewcode-block" id="is_link_email">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.is_link_email">[docs]</a>
+<span class="k">def</span> <span class="nf">is_link_email</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    
+    <span class="n">link_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;(https?://|www\.)\S+|(?:[\w\.-]+@[\w\.-]+\.\w+)&quot;</span><span class="p">)</span>
+    <span class="c1"># Check if the entire sentence is a link</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">link_pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="has_link_email">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.has_link_email">[docs]</a>
+<span class="k">def</span> <span class="nf">has_link_email</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Checks if a sentence contains any type of link (URL or email address).</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    text: The sentence to be analyzed.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    True if the sentence contains any type of link, False otherwise.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="c1"># Improved pattern to include &quot;www.&quot; as a possible URL prefix:</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(https?://|www\.)\S+|(?:[\w\.-]+@[\w\.-]+\.\w+)&quot;</span>
+
+  <span class="c1"># Check if any match is found</span>
+  <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="has_link">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.has_link">[docs]</a>
+<span class="k">def</span> <span class="nf">has_link</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Checks if a sentence contains any type of link (URL).</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    text: The sentence to be analyzed.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    True if the sentence contains any type of link, False otherwise.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="c1"># Improved pattern to include &quot;www.&quot; as a possible URL prefix:</span>
+  <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;(https?://|www\.)\S+&quot;</span>
+
+  <span class="c1"># Check if any match is found</span>
+  <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span></div>
+
+
+<span class="c1">#************start of is_sentence_link********************************</span>
+<div class="viewcode-block" id="is_sentence_link">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.is_sentence_link">[docs]</a>
+<span class="k">def</span> <span class="nf">is_sentence_link</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a given sentence is a link.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sentence (str): The sentence to be checked.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the sentence is a link, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Regular expression to match a sentence that is a link</span>
+    <span class="n">link_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^https?://\S+$|^www\.\S+$&#39;</span><span class="p">)</span>
+    <span class="c1"># Check if the entire sentence is a link</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">link_pattern</span><span class="p">,</span> <span class="n">sentence</span><span class="p">))</span></div>
+
+<span class="c1">#************end of is_sentence_link********************************</span>
+
+<span class="c1">#*********************start of starts_with_upper_and_ends_with_number_star_comma function ************</span>
+<div class="viewcode-block" id="starts_with_upper_and_ends_with_number_star_comma">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.starts_with_upper_and_ends_with_number_star_comma">[docs]</a>
+<span class="k">def</span> <span class="nf">starts_with_upper_and_ends_with_number_star_comma</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^[A-Z].*?(\d+|\*|,)$&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">input_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">match</span><span class="p">)</span></div>
+
+<span class="c1">#*********************end of starts_with_upper_and_ends_with_number_star_comma function ************</span>
+
+<span class="c1">#*****************start of starts_with_number function*************************</span>
+<div class="viewcode-block" id="starts_with_number">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.starts_with_number">[docs]</a>
+<span class="k">def</span> <span class="nf">starts_with_number</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;^\d&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">input_string</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">match</span><span class="p">)</span></div>
+
+<span class="c1">#*****************end of starts_with_number function*************************</span>
+
+<span class="c1">#********************start of split_sentence function***********************</span>
+<div class="viewcode-block" id="split_sentence">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.split_sentence">[docs]</a>
+<span class="k">def</span> <span class="nf">split_sentence</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits a sentence into two parts based on certain conditions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sentence (str): The sentence to be split.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing two parts of the sentence.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the sentence starts with a lowercase letter and remove it</span>
+    <span class="k">if</span> <span class="n">sentence</span> <span class="ow">and</span> <span class="n">sentence</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+        <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="c1"># Check for two consecutive spaces and split the sentence</span>
+    <span class="n">index_of_double_space</span> <span class="o">=</span> <span class="n">sentence</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">index_of_double_space</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sentence</span><span class="p">[:</span><span class="n">index_of_double_space</span><span class="p">],</span> <span class="n">sentence</span><span class="p">[</span><span class="n">index_of_double_space</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:]</span>
+
+    <span class="c1"># Iterate over the sentence to detect the unusual cases in sentences</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)):</span>
+        <span class="c1"># Condition 1: Uppercase follows lowercase</span>
+        <span class="k">if</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="ow">or</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">sentence</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">islower</span><span class="p">())</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isupper</span><span class="p">()):</span>
+                <span class="k">return</span> <span class="n">sentence</span><span class="p">[:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sentence</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="k">return</span> <span class="n">sentence</span><span class="p">,</span> <span class="s1">&#39;&#39;</span></div>
+
+
+<span class="c1">#function for extracting text from first page********************************</span>
+<div class="viewcode-block" id="extractTextFromPDFFirstP">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.extractTextFromPDFFirstP">[docs]</a>
+<span class="k">def</span> <span class="nf">extractTextFromPDFFirstP</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="c1">#to avoid encoding errors</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="c1">#extracting text from pdf file</span>
+    <span class="n">pdf_document</span> <span class="o">=</span> <span class="n">fitz</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    
+    <span class="c1"># Get the text from the first page</span>
+    <span class="n">first_page</span> <span class="o">=</span> <span class="n">pdf_document</span><span class="o">.</span><span class="n">load_page</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">first_page</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+
+    <span class="c1"># Close the PDF file</span>
+    <span class="n">pdf_document</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+<span class="c1">#************************************************************</span>
+
+
+<span class="c1"># remove non printable characters from the pdf text</span>
+<div class="viewcode-block" id="remove_non_printable_chars">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_non_printable_chars">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_non_printable_chars</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove non-printable characters from the given text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): The input text.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The text with non-printable characters removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use a regular expression to remove non-printable characters</span>
+    <span class="c1"># Retain French characters and specify additional characters if needed</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[^\x20-\x7E\r—À-ÿ]&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+<span class="c1">#*************************************************************</span>
+
+
+
+<span class="c1">#**********************************************************************</span>
+<span class="c1"># editing the logic of boundaries in sentences separation fro spacy</span>
+<div class="viewcode-block" id="set_custom_boundaries">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.set_custom_boundaries">[docs]</a>
+<span class="nd">@Language</span><span class="o">.</span><span class="n">component</span><span class="p">(</span><span class="s2">&quot;set_custom_boundaries&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">set_custom_boundaries</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add support to use `\n` as a delimiter for sentence detection&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">:</span>
+            <span class="n">doc</span><span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">is_sent_start</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">doc</span></div>
+
+<span class="c1">#**********************************************************************</span>
+
+<span class="c1">#**************start of extract_most_used_function ***************************</span>
+<span class="k">def</span> <span class="nf">extract_most_used_words</span><span class="p">(</span><span class="n">article_text</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the most used words from the given article text.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        article_text (str): The text of the article.</span>
+<span class="sd">        num_words (int, optional): The number of most common words to extract. Defaults to 10.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of tuples containing the most common words and their frequencies.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Rest of the code...</span>
+<div class="viewcode-block" id="extract_most_used_words">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.extract_most_used_words">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_most_used_words</span><span class="p">(</span><span class="n">article_text</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="c1">#it returns a list of tuples for words and their frequency</span>
+    <span class="c1"># Load the spaCy English model</span>
+    <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Process the article text using spaCy</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">article_text</span><span class="p">)</span>
+
+    <span class="c1"># Filter out stop words and punctuation</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">doc</span> <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">is_alpha</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">token</span><span class="o">.</span><span class="n">is_stop</span><span class="p">]</span>
+
+    <span class="c1"># Use Counter to count word frequencies</span>
+    <span class="n">word_frequencies</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+
+    <span class="c1"># Extract the most common words</span>
+    <span class="n">most_common_words</span> <span class="o">=</span> <span class="n">word_frequencies</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="n">num_words</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">most_common_words</span></div>
+
+<span class="c1">#**************end of extract_most_used_function ***************************</span>
+
+
+<span class="c1">#********************start of filter_sentences function***********************</span>
+<div class="viewcode-block" id="filter_sentences">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.filter_sentences">[docs]</a>
+<span class="k">def</span> <span class="nf">filter_sentences</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters a list of sentences by removing non-printable characters and short useless sentences.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sentences (list): A list of sentences to be filtered.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of filtered sentences.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filtered_sentences</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sentences</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">header_pattern</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sentence</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">remove_non_printable_chars</span><span class="p">(</span><span class="n">sentence</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_sentence_link</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">):</span>
+                        <span class="n">index_of_double_space</span> <span class="o">=</span> <span class="n">cleaned_text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">index_of_double_space</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                             <span class="n">filtered_sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">[:</span><span class="n">index_of_double_space</span><span class="p">])</span>
+                             <span class="n">filtered_sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">[</span><span class="n">index_of_double_space</span> <span class="o">+</span> <span class="mi">2</span><span class="p">:])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">filtered_sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+            <span class="n">sentence</span><span class="o">=</span><span class="n">remove_non_printable_chars</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">header_pattern</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sentence</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">!=</span><span class="s1">&#39;.&#39;</span><span class="p">:</span>
+                    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="n">sentence</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cleaned_text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_sentence_link</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">):</span>
+                        <span class="n">filtered_sentences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cleaned_text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filtered_sentences</span></div>
+
+<span class="c1">#********************end of filter_sentences function******************************</span>
+
+<span class="c1">#********************start of texttoSen function***********************</span>
+<div class="viewcode-block" id="texttoSen">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.texttoSen">[docs]</a>
+<span class="k">def</span> <span class="nf">texttoSen</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a given text into a list of filtered sentences.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    text (str): The input text to be converted into sentences.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    list: A list of filtered sentences extracted from the input text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#loading the language model that supports english from spacy</span>
+    <span class="n">custom_nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
+    <span class="c1">#for the changed set_custom_boudaries </span>
+    <span class="n">custom_nlp</span><span class="o">.</span><span class="n">add_pipe</span><span class="p">(</span><span class="s2">&quot;set_custom_boundaries&quot;</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="s2">&quot;parser&quot;</span><span class="p">)</span>
+    <span class="c1">#tokeinzation of the text</span>
+    <span class="n">custom_ellipsis_doc</span> <span class="o">=</span> <span class="n">custom_nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="c1">#creating sentences using spacy out of tokens</span>
+    <span class="n">custom_ellipsis_sentences</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">custom_ellipsis_doc</span><span class="o">.</span><span class="n">sents</span><span class="p">)</span>
+    <span class="c1">#filtering sentences extracted by a custom function</span>
+    <span class="n">filtered_sentences</span> <span class="o">=</span> <span class="n">filter_sentences</span><span class="p">(</span><span class="n">custom_ellipsis_sentences</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filtered_sentences</span></div>
+
+<span class="c1">#*******************end of texttoSen function***********************</span>
+<div class="viewcode-block" id="convert_pdf_date">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.convert_pdf_date">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_pdf_date</span><span class="p">(</span><span class="n">pdf_date</span><span class="p">):</span>
+    <span class="c1"># Extract relevant parts from the PDF date string</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pdf_date</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pdf_date</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pdf_date</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+
+    <span class="c1"># Create a datetime object</span>
+    <span class="n">pdf_datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pdf_datetime</span></div>
+
+<span class="c1">#**********************************************************</span>
+<div class="viewcode-block" id="convert_pdf_to_text">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.convert_pdf_to_text">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_pdf_to_text</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">,</span> <span class="n">output_text_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a PDF file to plain text and saves it to a text file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pdf_path (str): The path to the PDF file.</span>
+<span class="sd">        output_text_path (str): The path to save the extracted text.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        Exception: If there is an error during the conversion process.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Try PyMuPDF first for better handling of multi-column layouts</span>
+        <span class="n">pdf_document</span> <span class="o">=</span> <span class="n">fitz</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">page_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pdf_document</span><span class="o">.</span><span class="n">page_count</span><span class="p">):</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">pdf_document</span><span class="p">[</span><span class="n">page_num</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="n">page</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">)</span>
+
+        <span class="n">pdf_document</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">mu_pdf_error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PyMuPDF error: </span><span class="si">{</span><span class="n">mu_pdf_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trying PyPDF2...&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Fallback to PyPDF2 if PyMuPDF fails</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdf_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pdf_file</span><span class="p">:</span>
+                <span class="n">pdf_reader</span> <span class="o">=</span> <span class="n">PyPDF2</span><span class="o">.</span><span class="n">PdfReader</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">page_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_reader</span><span class="o">.</span><span class="n">pages</span><span class="p">)):</span>
+                    <span class="n">page</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="n">page_num</span><span class="p">]</span>
+                    <span class="n">text</span> <span class="o">+=</span> <span class="n">page</span><span class="o">.</span><span class="n">extract_text</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">pdf2_error</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PyPDF2 error: </span><span class="si">{</span><span class="n">pdf2_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unable to extract text from the PDF.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="c1"># Save the extracted text to a text file</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_text_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Text extracted successfully and saved to </span><span class="si">{</span><span class="n">output_text_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+    
+    
+    
+    
+<div class="viewcode-block" id="process_text_with_spacy">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.process_text_with_spacy">[docs]</a>
+<span class="k">def</span> <span class="nf">process_text_with_spacy</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the given text using SpaCy and extract authors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        text (str): The text to be processed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of authors extracted from the text.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nlp</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;en_core_web_sm&quot;</span><span class="p">)</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">nlp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="p">[</span><span class="n">entity</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">ents</span> <span class="k">if</span> <span class="n">entity</span><span class="o">.</span><span class="n">label_</span> <span class="o">==</span> <span class="s2">&quot;PERSON&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">authors</span></div>
+
+    
+    
+    
+<div class="viewcode-block" id="remove_email_links">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_email_links">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_email_links</span><span class="p">(</span><span class="n">paragraph</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removes email links from a given paragraph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        paragraph (str): The paragraph containing email links.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The cleaned paragraph with email links removed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Regular expression to match email addresses</span>
+    <span class="n">email_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Replace email addresses with an empty string</span>
+    <span class="n">cleaned_paragraph</span> <span class="o">=</span> <span class="n">email_pattern</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">paragraph</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cleaned_paragraph</span></div>
+
+
+
+<div class="viewcode-block" id="remove_strings_from_paragraph">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_strings_from_paragraph">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_strings_from_paragraph</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">strings_to_remove</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">string_to_remove</span> <span class="ow">in</span> <span class="n">strings_to_remove</span><span class="p">:</span>
+        <span class="n">paragraph</span> <span class="o">=</span> <span class="n">paragraph</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">string_to_remove</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">paragraph</span></div>
+
+
+
+    
+<div class="viewcode-block" id="remove_repeated_paragraphs">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_repeated_paragraphs">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_repeated_paragraphs</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="c1"># Split the text into paragraphs</span>
+    <span class="n">paragraphs</span> <span class="o">=</span> <span class="p">[</span><span class="n">paragraph</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">paragraph</span> <span class="ow">in</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">paragraph</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+
+    <span class="c1"># Remove duplicate paragraphs</span>
+    <span class="n">unique_paragraphs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">paragraphs</span><span class="p">))</span>
+
+    <span class="c1"># Reconstruct the cleaned text without repeated paragraphs</span>
+    <span class="n">cleaned_text</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">unique_paragraphs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cleaned_text</span></div>
+
+
+
+<div class="viewcode-block" id="header_pattern">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.header_pattern">[docs]</a>
+<span class="k">def</span> <span class="nf">header_pattern</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if a sentence matches patterns common for headers.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sentence (str): The sentence to be checked.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the sentence matches any of the header patterns, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Regular expressions for header patterns:</span>
+    <span class="n">date_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d</span><span class="si">{4}</span><span class="s1">\b&#39;</span><span class="p">)</span>
+    <span class="n">consecutive_numbers_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\d{7,}&#39;</span><span class="p">)</span>
+    <span class="c1"># Pattern for entire sentence wrapped in brackets:</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[\[{(&lt;].*[\]})&gt;]$&#39;</span><span class="p">)</span>  <span class="c1"># Ensure start and end with brackets</span>
+
+    <span class="c1"># Check for matches:</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">date_pattern</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+    <span class="n">match1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+    <span class="n">match2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">consecutive_numbers_pattern</span><span class="p">,</span> <span class="n">sentence</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">match</span> <span class="ow">or</span> <span class="n">match1</span> <span class="ow">or</span> <span class="n">match2</span> <span class="ow">or</span> <span class="s1">&#39;arXiv&#39;</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="remove_emails">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.remove_emails">[docs]</a>
+<span class="k">def</span> <span class="nf">remove_emails</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Removes email addresses from a string.&quot;&quot;&quot;</span>
+
+    <span class="n">email_pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[\wàâçéèêëîïôûùüÿñæœ\.-]+@[\wàâçéèêëîïôûùüÿñæœ\.-]+\.[a-zA-Z0-9]{2,5}&quot;</span>
+    <span class="n">clean_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">email_pattern</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clean_text</span></div>
+
+
+<div class="viewcode-block" id="extract_institutions">
+<a class="viewcode-back" href="../../Upload.html#Upload.functions.extract_institutions">[docs]</a>
+<span class="k">def</span> <span class="nf">extract_institutions</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extracts institution names from text.&quot;&quot;&quot;</span>
+
+    <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">r</span><span class="s2">&quot;(University|College|Institute|School|Académie|École|Université) of ([\wàâçéèêëîïôûùüÿñæœ\- ]+)&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;([\wàâçéèêëîïôûùüÿñæœ\- ]+ )?(University|College|Institute|School)( of [\wàâçéèêëîïôûùüÿñæœ\- ]+)?&quot;</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s2">&quot;(Department|Faculty|Division|Département) of ([\wàâçéèêëîïôûùüÿñæœ\- ]+), ([\wàâçéèêëîïôûùüÿñæœ\- ]+) (University|College|Institute|School)&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="n">institutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">institutions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">institutions</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">eureka-documentation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Backend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, TPIGL.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+
+<html lang="english" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload.DataExtract &#8212; eureka-documentation  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css?v=12dfc556" />
+    <script src="../../_static/documentation_options.js?v=df973ab0"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for Upload.DataExtract</h1><div class="highlight"><pre>
+<span></span><span class="c1">#imports **************************</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">Upload.functions</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pdfminer.high_level</span> <span class="kn">import</span> <span class="n">extract_text</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">fitz</span>
+<span class="kn">import</span> <span class="nn">PyPDF2</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">xmltodict</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">grobid_url</span> <span class="o">=</span> <span class="s2">&quot;http://grobid:8070/api/processFulltextDocument&quot;</span>
+<span class="c1">##############################################</span>
+<div class="viewcode-block" id="convert_readable_date">
+<a class="viewcode-back" href="../../Upload.html#Upload.DataExtract.convert_readable_date">[docs]</a>
+<span class="k">def</span> <span class="nf">convert_readable_date</span><span class="p">(</span><span class="n">date_str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Extract the date part and convert it to a datetime object</span>
+        <span class="n">date_part</span> <span class="o">=</span> <span class="n">date_str</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">15</span><span class="p">]</span>
+        <span class="n">date_object</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_part</span><span class="p">,</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">%H%M%S&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Format the final date as a readable string (day-month-year)</span>
+        <span class="n">readable_date</span> <span class="o">=</span> <span class="n">date_object</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">-%m-%Y&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">readable_date</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error converting date: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Unknown Date&quot;</span>
+
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error converting date: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Unknown Date&quot;</span></div>
+
+<span class="k">def</span> <span class="nf">extractData</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts data from a PDF file.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - pdf_file (file): The PDF file to extract data from.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - dict: A dictionary containing the extracted data with the following keys:</span>
+<span class="sd">        - &#39;titre&#39; (str): The title of the document.</span>
+<span class="sd">        - &#39;resume&#39; (str): The abstract or summary of the document.</span>
+<span class="sd">        - &#39;auteurs&#39; (list): The list of authors of the document.</span>
+<span class="sd">        - &#39;institutions&#39; (list): The list of institutions mentioned in the document.</span>
+<span class="sd">        - &#39;mots_cles&#39; (list): The list of keywords or index terms of the document.</span>
+<span class="sd">        - &#39;texte_integral&#39; (str): The full text of the document.</span>
+<span class="sd">        - &#39;pdf_url&#39; (str): The URL of the PDF file.</span>
+<span class="sd">        - &#39;references&#39; (list): The list of references cited in the document.</span>
+<span class="sd">        - &#39;publication_date&#39; (str): The publication date of the document.</span>
+<span class="sd">        - &#39;corrected&#39; (int): A flag indicating whether the document has been corrected (1 for corrected, 0 for not corrected).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Function code goes here</span>
+<div class="viewcode-block" id="extractData">
+<a class="viewcode-back" href="../../Upload.html#Upload.DataExtract.extractData">[docs]</a>
+<span class="k">def</span> <span class="nf">extractData</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">):</span>
+    <span class="n">buff</span><span class="o">=</span><span class="n">pdf_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;filename.pdf&#39;</span><span class="p">,</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">buff</span><span class="p">),</span> <span class="s1">&#39;application/pdf&#39;</span><span class="p">)}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">grobid_url</span><span class="p">,</span> <span class="n">files</span><span class="o">=</span><span class="n">files</span><span class="p">)</span>
+    <span class="n">index_of_closing_angle_bracket</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;?&gt;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span>
+    <span class="c1"># Extract the XML content without the declaration</span>
+    <span class="n">xml_content_without_declaration</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">index_of_closing_angle_bracket</span><span class="p">:]</span>
+    <span class="n">parsed_dict</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">xml_content_without_declaration</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="n">pdf_content</span> <span class="o">=</span> <span class="n">buff</span>
+    <span class="n">pdf_reader</span> <span class="o">=</span><span class="n">fitz</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;pdf&quot;</span><span class="p">,</span><span class="n">pdf_content</span><span class="p">)</span>
+    <span class="n">num_pages</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="o">.</span><span class="n">page_count</span>
+    <span class="n">Data</span><span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;titre&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;resume&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;auteurs&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;institutions&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;mots_cles&quot;</span><span class="p">:</span> <span class="p">[]</span> <span class="p">,</span>
+        <span class="s2">&quot;texte_integral&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pdf_url&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;references&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;publication_date&quot;</span><span class="p">:</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;corrected&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    
+    <span class="n">filter1</span><span class="o">=</span><span class="p">[]</span>
+    <span class="k">for</span> <span class="n">page_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="p">[</span><span class="n">page_num</span><span class="p">]</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">get_text</span><span class="p">(</span><span class="s2">&quot;blocks&quot;</span><span class="p">)</span>
+        <span class="n">fourth_elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">block</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">blocks</span><span class="p">]</span>
+        <span class="n">filtered</span><span class="o">=</span><span class="n">filter_sentences</span><span class="p">(</span><span class="n">fourth_elements</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">phrase</span> <span class="ow">in</span> <span class="n">filtered</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">has_link</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;available at&quot;</span> <span class="ow">in</span> <span class="n">phrase</span> <span class="ow">and</span> <span class="ow">not</span> <span class="s2">&quot;All rights reserved&quot;</span> <span class="ow">in</span> <span class="n">phrase</span><span class="p">:</span>
+                <span class="n">p1</span><span class="p">,</span><span class="n">p2</span><span class="o">=</span><span class="n">split_sentence</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">p2</span><span class="p">:</span>
+                    <span class="n">phrase</span><span class="o">=</span><span class="n">p1</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">p2</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">phrase</span><span class="o">=</span><span class="n">p1</span>
+                <span class="n">filter1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">phrase</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">process_text_with_spacy</span><span class="p">(</span><span class="n">filter1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_link_email</span><span class="p">(</span><span class="n">filter1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">:</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filter1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">process_text_with_spacy</span><span class="p">(</span><span class="n">filter1</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_link_email</span><span class="p">(</span><span class="n">filter1</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">filter1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filter1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">titre</span><span class="o">=</span><span class="n">parsed_dict</span><span class="p">[</span><span class="s1">&#39;TEI&#39;</span><span class="p">][</span><span class="s1">&#39;teiHeader&#39;</span><span class="p">][</span><span class="s1">&#39;fileDesc&#39;</span><span class="p">][</span><span class="s1">&#39;titleStmt&#39;</span><span class="p">][</span><span class="s1">&#39;title&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;titre&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">titre</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hello1&quot;</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">=</span><span class="mi">0</span>
+    <span class="n">index_of_abstract</span><span class="o">=</span><span class="mi">0</span>
+    
+    <span class="n">abstract_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\b(A\s+B\s+S\s+T\s+R\s+A\s+C\s+T|Abstract)\b&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">filter1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">abstract_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+            <span class="n">index_of_abstract</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">break</span>  <span class="c1"># Stop iteration after finding the first match</span>
+            
+    <span class="c1">#print(index_of_abstract)</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">filter1</span><span class="p">[</span><span class="n">index_of_abstract</span><span class="p">])</span><span class="o">&lt;</span><span class="mi">20</span><span class="p">):</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filter1</span><span class="p">[</span><span class="n">index_of_abstract</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">filter1</span><span class="p">[</span><span class="n">index_of_abstract</span><span class="p">]</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(Keywords|KEYWORDS|Index Terms).*?$&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">matched</span><span class="o">=</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">fr</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">matched</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">])</span>
+    <span class="n">university_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Université&#39;</span><span class="p">,</span> <span class="s1">&#39;Laboratoire&#39;</span><span class="p">,</span><span class="s1">&#39;University&#39;</span><span class="p">,</span><span class="s1">&#39;Universit&#39;</span><span class="p">,</span><span class="s1">&#39;Ecole&#39;</span><span class="p">,</span><span class="s1">&#39;Department&#39;</span><span class="p">,</span><span class="s1">&#39;Technology&#39;</span><span class="p">,</span><span class="s1">&#39;Laboratory&#39;</span><span class="p">,</span><span class="s1">&#39;Research&#39;</span><span class="p">,</span><span class="s1">&#39;Center&#39;</span><span class="p">,</span><span class="s1">&#39;Institute&#39;</span><span class="p">,</span><span class="s1">&#39;Institut&#39;</span><span class="p">,</span><span class="s1">&#39;Centre&#39;</span><span class="p">,</span><span class="s1">&#39;Polytechnique&#39;</span><span class="p">]</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">list1</span><span class="o">=</span><span class="n">parsed_dict</span><span class="p">[</span><span class="s1">&#39;TEI&#39;</span><span class="p">][</span><span class="s1">&#39;teiHeader&#39;</span><span class="p">][</span><span class="s1">&#39;profileDesc&#39;</span><span class="p">][</span><span class="s1">&#39;abstract&#39;</span><span class="p">][</span><span class="s1">&#39;div&#39;</span><span class="p">]</span>
+        <span class="n">Abstract</span><span class="o">=</span><span class="n">list1</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">]</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">Abstract</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Abstract</span><span class="o">=</span><span class="n">parsed_dict</span><span class="p">[</span><span class="s1">&#39;TEI&#39;</span><span class="p">][</span><span class="s1">&#39;text&#39;</span><span class="p">][</span><span class="s1">&#39;body&#39;</span><span class="p">][</span><span class="s1">&#39;div&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;p&#39;</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>
+            <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;resume&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">Abstract</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hello2&quot;</span><span class="p">)</span>
+        
+    <span class="c1"># Result = [name for name in filter1 if  any(univ_name in name for univ_name in university_names)]</span>
+    <span class="c1"># k=0</span>
+    <span class="c1"># for k in range(len(Result)):</span>
+    <span class="c1">#     Result[k]=remove_email_links(Result[k])</span>
+    <span class="c1"># Data[&#39;institutions&#39;]=(list(set(Result)))</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">page_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">num_pages</span><span class="p">):</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="p">[</span><span class="n">page_num</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">page_num</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">text1</span><span class="o">=</span><span class="n">page</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="n">page</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        
+    <span class="c1"># auteurs=process_text_with_spacy(text1)</span>
+    <span class="c1"># for Author in auteurs:</span>
+    <span class="c1">#     if not has_link_email(Author) and not any(univ_name in Author for univ_name in university_names):</span>
+    <span class="c1">#         Data[&#39;auteurs&#39;].append(Author)</span>
+    
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(Keywords|KEYWORDS|Index Terms)\b.*?(\n.*?\n|$)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">matched_paragraph</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="n">matched_paragraph</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(Keywords|KEYWORDS|Index Terms)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">matched_paragraph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">matched_paragraph</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span><span class="o">==</span><span class="mi">45</span><span class="p">):</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(Keywords|KEYWORDS|Index Terms)\b.*?(\n.*?\n.*?\n|$)&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">matched_paragraph</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+                <span class="n">matched_paragraph</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(Keywords|KEYWORDS|Index Terms)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">matched_paragraph</span><span class="p">)</span>
+        <span class="n">matched_paragraph</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\n&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="n">matched_paragraph</span><span class="p">)</span>
+        <span class="n">keywords</span><span class="o">=</span><span class="n">matched_paragraph</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#if there wasn&#39;t we use spacy to extract most used words in the document </span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">extract_most_used_words</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">keywords</span><span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">word</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">]</span>
+    
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;mots_cles&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">keywords</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="n">parsed_dict</span><span class="p">[</span><span class="s1">&#39;TEI&#39;</span><span class="p">][</span><span class="s1">&#39;teiHeader&#39;</span><span class="p">][</span><span class="s1">&#39;profileDesc&#39;</span><span class="p">][</span><span class="s1">&#39;textClass&#39;</span><span class="p">][</span><span class="s1">&#39;keywords&#39;</span><span class="p">]</span>
+        <span class="n">all_keywords</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">all_keywords</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">keywords</span><span class="p">[</span><span class="s1">&#39;term&#39;</span><span class="p">])</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;mots_cles&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">all_keywords</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;keywords : &quot;</span><span class="p">,</span><span class="n">all_keywords</span><span class="p">)</span>
+            
+        <span class="c1"># if keywords:</span>
+        <span class="c1">#     if isinstance(keywords, list):</span>
+        <span class="c1">#         # Flatten the list of lists</span>
+        <span class="c1">#         flat_keywords = [keyword for sublist in keywords for keyword in sublist]</span>
+        <span class="c1">#         Data[&#39;mots_cles&#39;] = flat_keywords</span>
+        <span class="c1">#     elif isinstance(keywords, dict):</span>
+        <span class="c1">#         # If &#39;keywords&#39; is a dictionary, then extract &#39;term&#39; directly</span>
+        <span class="c1">#         Data[&#39;mots_cles&#39;] = [keywords.get(&#39;term&#39;)]</span>
+        <span class="c1">#     else:</span>
+        <span class="c1">#         # Handle other cases where &#39;keywords&#39; might be of unexpected type</span>
+        <span class="c1">#         mots_cles = []</span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     mots_cles = []</span>
+
+        <span class="c1"># print(&quot;keywords : &quot;, Data[&#39;mots_cles&#39;])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;mots_cles&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">keywords</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;hello3&quot;</span><span class="p">)</span>
+    <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n)</span><span class="si">{3}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+
+    <span class="c1">#we search using regular expression else we extract from last page three refs</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+        <span class="n">matched_paragraph</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+        <span class="n">matched_paragraph</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(References|REFERENCES)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">matched_paragraph</span><span class="p">)</span>
+        <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;references&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">matched_paragraph</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(?:References|REFERENCES)\b(?:\s*\[.*?\].*?\n){0,3}&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="c1">#we search using regular expression else we extract from last page three refs</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+            <span class="n">matched_paragraph</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+            <span class="n">matched_paragraph</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(References|REFERENCES)&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">matched_paragraph</span><span class="p">)</span>
+            <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;references&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">matched_paragraph</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="c1"># Get the text from the first page</span>
+            <span class="n">first_page</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">text1</span> <span class="o">=</span> <span class="n">first_page</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+            <span class="c1"># Close the PDF file</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\b(?:[\d])\b.*?(?:\.\n.*?)</span><span class="si">{3}</span><span class="s1">\.\n&#39;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">matched_paragraph</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+                <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;references&#39;</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="n">matched_paragraph</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+                
+    
+    <span class="n">metadata</span> <span class="o">=</span> <span class="n">pdf_reader</span><span class="o">.</span><span class="n">metadata</span>
+    <span class="n">dattee</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modDate&quot;</span><span class="p">,</span> <span class="s2">&quot;N/A&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Extraction des composants de la date</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dattee</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+    <span class="n">month</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dattee</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">8</span><span class="p">])</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dattee</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">10</span><span class="p">])</span>
+
+    <span class="c1"># Création de l&#39;objet datetime</span>
+    <span class="n">date_object</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+
+    <span class="c1"># La conversion au format ISO 8601 n&#39;inclura que l&#39;année, le mois et le jour</span>
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;publication_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">date_object</span><span class="o">.</span><span class="n">isoformat</span><span class="p">()</span>
+    <span class="n">authors</span> <span class="o">=</span> <span class="n">parsed_dict</span><span class="p">[</span><span class="s1">&#39;TEI&#39;</span><span class="p">][</span><span class="s1">&#39;teiHeader&#39;</span><span class="p">][</span><span class="s1">&#39;fileDesc&#39;</span><span class="p">][</span><span class="s1">&#39;sourceDesc&#39;</span><span class="p">][</span><span class="s1">&#39;biblStruct&#39;</span><span class="p">][</span><span class="s1">&#39;analytic&#39;</span><span class="p">][</span><span class="s1">&#39;author&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Extracting author names</span>
+    <span class="n">author_institutions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">author_names</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">institutions_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># To keep track of unique institutions</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authors</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># If only one author</span>
+        <span class="n">pers_name</span> <span class="o">=</span> <span class="n">authors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;persName&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">forename</span> <span class="o">=</span> <span class="n">pers_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;forename&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">surname</span> <span class="o">=</span> <span class="n">pers_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;surname&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forename</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">forename</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">fn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;#text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">forename</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">forename</span> <span class="o">=</span> <span class="n">forename</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;#text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">forename</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">surname</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">author_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span>
+
+
+
+        <span class="k">if</span> <span class="s1">&#39;affiliation&#39;</span> <span class="ow">in</span> <span class="n">authors</span><span class="p">:</span>
+            <span class="n">affiliation</span> <span class="o">=</span> <span class="n">authors</span><span class="p">[</span><span class="s1">&#39;affiliation&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">affiliation</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">aff</span> <span class="ow">in</span> <span class="n">affiliation</span><span class="p">:</span>
+                    <span class="n">org_name</span> <span class="o">=</span> <span class="n">aff</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;orgName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">org_name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>  <span class="c1"># Extract the text from the dictionary</span>
+                    <span class="k">if</span> <span class="n">org_name</span> <span class="ow">and</span> <span class="n">org_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">institutions_set</span><span class="p">:</span>  <span class="c1"># Check if not already encountered</span>
+                        <span class="n">author_institutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+                        <span class="n">institutions_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">org_name</span> <span class="o">=</span> <span class="n">affiliation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;orgName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">org_name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>  <span class="c1"># Extract the text from the dictionary</span>
+                <span class="k">if</span> <span class="n">org_name</span> <span class="ow">and</span> <span class="n">org_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">institutions_set</span><span class="p">:</span>  <span class="c1"># Check if not already encountered</span>
+                    <span class="n">author_institutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+                    <span class="n">institutions_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">authors</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># If multiple authors</span>
+        <span class="k">for</span> <span class="n">author</span> <span class="ow">in</span> <span class="n">authors</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s1">&#39;persName&#39;</span> <span class="ow">in</span> <span class="n">author</span><span class="p">:</span>
+                <span class="n">pers_name</span> <span class="o">=</span> <span class="n">author</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;persName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">forename</span> <span class="o">=</span> <span class="n">pers_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;forename&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="n">surname</span> <span class="o">=</span> <span class="n">pers_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;surname&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forename</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">forename</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">fn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;#text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="n">forename</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">forename</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="n">forename</span> <span class="o">=</span> <span class="n">forename</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;#text&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">forename</span> <span class="o">=</span> <span class="n">forename</span>
+                <span class="n">full_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">forename</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">surname</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">author_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">full_name</span><span class="p">)</span>
+
+
+            <span class="k">if</span> <span class="s1">&#39;affiliation&#39;</span> <span class="ow">in</span> <span class="n">author</span><span class="p">:</span>
+                <span class="n">affiliation</span> <span class="o">=</span> <span class="n">author</span><span class="p">[</span><span class="s1">&#39;affiliation&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">affiliation</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">aff</span> <span class="ow">in</span> <span class="n">affiliation</span><span class="p">:</span>
+                        <span class="n">org_name</span> <span class="o">=</span> <span class="n">aff</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;orgName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+
+                            <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">org_name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                            <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>  <span class="c1"># Extract the text from the dictionary</span>
+                        <span class="k">if</span> <span class="n">org_name</span> <span class="ow">and</span> <span class="n">org_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">institutions_set</span><span class="p">:</span>  <span class="c1"># Check if not already encountered</span>
+                            <span class="n">author_institutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+                            <span class="n">institutions_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">org_name</span> <span class="o">=</span> <span class="n">affiliation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;orgName&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                        <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">org_name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+                    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">org_name</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="n">org_name</span> <span class="o">=</span> <span class="n">org_name</span><span class="p">[</span><span class="s1">&#39;#text&#39;</span><span class="p">]</span>  <span class="c1"># Extract the text from the dictionary</span>
+                    <span class="k">if</span> <span class="n">org_name</span> <span class="ow">and</span> <span class="n">org_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">institutions_set</span><span class="p">:</span>  <span class="c1"># Check if not already encountered</span>
+                        <span class="n">author_institutions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+                        <span class="n">institutions_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">org_name</span><span class="p">)</span>
+
+
+
+<span class="c1"># Display the parsed dictionary</span>
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;auteurs&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">author_names</span>
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;institutions&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">author_institutions</span>
+    <span class="c1">#readable_date = convert_readable_date(metadata.get(&quot;modDate&quot;, &quot;N/A&quot;))</span>
+    <span class="c1"># Data[&#39;publication_date&#39;]=metadata.get(&quot;modDate&quot;, &quot;N/A&quot;)</span>
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;texte_integral&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">text</span>
+    <span class="n">Data</span><span class="p">[</span><span class="s1">&#39;corrected&#39;</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Authors : &quot;</span><span class="p">,</span> <span class="n">author_names</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Institutions&quot;</span><span class="p">,</span><span class="n">author_institutions</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Data</span> 
+
+
+
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;_summary_</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">eureka-documentation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Backend</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, TPIGL.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
