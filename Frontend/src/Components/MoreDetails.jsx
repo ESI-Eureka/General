@@ -1,6 +1,6 @@
 // MoreDetails.js
 
-import React, { useState,useEffect } from "react";
+import React from "react";
 import './MoreDetails.css';
 
 /**
@@ -17,20 +17,19 @@ const MoreDetails = ({ editMode,data,setData}) => {
   
 
   const handleInstitutionChange = (e) => {
-    setData((prevData) => ({ ...prevData, institution: e.target.value }));
-    console.log(data)
+    setData((prevData) => ({ ...prevData, institutions: e.target.value }));
   };
 
   const handleKeywordsChange = (e) => {
-    setData((prevData) => ({ ...prevData, keywords: e.target.value }));
+    setData((prevData) => ({ ...prevData, mots_cles: e.target.value }));
   };
 
   const handleSummaryChange = (e) => {
-    setData((prevData) => ({ ...prevData, summary: e.target.value }));
+    setData((prevData) => ({ ...prevData, resume: e.target.value }));
   };
 
   const handleFourthVariableChange = (e) => {
-    setData((prevData) => ({ ...prevData, fourthVariable: e.target.value }));
+    setData((prevData) => ({ ...prevData, references: e.target.value }));
   };
 
   return (
@@ -51,7 +50,7 @@ const MoreDetails = ({ editMode,data,setData}) => {
           <p>{data.mots_cles}</p>
         )}
       </div>
-      <div className="Corr-Details">
+      <div className="Corr-Details abstract">
         <h4>Abstract</h4>
         {editMode ? (
           <textarea className="textarea-as-p" defaultValue={data.resume} onChange={handleSummaryChange} />

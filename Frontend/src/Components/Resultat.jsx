@@ -100,15 +100,12 @@ const Resultat = (props) => {
     );
   };
 
-  const setAuteurs = [...new Set(props.Data.auteurs)];
-  const setInstitutions = [...new Set(props.Data.institutions)];
-
   return (
     <div className="resultats">
       <div className="Information">
         <h3 className='info1'> {props.Data.titre}</h3>
-        <div className='info'> <h4> Authors: </h4>{setAuteurs.join(', ')}</div>
-        <div className='info'> <h4> Institutions: </h4>{setInstitutions.join(', ')}</div>
+        <div className='info'> <h4> Authors: </h4>{props.Data.auteurs.join(', ')}</div>
+        <div className='info'> <h4> Institutions: </h4>{props.Data.institutions}</div>
         <div className='info'> <h4> Publication date: </h4>{props.Data.publication_date.substring(0, 10)}</div>
 
         {userRole === "user" && ( // Condition pour vérifier si l'utilisateur a le rôle "user"
