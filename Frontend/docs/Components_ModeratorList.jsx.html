@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Components/ModeratorList.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Components/ModeratorList.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import "./ModeratorList.css";
+import ModeratorItem from "./ModeratorItem";
+import ModeratorForm from "./ModeratorForm";
+
+/**
+ * Represents a component that displays a list of moderators.
+ * @component
+ */
+const ModeratorList = () => {
+  const [moderateurs, setModerateurs] = useState([]);
+
+  const [showForm, setShowForm] = useState(false);
+
+  // Assuming you have an endpoint for fetching moderators, adjust the URL accordingly
+  const moderatorsEndpoint = "http://localhost:8000/users/role/2/";
+
+  // Function to fetch moderators
+  const fetchModerators = async () => {
+    try {
+      const response = await fetch(moderatorsEndpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Handle the response from the backend
+      console.log("Moderators fetched successfully:", data);
+      // You may want to update state or perform other actions here
+      const moderators = data.map((mod, index) => ({
+        ...mod,
+        id: index + 1,
+    }));
+
+    setModerateurs(moderators);
+    } catch (error) {
+      console.error("Error:", error);
+      // Handle errors, show a message to the user, etc.
+    }
+  };
+
+  // Call fetchModerators when needed
+  // For example, you can call it in a useEffect hook when the component mounts
+  useEffect(() => {
+    fetchModerators();
+  }, []);
+
+  const handleDelete = (id) => {
+    // Supprimer le modérateur côté client
+    const updatedModerateurs = moderateurs.filter((mod) => mod.id !== id);
+    setModerateurs(updatedModerateurs);
+
+    // Réorganiser les ID séquentiellement
+    const renumberedModerateurs = updatedModerateurs.map((mod, index) => ({
+      ...mod,
+      id: index + 1,
+    }));
+
+    setModerateurs(renumberedModerateurs);
+
+    // Ici, vous devez appeler l'API backend pour supprimer le modérateur de la BDD
+    // fetch(`/api/moderateurs/${id}`, { method: 'DELETE' });
+  };
+
+  const handleEdit = (id, newEmail) => {
+    // Modifier l'e-mail du modérateur côté client
+    const updatedModerateurs = moderateurs.map((mod) =>
+      mod.id === id ? { ...mod, email: newEmail } : mod
+    );
+    setModerateurs(updatedModerateurs);
+    // Ici, vous devez appeler l'API backend pour mettre à jour l'e-mail dans la BDD
+    // fetch(`/api/moderateurs/${id}`, {
+    //   method: 'PUT',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ email: newEmail }),
+    // });
+  };
+
+  const handleAdd = (newEmail) => {
+    // Ajouter le modérateur côté client
+    const newModerateur = {
+      id: moderateurs.length + 1,
+      email: newEmail,
+    };
+    setModerateurs([...moderateurs, newModerateur]);
+    // Ici, vous devez appeler l'API backend pour ajouter le modérateur à la BDD
+    // fetch(`/api/moderateurs`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ email: newEmail }),
+    // });
+    // Cacher le formulaire après l'ajout
+    setShowForm(false);
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+  };
+
+  return (
+    &lt;div className="moderators-list-container">
+      &lt;div className="moderators-list-header">
+        &lt;h2>Moderators List&lt;/h2>
+        &lt;button onClick={() => setShowForm(true)}>Add Moderator&lt;/button>
+      &lt;/div>
+      &lt;div className="moderators-list-wrapper">
+        &lt;ul className="moderators-list">
+          {moderateurs.map((moderateur) => (
+            &lt;ModeratorItem
+              key={moderateur.id}
+              moderateur={moderateur}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          ))}
+        &lt;/ul>
+      &lt;/div>
+      {showForm &amp;&amp; &lt;ModeratorForm onAdd={handleAdd} onClose={handleCancel} />}
+    &lt;/div>
+  );
+};
+
+export default ModeratorList;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>

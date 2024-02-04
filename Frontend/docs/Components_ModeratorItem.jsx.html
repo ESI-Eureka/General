@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Components/ModeratorItem.jsx - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#App">App</a></li><li><a href="global.html#Calendrier">Calendrier</a></li><li><a href="global.html#Details">Details</a></li><li><a href="global.html#Error404">Error404</a></li><li><a href="global.html#Favoris">Favoris</a></li><li><a href="global.html#FileListItem">FileListItem</a></li><li><a href="global.html#Filtre">Filtre</a></li><li><a href="global.html#FiltreAuteur">FiltreAuteur</a></li><li><a href="global.html#FiltreDate">FiltreDate</a></li><li><a href="global.html#FiltreInstitution">FiltreInstitution</a></li><li><a href="global.html#FiltreMotCle">FiltreMotCle</a></li><li><a href="global.html#IconedButton">IconedButton</a></li><li><a href="global.html#LoadingBar">LoadingBar</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModArticles">ModArticles</a></li><li><a href="global.html#ModerateurDetails">ModerateurDetails</a></li><li><a href="global.html#ModeratorForm">ModeratorForm</a></li><li><a href="global.html#ModeratorItem">ModeratorItem</a></li><li><a href="global.html#ModeratorList">ModeratorList</a></li><li><a href="global.html#Moderators">Moderators</a></li><li><a href="global.html#MoreDetails">MoreDetails</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#NavFiltre">NavFiltre</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Resultat">Resultat</a></li><li><a href="global.html#ResultatDetails">ResultatDetails</a></li><li><a href="global.html#SearchBar">SearchBar</a></li><li><a href="global.html#SearchBar3">SearchBar3</a></li><li><a href="global.html#SearchPage">SearchPage</a></li><li><a href="global.html#Signup">Signup</a></li><li><a href="global.html#Upload">Upload</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Components/ModeratorItem.jsx</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import "./ModeratorItem.css";
+import { ReactComponent as EditIcon } from "../Icons/Edit.svg";
+import { ReactComponent as SaveIcon } from "../Icons/Save.svg";
+import { ReactComponent as DeleteIcon } from "../Icons/Delete.svg";
+import { ReactComponent as CrossIcon } from "../Icons/Cross.svg";
+
+/**
+ * Represents a moderator item component.
+ * @param {Object} props - The component props.
+ * @param {Object} props.moderateur - The moderator object.
+ * @param {Function} props.onDelete - The function to call when deleting the moderator.
+ * @param {Function} props.onEdit - The function to call when editing the moderator.
+ * @returns {JSX.Element} The moderator item component.
+ */
+const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
+  const { id, email } = moderateur;
+  const [isEditing, setIsEditing] = useState(false);
+  const [newEmail, setNewEmail] = useState(email);
+  const [initialEmail, setInitialEmail] = useState("utilisateur@example.com");
+  const [isValidEmail, setIsValidEmail] = useState(true);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const handleDelete = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteConfirmation = () => {
+    // Perform save logic here
+    // You can call the onDelete function
+    // Make a DELETE request to the Django backend endpoint
+    fetch('http://localhost:8000/users/', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email
+    }),
+    })
+      .then(response => {
+        // Check if the response status is 204 (No Content), indicating a successful deletion
+        if (response.status === 204) {
+          console.log('Moderator deleted successfully');
+          // You may want to redirect the user or perform other actions here
+          onDelete(id);
+        } else {
+          // Handle other response statuses, e.g., show an error message
+          console.error('Failed to delete moderator. Status:', response.status);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        // Handle errors, show a message to the user, etc.
+      })
+      .finally(() => {
+        setShowDeleteConfirmation(false);
+      });
+  };
+  
+
+  const handleCancelClick = () => {
+    setNewEmail(initialEmail);
+    setIsEditing(false);
+    setIsValidEmail(true);
+  };
+
+  const handleSaveClick = () => {
+    // Perform save logic here
+    // You can call the onEdit function with the updated email
+    // Make a POST request to the Django backend endpoint
+    fetch('http://localhost:8000/users/', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        current_email : initialEmail,
+        email: newEmail
+    }),
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("Update successfull:", response.body);
+          onEdit(id, newEmail);
+          // Set isEditing to false to exit the editing mode
+          setIsEditing(false);
+          // Call the parent function with the added moderator details
+          return response.json();
+        } else if (response.status === 400) {
+          throw new Error("Email already exists.");
+        } else {
+          throw new Error("Failed to edit.");
+        }
+      })
+      .catch(error => {
+        console.error('Error :', error);
+        // Handle errors, show a message to the user, etc.
+      });
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setNewEmail(email);
+    setInitialEmail(email);
+    setIsValidEmail(true);
+  };
+
+  const validateEmail = (inputEmail) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(inputEmail);
+  };
+
+  return (
+    &lt;li className="moderator-item">
+      &lt;span className="id-moderator">{id}&lt;/span>
+      {isEditing ? (
+        &lt;>
+            &lt;input
+              type="text"
+              value={newEmail}
+              onChange={(e) => {
+                setNewEmail(e.target.value);
+                setIsValidEmail(validateEmail(e.target.value));
+              }}
+            />
+
+          &lt;div className="buttons">
+            &lt;button
+              className="editing"
+              onClick={handleSaveClick}
+              disabled={!isValidEmail}
+            >
+              &lt;SaveIcon />
+              &lt;span className="button-text">Save&lt;/span>
+            &lt;/button>
+            &lt;button className="cross" onClick={handleCancelClick}>
+              &lt;CrossIcon />
+              &lt;span className="button-text">Cancel&lt;/span>
+            &lt;/button>
+          &lt;/div>
+        &lt;/>
+      ) : (
+        &lt;>
+          &lt;span>{email}&lt;/span>
+          &lt;div className="buttons">
+            &lt;button className="editing" onClick={handleEditClick}>
+              &lt;EditIcon />
+              &lt;span className="button-text">Edit&lt;/span>
+            &lt;/button>
+            &lt;button onClick={handleDelete}>
+              &lt;DeleteIcon />
+              &lt;span className="button-text">Delete&lt;/span>
+            &lt;/button>
+          &lt;/div>
+        &lt;/>
+      )}
+      {showDeleteConfirmation &amp;&amp; (
+        &lt;>
+          &lt;div className="modal-overlay">&lt;/div>
+          &lt;div className="delete-confirmation">
+            &lt;p>Are you sure you want to delete this item?&lt;/p>
+            &lt;div className="delete-buttons">
+              &lt;button className="delete-btn" onClick={handleDeleteConfirmation}>
+                Yes
+              &lt;/button>
+              &lt;button
+                className="cancel-btn"
+                onClick={() => setShowDeleteConfirmation(false)}
+              >
+                No
+              &lt;/button>
+            &lt;/div>
+          &lt;/div>
+        &lt;/>
+      )}
+    &lt;/li>
+  );
+};
+
+export default ModeratorItem;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Sun Feb 04 2024 15:35:06 GMT+0100 (West Africa Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
