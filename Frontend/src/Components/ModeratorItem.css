@@ -43,7 +43,6 @@
   align-items: center;
   gap: 1vw;
 }
-/* CSS pour le pop-up de confirmation */
 .delete-confirmation {
   position: fixed;
   top: 50%;

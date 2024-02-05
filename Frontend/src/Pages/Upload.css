@@ -1,191 +1,186 @@
 /************************* CSS de Upload Page ***************************/
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Montserrat', sans-serif;
-    box-sizing: border-box;
-    overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .SearchContainer {
-    width: 100vw;
-    height: 50vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: -12vh; /* Adjust the negative margin based on your preference */
+  width: 100vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: -12vh; /* Adjust the negative margin based on your preference */
 }
-
 
 .Logo2 {
-    margin-bottom: 10vh;
+  margin-bottom: 10vh;
 }
-.parent{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: grab;
+.parent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
 }
 
-.image{
-    position: absolute;
-    width: 100px;
-    height: 88px;
-    flex-shrink: 0;
-    margin-top: -10vh;
+.image {
+  position: absolute;
+  width: 100px;
+  height: 88px;
+  flex-shrink: 0;
+  margin-top: -10vh;
 }
 .phrase {
-    width : 300px;
-    position: absolute;
-    text-align: center;
-    margin-top: 20vh;
-    color: #000;
-    font-family: Montserrat;
-    font-size: 1.125rem; /* Initial font size using vw unit */
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    word-wrap: break-word; /* Allow words to break and wrap to the next line */
+  width: 300px;
+  position: absolute;
+  text-align: center;
+  margin-top: 20vh;
+  color: #000;
+  font-family: Montserrat;
+  font-size: 1.125rem; /* Initial font size using vw unit */
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  word-wrap: break-word; /* Allow words to break and wrap to the next line */
 }
 
 /* Media query for smaller screens */
 @media screen and (max-width: 800px) {
-    .phrase {
-        width : 150px;
-        font-size: 12px;
-        word-wrap: break-word; /* Adjust font size for smaller screens */
-    }
-    
+  .phrase {
+    width: 150px;
+    font-size: 12px;
+    word-wrap: break-word; /* Adjust font size for smaller screens */
+  }
 }
 
-.link{
-    color: var(--Blue-secondary, #2546F3);
-    text-decoration-line: underline;
-    cursor: pointer;
+.link {
+  color: var(--Blue-secondary, #2546f3);
+  text-decoration-line: underline;
+  cursor: pointer;
 }
-.dropped-files-list ul{
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 36px;
+.dropped-files-list ul {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 36px;
 }
 
-.counting{
-    border-radius: 50%;
-    border: var(--Blue-primary, #0923A9) solid 1px;
-    width: 2rem;
-    height: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    position: absolute;
-    margin-left: 88px;
-
+.counting {
+  border-radius: 50%;
+  border: var(--Blue-primary, #0923a9) solid 1px;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  position: absolute;
+  margin-left: 88px;
 }
 
 .overlayContainer {
-    position: absolute;
-    top: 30vh ;
-    left: 30vw;
-    width: 30vw;
-    height: 40vh;
-    border-radius: 0.25rem;
-    background: #FFF;
-    box-shadow: 0px 12px 26px 0px rgba(0, 0, 0, 0.10), 0px 46px 46px 0px rgba(0, 0, 0, 0.09), 0px 105px 63px 0px rgba(0, 0, 0, 0.05), 0px 186px 74px 0px rgba(0, 0, 0, 0.01), 0px 290px 81px 0px rgba(0, 0, 0, 0.00);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    padding: 24px;
+  position: absolute;
+  top: 30vh;
+  left: 30vw;
+  width: 30vw;
+  height: 40vh;
+  border-radius: 0.25rem;
+  background: #fff;
+  box-shadow: 0px 12px 26px 0px rgba(0, 0, 0, 0.1),
+    0px 46px 46px 0px rgba(0, 0, 0, 0.09),
+    0px 105px 63px 0px rgba(0, 0, 0, 0.05),
+    0px 186px 74px 0px rgba(0, 0, 0, 0.01), 0px 290px 81px 0px rgba(0, 0, 0, 0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 24px;
 }
 
-.bg{
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.25); /* 25% opacity black */
-    z-index: 9998; /* Make sure the overlay appears above other elements */
-    pointer-events: none; /* Allow clicks to reach elements below the overlay */
-
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25); /* 25% opacity black */
+  z-index: 9998; /* Make sure the overlay appears above other elements */
+  pointer-events: none; /* Allow clicks to reach elements below the overlay */
 }
 
-.overlayContainer.error{
-    border: 2px solid red;
-    font-family: Montserrat;
-    font-size: 1.125rem; /* Initial font size using vw unit */
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    word-wrap: break-word;
-    text-align: center;
-    padding: 24px;
+.overlayContainer.error {
+  border: 2px solid red;
+  font-family: Montserrat;
+  font-size: 1.125rem; /* Initial font size using vw unit */
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  word-wrap: break-word;
+  text-align: center;
+  padding: 24px;
 }
-.overlayContainer.success{
-    padding: 24px;
-    border: 2px solid green;
+.overlayContainer.success {
+  padding: 24px;
+  border: 2px solid green;
 }
 
-
-.erorUpload .cross{
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 1rem;
-    height: 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+.erorUpload .cross {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
-.done{
-    width: 4rem;
-    height: 4rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1vh;
+.done {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1vh;
 }
-.loadingbaroverlay{
-    width: 100%;
-    
+.loadingbaroverlay {
+  width: 100%;
 }
-.overlay-success{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2vh;
+.overlay-success {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2vh;
 }
 
 .contin {
-    margin-top: 3vh;
-    height: 5vh;
-    cursor: pointer;
+  margin-top: 3vh;
+  height: 5vh;
+  cursor: pointer;
 }
 @media (max-width: 1024px) {
-    .contin {
-        height: 2.5rem;
-    }
+  .contin {
+    height: 2.5rem;
+  }
 }
 @media (max-width: 768px) {
-    
-    .overlayContainer {
-        position: absolute;
-    top: 30vh ;
+  .overlayContainer {
+    position: absolute;
+    top: 30vh;
     left: 10vw;
-        width: 70vw;
-        height: 40vh;
-    }
-    
+    width: 70vw;
+    height: 40vh;
+  }
 }

@@ -8,8 +8,8 @@
   width: 100vw;
 }
 .err404 {
-    margin-top: 4vh;
-    margin-bottom: 10vh;
+  margin-top: 4vh;
+  margin-bottom: 10vh;
   background: linear-gradient(180deg, rgba(9, 35, 169, 0) -7.53%, #000 37.63%);
   background-clip: text;
   -webkit-background-clip: text;
@@ -89,10 +89,9 @@
 }
 
 @media (max-width: 1024px) {
-    
-      .first {
-        font-size: 15px;
-      }
+  .first {
+    font-size: 15px;
+  }
   .BottomImg svg {
     width: 88px;
     height: 88px;
@@ -100,22 +99,22 @@
 }
 
 @media (max-width: 767px) {
-    .err404 {
-        margin-top: 8vh;
-        margin-bottom: -5.6vh;
-      font-size: 10vw;
-    }
-    .hero {
-        position: relative;
-        top: 10vh;
-      }
-    .first {
-        font-size: 13px;
-      }
-      .text{
-        margin-top: 5vh;
-        width: 80%;
-      }
+  .err404 {
+    margin-top: 8vh;
+    margin-bottom: -5.6vh;
+    font-size: 10vw;
+  }
+  .hero {
+    position: relative;
+    top: 10vh;
+  }
+  .first {
+    font-size: 13px;
+  }
+  .text {
+    margin-top: 5vh;
+    width: 80%;
+  }
   .BottomImg svg {
     width: 64px;
     height: 64px;

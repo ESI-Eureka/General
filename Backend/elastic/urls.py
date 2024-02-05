@@ -15,7 +15,6 @@ urlpatterns = [
     path('delete/', delete_article_view, name='delete_article_view'),
     path('viewAll/', recuperer_article, name='recuperer_article'),
     path('maj/', mettre_jour_article, name='mettre_jour_article'),
-    
     path('index_fav/', index_article_view_fav, name='index_article_fav'),  
     path('delete_favoris_document/', delete_favoris_document, name='delete_favoris_document'),
     path('search_favoris/', retrieve_and_save_favorite_articles, name='search_favoris'),

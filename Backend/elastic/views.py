@@ -17,7 +17,7 @@ nom_index = 'articles_scientifiques'
 nom_index_fav = 'favoris'
 
 # Path to the JSON Document
-fichier2_json_path = './elastic/document.json'
+fichier2_json_path = './__BDD__ELASTIC__/document.json'
 
 # Path to JSON documents (favorites artciles)
 

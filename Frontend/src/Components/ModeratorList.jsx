@@ -30,9 +30,7 @@ const ModeratorList = () => {
       }
 
       const data = await response.json();
-      // Handle the response from the backend
       console.log("Moderators fetched successfully:", data);
-      // You may want to update state or perform other actions here
       const moderators = data.map((mod, index) => ({
         ...mod,
         id: index + 1,
@@ -41,22 +39,17 @@ const ModeratorList = () => {
     setModerateurs(moderators);
     } catch (error) {
       console.error("Error:", error);
-      // Handle errors, show a message to the user, etc.
     }
   };
 
-  // Call fetchModerators when needed
-  // For example, you can call it in a useEffect hook when the component mounts
   useEffect(() => {
     fetchModerators();
   }, []);
 
   const handleDelete = (id) => {
-    // Supprimer le modérateur côté client
     const updatedModerateurs = moderateurs.filter((mod) => mod.id !== id);
     setModerateurs(updatedModerateurs);
 
-    // Réorganiser les ID séquentiellement
     const renumberedModerateurs = updatedModerateurs.map((mod, index) => ({
       ...mod,
       id: index + 1,
@@ -64,42 +57,21 @@ const ModeratorList = () => {
 
     setModerateurs(renumberedModerateurs);
 
-    // Ici, vous devez appeler l'API backend pour supprimer le modérateur de la BDD
-    // fetch(`/api/moderateurs/${id}`, { method: 'DELETE' });
   };
 
   const handleEdit = (id, newEmail) => {
-    // Modifier l'e-mail du modérateur côté client
     const updatedModerateurs = moderateurs.map((mod) =>
       mod.id === id ? { ...mod, email: newEmail } : mod
     );
     setModerateurs(updatedModerateurs);
-    // Ici, vous devez appeler l'API backend pour mettre à jour l'e-mail dans la BDD
-    // fetch(`/api/moderateurs/${id}`, {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ email: newEmail }),
-    // });
   };
 
   const handleAdd = (newEmail) => {
-    // Ajouter le modérateur côté client
     const newModerateur = {
       id: moderateurs.length + 1,
       email: newEmail,
     };
     setModerateurs([...moderateurs, newModerateur]);
-    // Ici, vous devez appeler l'API backend pour ajouter le modérateur à la BDD
-    // fetch(`/api/moderateurs`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ email: newEmail }),
-    // });
-    // Cacher le formulaire après l'ajout
     setShowForm(false);
   };
 

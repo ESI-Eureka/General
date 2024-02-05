@@ -26,9 +26,6 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
   };
 
   const handleDeleteConfirmation = () => {
-    // Perform save logic here
-    // You can call the onDelete function
-    // Make a DELETE request to the Django backend endpoint
     fetch('http://localhost:8000/users/', {
       method: 'DELETE',
       headers: {
@@ -39,19 +36,15 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
     }),
     })
       .then(response => {
-        // Check if the response status is 204 (No Content), indicating a successful deletion
         if (response.status === 204) {
           console.log('Moderator deleted successfully');
-          // You may want to redirect the user or perform other actions here
           onDelete(id);
         } else {
-          // Handle other response statuses, e.g., show an error message
           console.error('Failed to delete moderator. Status:', response.status);
         }
       })
       .catch(error => {
         console.error('Error:', error);
-        // Handle errors, show a message to the user, etc.
       })
       .finally(() => {
         setShowDeleteConfirmation(false);
@@ -66,9 +59,6 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
   };
 
   const handleSaveClick = () => {
-    // Perform save logic here
-    // You can call the onEdit function with the updated email
-    // Make a POST request to the Django backend endpoint
     fetch('http://localhost:8000/users/', {
       method: 'PUT',
       headers: {
@@ -84,9 +74,7 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
         if (response.ok) {
           console.log("Update successfull:", response.body);
           onEdit(id, newEmail);
-          // Set isEditing to false to exit the editing mode
           setIsEditing(false);
-          // Call the parent function with the added moderator details
           return response.json();
         } else if (response.status === 400) {
           throw new Error("Email already exists.");
@@ -96,7 +84,6 @@ const ModeratorItem = ({ moderateur, onDelete, onEdit }) => {
       })
       .catch(error => {
         console.error('Error :', error);
-        // Handle errors, show a message to the user, etc.
       });
   };
 

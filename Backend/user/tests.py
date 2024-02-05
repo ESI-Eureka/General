@@ -12,9 +12,6 @@ class TestAuthentication(TestCase):
     """
 
     def setUp(self):
-        ...
-class TestAuthentication(TestCase):  # Make sure to inherit from TestCase
-    def setUp(self):
         self.role = Role.objects.get(name='user')
         self.valid_signup_data = {
             'email': 'test@example.com',

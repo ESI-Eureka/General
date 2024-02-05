@@ -50,7 +50,6 @@ const NavBar = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("email");
     localStorage.removeItem("password");
-    // Redirect to the login page or perform other post-logout actions
     window.location.href = "/login";
   };
   return (

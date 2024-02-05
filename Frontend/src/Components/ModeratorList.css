@@ -1,5 +1,4 @@
 .moderators-list-container {
-  /* Autres styles pour le conteneur principal */
   display: flex;
   flex-direction: column;
   justify-content: center;

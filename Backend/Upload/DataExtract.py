@@ -30,9 +30,6 @@ def convert_readable_date(date_str):
         print(f"Error converting date: {e}")
         return "Unknown Date"
 
-    except ValueError as e:
-        print(f"Error converting date: {e}")
-        return "Unknown Date"
 def extractData(pdf_file):
     """
     Extracts data from a PDF file.
@@ -53,8 +50,6 @@ def extractData(pdf_file):
         - 'publication_date' (str): The publication date of the document.
         - 'corrected' (int): A flag indicating whether the document has been corrected (1 for corrected, 0 for not corrected).
     """
-    # Function code goes here
-def extractData(pdf_file):
     buff=pdf_file.read()
     files = {'input': ('filename.pdf', BytesIO(buff), 'application/pdf')}
     response = requests.post(grobid_url, files=files)
